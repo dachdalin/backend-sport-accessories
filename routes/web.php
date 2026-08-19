@@ -5,8 +5,11 @@ use App\Http\Controllers\Backend\CategoryController;
 use App\Http\Controllers\Backend\ColorController;
 use App\Http\Controllers\Backend\CurrencyController;
 use App\Http\Controllers\Backend\HelpTopicController;
+use App\Http\Controllers\Backend\OfflinePaymentMethodController;
 use App\Http\Controllers\Backend\SearchFunctionController;
 use App\Http\Controllers\Backend\ShippingMethodController;
+use App\Http\Controllers\Backend\SocialMediaController;
+use App\Http\Controllers\Backend\SoftCredentialController;
 use App\Http\Controllers\Backend\TagController;
 use Illuminate\Support\Facades\Route;
 
@@ -23,6 +26,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('help-topics', HelpTopicController::class)->except(['show']);
     Route::resource('shipping-methods', ShippingMethodController::class)->except(['show']);
     Route::resource('search-functions', SearchFunctionController::class)->except(['show']);
+    Route::resource('offline-payment-methods', OfflinePaymentMethodController::class)->except(['show']);
+    Route::resource('social-medias', SocialMediaController::class)->except(['show']);
+    Route::resource('credentials', SoftCredentialController::class)->only(['index', 'store', 'update', 'destroy']);
 });
 
 require __DIR__.'/settings.php';

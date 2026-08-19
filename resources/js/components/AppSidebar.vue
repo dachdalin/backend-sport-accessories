@@ -6,12 +6,15 @@ import {
     FolderGit2,
     FolderTree,
     HelpCircle,
+    KeyRound,
     LayoutGrid,
     Palette,
     Search,
+    Share2,
     Tag,
     Tags,
     Truck,
+    Wallet,
 } from '@lucide/vue';
 import AppLogo from '@/components/AppLogo.vue';
 import NavFooter from '@/components/NavFooter.vue';
@@ -30,10 +33,13 @@ import { dashboard } from '@/routes';
 import { index as brandsIndex } from '@/routes/brands';
 import { index as categoriesIndex } from '@/routes/categories';
 import { index as colorsIndex } from '@/routes/colors';
+import { index as credentialsIndex } from '@/routes/credentials';
 import { index as currenciesIndex } from '@/routes/currencies';
 import { index as helpTopicsIndex } from '@/routes/help-topics';
+import { index as offlinePaymentMethodsIndex } from '@/routes/offline-payment-methods';
 import { index as searchFunctionsIndex } from '@/routes/search-functions';
 import { index as shippingMethodsIndex } from '@/routes/shipping-methods';
+import { index as socialMediasIndex } from '@/routes/social-medias';
 import { index as tagsIndex } from '@/routes/tags';
 import type { NavItem } from '@/types';
 
@@ -82,6 +88,21 @@ const mainNavItems: NavItem[] = [
         title: 'Search functions',
         href: searchFunctionsIndex(),
         icon: Search,
+    },
+    {
+        title: 'Offline payment methods',
+        href: offlinePaymentMethodsIndex(),
+        icon: Wallet,
+    },
+    {
+        title: 'Social media',
+        href: socialMediasIndex(),
+        icon: Share2,
+    },
+    {
+        title: 'Credentials',
+        href: credentialsIndex(),
+        icon: KeyRound,
     },
 ];
 
