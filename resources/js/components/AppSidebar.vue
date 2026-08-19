@@ -1,6 +1,15 @@
 <script setup lang="ts">
 import { Link } from '@inertiajs/vue3';
-import { BookOpen, FolderGit2, LayoutGrid, Palette, Tag } from '@lucide/vue';
+import {
+    BookOpen,
+    Coins,
+    FolderGit2,
+    FolderTree,
+    LayoutGrid,
+    Palette,
+    Tag,
+    Tags,
+} from '@lucide/vue';
 import AppLogo from '@/components/AppLogo.vue';
 import NavFooter from '@/components/NavFooter.vue';
 import NavMain from '@/components/NavMain.vue';
@@ -16,7 +25,10 @@ import {
 } from '@/components/ui/sidebar';
 import { dashboard } from '@/routes';
 import { index as brandsIndex } from '@/routes/brands';
+import { index as categoriesIndex } from '@/routes/categories';
 import { index as colorsIndex } from '@/routes/colors';
+import { index as currenciesIndex } from '@/routes/currencies';
+import { index as tagsIndex } from '@/routes/tags';
 import type { NavItem } from '@/types';
 
 const mainNavItems: NavItem[] = [
@@ -34,6 +46,21 @@ const mainNavItems: NavItem[] = [
         title: 'Brands',
         href: brandsIndex(),
         icon: Tag,
+    },
+    {
+        title: 'Tags',
+        href: tagsIndex(),
+        icon: Tags,
+    },
+    {
+        title: 'Currencies',
+        href: currenciesIndex(),
+        icon: Coins,
+    },
+    {
+        title: 'Categories',
+        href: categoriesIndex(),
+        icon: FolderTree,
     },
 ];
 
