@@ -5,10 +5,13 @@ import {
     Coins,
     FolderGit2,
     FolderTree,
+    HelpCircle,
     LayoutGrid,
     Palette,
+    Search,
     Tag,
     Tags,
+    Truck,
 } from '@lucide/vue';
 import AppLogo from '@/components/AppLogo.vue';
 import NavFooter from '@/components/NavFooter.vue';
@@ -28,6 +31,9 @@ import { index as brandsIndex } from '@/routes/brands';
 import { index as categoriesIndex } from '@/routes/categories';
 import { index as colorsIndex } from '@/routes/colors';
 import { index as currenciesIndex } from '@/routes/currencies';
+import { index as helpTopicsIndex } from '@/routes/help-topics';
+import { index as searchFunctionsIndex } from '@/routes/search-functions';
+import { index as shippingMethodsIndex } from '@/routes/shipping-methods';
 import { index as tagsIndex } from '@/routes/tags';
 import type { NavItem } from '@/types';
 
@@ -61,6 +67,21 @@ const mainNavItems: NavItem[] = [
         title: 'Categories',
         href: categoriesIndex(),
         icon: FolderTree,
+    },
+    {
+        title: 'Help topics',
+        href: helpTopicsIndex(),
+        icon: HelpCircle,
+    },
+    {
+        title: 'Shipping methods',
+        href: shippingMethodsIndex(),
+        icon: Truck,
+    },
+    {
+        title: 'Search functions',
+        href: searchFunctionsIndex(),
+        icon: Search,
     },
 ];
 

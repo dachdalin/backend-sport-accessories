@@ -93,7 +93,9 @@ defineOptions({
                 <Select
                     name="parent_id"
                     :default-value="
-                        category.parent_id ? String(category.parent_id) : undefined
+                        category.parent_id
+                            ? String(category.parent_id)
+                            : undefined
                     "
                 >
                     <SelectTrigger id="parent_id" class="w-full">
