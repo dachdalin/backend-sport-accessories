@@ -2,7 +2,7 @@
 import { Form, Head } from '@inertiajs/vue3';
 import { Pencil, Plus, Trash2 } from '@lucide/vue';
 import { ref } from 'vue';
-import ColorController from '@/actions/App/Http/Controllers/ColorController';
+import ColorController from '@/actions/App/Http/Controllers/Backend/ColorController';
 import Heading from '@/components/Heading.vue';
 import InputError from '@/components/InputError.vue';
 import { Button } from '@/components/ui/button';

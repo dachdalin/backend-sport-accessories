@@ -1,7 +1,7 @@
 <?php
 
-use App\Http\Controllers\BrandController;
-use App\Http\Controllers\ColorController;
+use App\Http\Controllers\Backend\BrandController;
+use App\Http\Controllers\Backend\ColorController;
 use Illuminate\Support\Facades\Route;
 
 Route::inertia('/', 'Welcome')->name('home');

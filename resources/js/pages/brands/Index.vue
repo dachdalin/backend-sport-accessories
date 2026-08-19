@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Form, Head, Link } from '@inertiajs/vue3';
-import BrandController from '@/actions/App/Http/Controllers/BrandController';
+import BrandController from '@/actions/App/Http/Controllers/Backend/BrandController';
 import Heading from '@/components/Heading.vue';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
