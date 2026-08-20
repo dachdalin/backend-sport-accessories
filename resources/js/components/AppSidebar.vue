@@ -8,7 +8,9 @@ import {
     GalleryHorizontal,
     HelpCircle,
     KeyRound,
+    Layers,
     LayoutGrid,
+    Mail,
     MessageCircleQuestion,
     MessageSquareQuote,
     Palette,
@@ -17,6 +19,7 @@ import {
     Share2,
     Tag,
     Tags,
+    Ticket,
     Truck,
     Wallet,
 } from '@lucide/vue';
@@ -39,9 +42,12 @@ import { index as faqsIndex } from '@/routes/faqs';
 import { index as brandsIndex } from '@/routes/brands';
 import { index as categoriesIndex } from '@/routes/categories';
 import { index as colorsIndex } from '@/routes/colors';
+import { index as couponsIndex } from '@/routes/coupons';
 import { index as credentialsIndex } from '@/routes/credentials';
 import { index as currenciesIndex } from '@/routes/currencies';
 import { index as helpTopicsIndex } from '@/routes/help-topics';
+import { index as materialsIndex } from '@/routes/materials';
+import { index as newsletterSubscribersIndex } from '@/routes/newsletter-subscribers';
 import { index as offlinePaymentMethodsIndex } from '@/routes/offline-payment-methods';
 import { index as searchFunctionsIndex } from '@/routes/search-functions';
 import { index as shippingMethodsIndex } from '@/routes/shipping-methods';
@@ -71,6 +77,11 @@ const mainNavItems: NavItem[] = [
         title: 'Sizes',
         href: sizesIndex(),
         icon: Ruler,
+    },
+    {
+        title: 'Materials',
+        href: materialsIndex(),
+        icon: Layers,
     },
     {
         title: 'Tags',
@@ -131,6 +142,16 @@ const mainNavItems: NavItem[] = [
         title: 'FAQs',
         href: faqsIndex(),
         icon: MessageCircleQuestion,
+    },
+    {
+        title: 'Coupons',
+        href: couponsIndex(),
+        icon: Ticket,
+    },
+    {
+        title: 'Newsletter subscribers',
+        href: newsletterSubscribersIndex(),
+        icon: Mail,
     },
 ];
 

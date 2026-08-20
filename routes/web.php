@@ -4,9 +4,12 @@ use App\Http\Controllers\Backend\BannerController;
 use App\Http\Controllers\Backend\BrandController;
 use App\Http\Controllers\Backend\CategoryController;
 use App\Http\Controllers\Backend\ColorController;
+use App\Http\Controllers\Backend\CouponController;
 use App\Http\Controllers\Backend\CurrencyController;
 use App\Http\Controllers\Backend\FaqController;
 use App\Http\Controllers\Backend\HelpTopicController;
+use App\Http\Controllers\Backend\MaterialController;
+use App\Http\Controllers\Backend\NewsletterSubscriberController;
 use App\Http\Controllers\Backend\OfflinePaymentMethodController;
 use App\Http\Controllers\Backend\SearchFunctionController;
 use App\Http\Controllers\Backend\ShippingMethodController;
@@ -24,6 +27,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::resource('colors', ColorController::class)->only(['index', 'store', 'update', 'destroy']);
     Route::resource('sizes', SizeController::class)->only(['index', 'store', 'update', 'destroy']);
+    Route::resource('materials', MaterialController::class)->only(['index', 'store', 'update', 'destroy']);
     Route::resource('brands', BrandController::class)->except(['show']);
     Route::resource('banners', BannerController::class)->except(['show']);
     Route::resource('tags', TagController::class)->only(['index', 'store', 'update', 'destroy']);
@@ -37,6 +41,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('credentials', SoftCredentialController::class)->only(['index', 'store', 'update', 'destroy']);
     Route::resource('testimonials', TestimonialController::class)->except(['show']);
     Route::resource('faqs', FaqController::class)->except(['show']);
+    Route::resource('coupons', CouponController::class)->except(['show']);
+    Route::resource('newsletter-subscribers', NewsletterSubscriberController::class)->only(['index', 'store', 'update', 'destroy']);
 });
 
 require __DIR__.'/settings.php';
