@@ -1,0 +1,145 @@
+<script setup lang="ts">
+import { Form, Head } from '@inertiajs/vue3';
+import TeamMemberController from '@/actions/App/Http/Controllers/Backend/TeamMemberController';
+import Heading from '@/components/Heading.vue';
+import InputError from '@/components/InputError.vue';
+import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { edit, index } from '@/routes/team-members';
+
+type TeamMember = {
+    id: number;
+    name: string;
+    role: string;
+    bio: string | null;
+    photo: string;
+    photo_alt_text: string | null;
+    sort_order: number;
+    status: boolean;
+};
+
+const props = defineProps<{
+    teamMember: TeamMember;
+}>();
+
+defineOptions({
+    layout: (pageProps: { teamMember: TeamMember }) => ({
+        breadcrumbs: [
+            {
+                title: 'Team members',
+                href: index(),
+            },
+            {
+                title: 'Edit team member',
+                href: edit(pageProps.teamMember),
+            },
+        ],
+    }),
+});
+</script>
+
+<template>
+    <Head title="Edit team member" />
+
+    <div class="flex flex-col space-y-6">
+        <Heading
+            title="Edit team member"
+            :description="`Update the details for ${props.teamMember.name}`"
+        />
+
+        <Form
+            v-bind="TeamMemberController.update.form(props.teamMember)"
+            class="max-w-xl space-y-6"
+            v-slot="{ errors, processing }"
+        >
+            <div class="grid gap-2">
+                <Label for="name">Name</Label>
+                <Input
+                    id="name"
+                    name="name"
+                    required
+                    autofocus
+                    :default-value="props.teamMember.name"
+                />
+                <InputError :message="errors.name" />
+            </div>
+
+            <div class="grid gap-2">
+                <Label for="role">Role</Label>
+                <Input
+                    id="role"
+                    name="role"
+                    required
+                    :default-value="props.teamMember.role"
+                />
+                <InputError :message="errors.role" />
+            </div>
+
+            <div class="grid gap-2">
+                <Label for="bio">Bio</Label>
+                <Textarea
+                    id="bio"
+                    name="bio"
+                    rows="4"
+                    :default-value="props.teamMember.bio ?? ''"
+                    placeholder="Short biography"
+                />
+                <InputError :message="errors.bio" />
+            </div>
+
+            <div class="grid gap-2">
+                <img
+                    :src="`/storage/${props.teamMember.photo}`"
+                    :alt="
+                        props.teamMember.photo_alt_text ??
+                        props.teamMember.name
+                    "
+                    class="size-16 rounded-full object-cover"
+                />
+                <Label for="photo">Replace photo</Label>
+                <Input id="photo" name="photo" type="file" accept="image/*" />
+                <InputError :message="errors.photo" />
+            </div>
+
+            <div class="grid gap-2">
+                <Label for="photo_alt_text">Photo alt text</Label>
+                <Input
+                    id="photo_alt_text"
+                    name="photo_alt_text"
+                    :default-value="props.teamMember.photo_alt_text ?? ''"
+                    placeholder="Describes the photo"
+                />
+                <InputError :message="errors.photo_alt_text" />
+            </div>
+
+            <div class="grid gap-2">
+                <Label for="sort_order">Sort order</Label>
+                <Input
+                    id="sort_order"
+                    name="sort_order"
+                    type="number"
+                    min="0"
+                    :default-value="props.teamMember.sort_order"
+                />
+                <InputError :message="errors.sort_order" />
+            </div>
+
+            <div class="flex items-center gap-2">
+                <Checkbox
+                    id="status"
+                    name="status"
+                    :default-value="props.teamMember.status"
+                />
+                <Label for="status">Active</Label>
+                <InputError :message="errors.status" />
+            </div>
+
+            <div class="flex items-center gap-4">
+                <Button :disabled="processing">Save team member</Button>
+            </div>
+        </Form>
+    </div>
+</template>

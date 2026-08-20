@@ -19,10 +19,12 @@ import {
     ScrollText,
     Search,
     Share2,
+    Store,
     Tag,
     Tags,
     Ticket,
     Truck,
+    Users,
     Wallet,
 } from '@lucide/vue';
 import AppLogo from '@/components/AppLogo.vue';
@@ -57,7 +59,9 @@ import { index as searchFunctionsIndex } from '@/routes/search-functions';
 import { index as shippingMethodsIndex } from '@/routes/shipping-methods';
 import { index as sizesIndex } from '@/routes/sizes';
 import { index as socialMediasIndex } from '@/routes/social-medias';
+import { index as storeLocationsIndex } from '@/routes/store-locations';
 import { index as tagsIndex } from '@/routes/tags';
+import { index as teamMembersIndex } from '@/routes/team-members';
 import { index as testimonialsIndex } from '@/routes/testimonials';
 import type { NavItem } from '@/types';
 
@@ -166,6 +170,16 @@ const mainNavItems: NavItem[] = [
         title: 'Pages',
         href: pagesIndex(),
         icon: ScrollText,
+    },
+    {
+        title: 'Store locations',
+        href: storeLocationsIndex(),
+        icon: Store,
+    },
+    {
+        title: 'Team members',
+        href: teamMembersIndex(),
+        icon: Users,
     },
 ];
 
