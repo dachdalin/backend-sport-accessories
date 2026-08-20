@@ -11,14 +11,18 @@ use App\Http\Controllers\Backend\HelpTopicController;
 use App\Http\Controllers\Backend\MaterialController;
 use App\Http\Controllers\Backend\NewsletterSubscriberController;
 use App\Http\Controllers\Backend\OfflinePaymentMethodController;
+use App\Http\Controllers\Backend\PageController;
+use App\Http\Controllers\Backend\ReturnPolicyController;
 use App\Http\Controllers\Backend\SearchFunctionController;
 use App\Http\Controllers\Backend\ShippingMethodController;
 use App\Http\Controllers\Backend\SizeController;
 use App\Http\Controllers\Backend\SocialMediaController;
 use App\Http\Controllers\Backend\SoftCredentialController;
+use App\Http\Controllers\Backend\SupplierController;
 use App\Http\Controllers\Backend\TagController;
 use App\Http\Controllers\Backend\TaxRateController;
 use App\Http\Controllers\Backend\TestimonialController;
+use App\Http\Controllers\Backend\WarehouseController;
 use Illuminate\Support\Facades\Route;
 
 Route::inertia('/', 'Welcome')->name('home');
@@ -45,6 +49,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('coupons', CouponController::class)->except(['show']);
     Route::resource('newsletter-subscribers', NewsletterSubscriberController::class)->only(['index', 'store', 'update', 'destroy']);
     Route::resource('tax-rates', TaxRateController::class)->except(['show']);
+    Route::resource('warehouses', WarehouseController::class)->except(['show']);
+    Route::resource('return-policies', ReturnPolicyController::class)->except(['show']);
+    Route::resource('suppliers', SupplierController::class)->except(['show']);
+    Route::resource('pages', PageController::class)->except(['show']);
 });
 
 require __DIR__.'/settings.php';

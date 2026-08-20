@@ -15,6 +15,8 @@ import {
     MessageSquareQuote,
     Palette,
     Ruler,
+    RotateCcw,
+    ScrollText,
     Search,
     Share2,
     Tag,
@@ -49,6 +51,8 @@ import { index as helpTopicsIndex } from '@/routes/help-topics';
 import { index as materialsIndex } from '@/routes/materials';
 import { index as newsletterSubscribersIndex } from '@/routes/newsletter-subscribers';
 import { index as offlinePaymentMethodsIndex } from '@/routes/offline-payment-methods';
+import { index as pagesIndex } from '@/routes/pages';
+import { index as returnPoliciesIndex } from '@/routes/return-policies';
 import { index as searchFunctionsIndex } from '@/routes/search-functions';
 import { index as shippingMethodsIndex } from '@/routes/shipping-methods';
 import { index as sizesIndex } from '@/routes/sizes';
@@ -152,6 +156,16 @@ const mainNavItems: NavItem[] = [
         title: 'Newsletter subscribers',
         href: newsletterSubscribersIndex(),
         icon: Mail,
+    },
+    {
+        title: 'Return policies',
+        href: returnPoliciesIndex(),
+        icon: RotateCcw,
+    },
+    {
+        title: 'Pages',
+        href: pagesIndex(),
+        icon: ScrollText,
     },
 ];
 
