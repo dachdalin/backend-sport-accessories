@@ -5,10 +5,14 @@ import {
     Coins,
     FolderGit2,
     FolderTree,
+    GalleryHorizontal,
     HelpCircle,
     KeyRound,
     LayoutGrid,
+    MessageCircleQuestion,
+    MessageSquareQuote,
     Palette,
+    Ruler,
     Search,
     Share2,
     Tag,
@@ -30,6 +34,8 @@ import {
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import { dashboard } from '@/routes';
+import { index as bannersIndex } from '@/routes/banners';
+import { index as faqsIndex } from '@/routes/faqs';
 import { index as brandsIndex } from '@/routes/brands';
 import { index as categoriesIndex } from '@/routes/categories';
 import { index as colorsIndex } from '@/routes/colors';
@@ -39,8 +45,10 @@ import { index as helpTopicsIndex } from '@/routes/help-topics';
 import { index as offlinePaymentMethodsIndex } from '@/routes/offline-payment-methods';
 import { index as searchFunctionsIndex } from '@/routes/search-functions';
 import { index as shippingMethodsIndex } from '@/routes/shipping-methods';
+import { index as sizesIndex } from '@/routes/sizes';
 import { index as socialMediasIndex } from '@/routes/social-medias';
 import { index as tagsIndex } from '@/routes/tags';
+import { index as testimonialsIndex } from '@/routes/testimonials';
 import type { NavItem } from '@/types';
 
 const mainNavItems: NavItem[] = [
@@ -58,6 +66,11 @@ const mainNavItems: NavItem[] = [
         title: 'Brands',
         href: brandsIndex(),
         icon: Tag,
+    },
+    {
+        title: 'Sizes',
+        href: sizesIndex(),
+        icon: Ruler,
     },
     {
         title: 'Tags',
@@ -103,6 +116,21 @@ const mainNavItems: NavItem[] = [
         title: 'Credentials',
         href: credentialsIndex(),
         icon: KeyRound,
+    },
+    {
+        title: 'Banners',
+        href: bannersIndex(),
+        icon: GalleryHorizontal,
+    },
+    {
+        title: 'Testimonials',
+        href: testimonialsIndex(),
+        icon: MessageSquareQuote,
+    },
+    {
+        title: 'FAQs',
+        href: faqsIndex(),
+        icon: MessageCircleQuestion,
     },
 ];
 
