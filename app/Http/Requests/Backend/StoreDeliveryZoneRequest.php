@@ -5,7 +5,7 @@ namespace App\Http\Requests\Backend;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreWithdrawalMethodRequest extends FormRequest
+class StoreDeliveryZoneRequest extends FormRequest
 {
     /**
      * Get the validation rules that apply to the request.
@@ -15,9 +15,9 @@ class StoreWithdrawalMethodRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'method_name' => ['bail', 'required', 'string', 'max:255', 'unique:withdrawal_methods,method_name'],
-            'method_fields' => ['bail', 'required', 'string', 'max:5000'],
-            'is_default' => ['bail', 'sometimes', 'boolean'],
+            'zip_code' => ['bail', 'required', 'string', 'max:20', 'unique:delivery_zones,zip_code'],
+            'city' => ['bail', 'nullable', 'string', 'max:100'],
+            'delivery_charge' => ['bail', 'required', 'numeric', 'min:0'],
             'status' => ['bail', 'sometimes', 'boolean'],
         ];
     }

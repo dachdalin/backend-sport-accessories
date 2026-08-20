@@ -11,11 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('withdrawal_methods', function (Blueprint $table) {
+        Schema::create('delivery_zones', function (Blueprint $table) {
             $table->id();
-            $table->string('method_name')->unique();
-            $table->text('method_fields');
-            $table->boolean('is_default')->default(false);
+            $table->string('zip_code', 20)->unique();
+            $table->string('city', 100)->nullable();
+            $table->decimal('delivery_charge', 8, 2)->default(0);
             $table->boolean('status')->default(true)->index();
             $table->timestamps();
         });
@@ -26,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('withdrawal_methods');
+        Schema::dropIfExists('delivery_zones');
     }
 };

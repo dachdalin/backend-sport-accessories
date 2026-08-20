@@ -2,13 +2,13 @@
 
 namespace Database\Factories;
 
-use App\Models\WithdrawalMethod;
+use App\Models\DeliveryZone;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends Factory<WithdrawalMethod>
+ * @extends Factory<DeliveryZone>
  */
-class WithdrawalMethodFactory extends Factory
+class DeliveryZoneFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -18,9 +18,9 @@ class WithdrawalMethodFactory extends Factory
     public function definition(): array
     {
         return [
-            'method_name' => fake()->unique()->company().' Payout',
-            'method_fields' => fake()->sentence(),
-            'is_default' => false,
+            'zip_code' => fake()->unique()->postcode(),
+            'city' => fake()->city(),
+            'delivery_charge' => fake()->randomFloat(2, 0, 25),
             'status' => true,
         ];
     }

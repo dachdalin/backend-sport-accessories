@@ -2,22 +2,24 @@
 
 namespace App\Models;
 
-use Database\Factories\WithdrawalMethodFactory;
+use App\Enums\AnalyticScriptType;
+use Database\Factories\AnalyticScriptFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class WithdrawalMethod extends Model
+class AnalyticScript extends Model
 {
-    /** @use HasFactory<WithdrawalMethodFactory> */
+    /** @use HasFactory<AnalyticScriptFactory> */
     use HasFactory;
 
     /**
      * @var array<int, string>
      */
     protected $fillable = [
-        'method_name',
-        'method_fields',
-        'is_default',
+        'name',
+        'type',
+        'script_id',
+        'script',
         'status',
     ];
 
@@ -25,8 +27,8 @@ class WithdrawalMethod extends Model
      * @var array<string, mixed>
      */
     protected $attributes = [
-        'is_default' => false,
-        'status' => true,
+        'type' => 'custom',
+        'status' => false,
     ];
 
     /**
@@ -37,7 +39,7 @@ class WithdrawalMethod extends Model
     protected function casts(): array
     {
         return [
-            'is_default' => 'boolean',
+            'type' => AnalyticScriptType::class,
             'status' => 'boolean',
         ];
     }

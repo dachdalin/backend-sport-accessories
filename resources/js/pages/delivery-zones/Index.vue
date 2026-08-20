@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Form, Head, Link } from '@inertiajs/vue3';
-import WithdrawalMethodController from '@/actions/App/Http/Controllers/Backend/WithdrawalMethodController';
+import DeliveryZoneController from '@/actions/App/Http/Controllers/Backend/DeliveryZoneController';
 import Heading from '@/components/Heading.vue';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -13,25 +13,25 @@ import {
     DialogTitle,
     DialogTrigger,
 } from '@/components/ui/dialog';
-import { create, edit, index } from '@/routes/withdrawal-methods';
+import { create, edit, index } from '@/routes/delivery-zones';
 
-type WithdrawalMethod = {
+type DeliveryZone = {
     id: number;
-    method_name: string;
-    method_fields: string;
-    is_default: boolean;
+    zip_code: string;
+    city: string | null;
+    delivery_charge: string;
     status: boolean;
 };
 
 defineProps<{
-    withdrawalMethods: WithdrawalMethod[];
+    deliveryZones: DeliveryZone[];
 }>();
 
 defineOptions({
     layout: {
         breadcrumbs: [
             {
-                title: 'Withdrawal methods',
+                title: 'Delivery zones',
                 href: index(),
             },
         ],
@@ -40,16 +40,16 @@ defineOptions({
 </script>
 
 <template>
-    <Head title="Withdrawal methods" />
+    <Head title="Delivery zones" />
 
     <div class="flex flex-col gap-6">
         <div class="flex items-center justify-between">
             <Heading
-                title="Withdrawal methods"
-                description="Manage how vendors can withdraw their earnings"
+                title="Delivery zones"
+                description="Manage which zip codes you deliver to and their charge"
             />
             <Button as-child>
-                <Link :href="create()">Add withdrawal method</Link>
+                <Link :href="create()">Add delivery zone</Link>
             </Button>
         </div>
 
@@ -61,58 +61,50 @@ defineOptions({
                     class="border-b border-sidebar-border/70 text-muted-foreground dark:border-sidebar-border"
                 >
                     <tr>
-                        <th class="p-3 font-medium">Name</th>
-                        <th class="p-3 font-medium">Default</th>
+                        <th class="p-3 font-medium">Zip code</th>
+                        <th class="p-3 font-medium">City</th>
+                        <th class="p-3 font-medium">Delivery charge</th>
                         <th class="p-3 font-medium">Status</th>
                         <th class="p-3 text-right font-medium">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr
-                        v-for="method in withdrawalMethods"
-                        :key="method.id"
+                        v-for="zone in deliveryZones"
+                        :key="zone.id"
                         class="border-b border-sidebar-border/70 last:border-b-0 dark:border-sidebar-border"
                     >
-                        <td class="p-3 font-medium">
-                            {{ method.method_name }}
+                        <td class="p-3 font-medium">{{ zone.zip_code }}</td>
+                        <td class="p-3 text-muted-foreground">
+                            {{ zone.city ?? '—' }}
                         </td>
+                        <td class="p-3">{{ zone.delivery_charge }}</td>
                         <td class="p-3">
                             <Badge
                                 :variant="
-                                    method.is_default ? 'default' : 'outline'
+                                    zone.status ? 'default' : 'secondary'
                                 "
                             >
-                                {{ method.is_default ? 'Default' : '—' }}
-                            </Badge>
-                        </td>
-                        <td class="p-3">
-                            <Badge
-                                :variant="
-                                    method.status ? 'default' : 'secondary'
-                                "
-                            >
-                                {{ method.status ? 'Active' : 'Inactive' }}
+                                {{ zone.status ? 'Active' : 'Inactive' }}
                             </Badge>
                         </td>
                         <td class="p-3">
                             <div class="flex justify-end gap-2">
                                 <Button variant="outline" size="sm" as-child>
-                                    <Link :href="edit(method)">Edit</Link>
+                                    <Link :href="edit(zone)">Edit</Link>
                                 </Button>
 
                                 <Dialog>
                                     <DialogTrigger as-child>
-                                        <Button
-                                            variant="destructive"
-                                            size="sm"
+                                        <Button variant="destructive" size="sm"
                                             >Delete</Button
                                         >
                                     </DialogTrigger>
                                     <DialogContent>
                                         <Form
                                             v-bind="
-                                                WithdrawalMethodController.destroy.form(
-                                                    method,
+                                                DeliveryZoneController.destroy.form(
+                                                    zone,
                                                 )
                                             "
                                             :options="{ preserveScroll: true }"
@@ -121,7 +113,7 @@ defineOptions({
                                             <DialogHeader class="space-y-3">
                                                 <DialogTitle
                                                     >Delete "{{
-                                                        method.method_name
+                                                        zone.zip_code
                                                     }}"?</DialogTitle
                                                 >
                                             </DialogHeader>
@@ -147,12 +139,12 @@ defineOptions({
                         </td>
                     </tr>
 
-                    <tr v-if="withdrawalMethods.length === 0">
+                    <tr v-if="deliveryZones.length === 0">
                         <td
                             class="p-6 text-center text-muted-foreground"
-                            colspan="4"
+                            colspan="5"
                         >
-                            No withdrawal methods yet.
+                            No delivery zones yet.
                         </td>
                     </tr>
                 </tbody>

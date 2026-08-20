@@ -2,20 +2,25 @@
 import { Link } from '@inertiajs/vue3';
 import {
     Award,
-    Banknote,
+    BarChart3,
     BookOpen,
+    Briefcase,
     Coins,
+    Factory,
     FolderGit2,
     FolderTree,
     GalleryHorizontal,
+    Gift,
     HelpCircle,
     KeyRound,
     Layers,
     LayoutGrid,
     Mail,
+    MapPinned,
     MessageCircleQuestion,
     MessageSquareQuote,
     Palette,
+    Percent,
     Ruler,
     RotateCcw,
     ScrollText,
@@ -28,6 +33,7 @@ import {
     Truck,
     Users,
     Wallet,
+    Warehouse,
 } from '@lucide/vue';
 import AppLogo from '@/components/AppLogo.vue';
 import NavFooter from '@/components/NavFooter.vue';
@@ -43,6 +49,7 @@ import {
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import { dashboard } from '@/routes';
+import { index as analyticScriptsIndex } from '@/routes/analytic-scripts';
 import { index as bannersIndex } from '@/routes/banners';
 import { index as faqsIndex } from '@/routes/faqs';
 import { index as brandsIndex } from '@/routes/brands';
@@ -51,7 +58,10 @@ import { index as colorsIndex } from '@/routes/colors';
 import { index as couponsIndex } from '@/routes/coupons';
 import { index as credentialsIndex } from '@/routes/credentials';
 import { index as currenciesIndex } from '@/routes/currencies';
+import { index as deliveryZonesIndex } from '@/routes/delivery-zones';
+import { index as giftCardsIndex } from '@/routes/gift-cards';
 import { index as helpTopicsIndex } from '@/routes/help-topics';
+import { index as jobOpeningsIndex } from '@/routes/job-openings';
 import { index as loyaltyTiersIndex } from '@/routes/loyalty-tiers';
 import { index as materialsIndex } from '@/routes/materials';
 import { index as newsletterSubscribersIndex } from '@/routes/newsletter-subscribers';
@@ -63,10 +73,12 @@ import { index as shippingMethodsIndex } from '@/routes/shipping-methods';
 import { index as sizesIndex } from '@/routes/sizes';
 import { index as socialMediasIndex } from '@/routes/social-medias';
 import { index as storeLocationsIndex } from '@/routes/store-locations';
+import { index as suppliersIndex } from '@/routes/suppliers';
 import { index as tagsIndex } from '@/routes/tags';
+import { index as taxRatesIndex } from '@/routes/tax-rates';
 import { index as teamMembersIndex } from '@/routes/team-members';
 import { index as testimonialsIndex } from '@/routes/testimonials';
-import { index as withdrawalMethodsIndex } from '@/routes/withdrawal-methods';
+import { index as warehousesIndex } from '@/routes/warehouses';
 import type { NavItem } from '@/types';
 
 const mainNavItems: NavItem[] = [
@@ -191,9 +203,39 @@ const mainNavItems: NavItem[] = [
         icon: Award,
     },
     {
-        title: 'Withdrawal methods',
-        href: withdrawalMethodsIndex(),
-        icon: Banknote,
+        title: 'Tax rates',
+        href: taxRatesIndex(),
+        icon: Percent,
+    },
+    {
+        title: 'Warehouses',
+        href: warehousesIndex(),
+        icon: Warehouse,
+    },
+    {
+        title: 'Suppliers',
+        href: suppliersIndex(),
+        icon: Factory,
+    },
+    {
+        title: 'Gift cards',
+        href: giftCardsIndex(),
+        icon: Gift,
+    },
+    {
+        title: 'Job openings',
+        href: jobOpeningsIndex(),
+        icon: Briefcase,
+    },
+    {
+        title: 'Analytic scripts',
+        href: analyticScriptsIndex(),
+        icon: BarChart3,
+    },
+    {
+        title: 'Delivery zones',
+        href: deliveryZonesIndex(),
+        icon: MapPinned,
     },
 ];
 

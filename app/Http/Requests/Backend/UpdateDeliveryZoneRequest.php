@@ -6,7 +6,7 @@ use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
-class UpdateWithdrawalMethodRequest extends FormRequest
+class UpdateDeliveryZoneRequest extends FormRequest
 {
     /**
      * Get the validation rules that apply to the request.
@@ -16,9 +16,9 @@ class UpdateWithdrawalMethodRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'method_name' => ['bail', 'required', 'string', 'max:255', Rule::unique('withdrawal_methods', 'method_name')->ignore($this->route('withdrawal_method'))],
-            'method_fields' => ['bail', 'required', 'string', 'max:5000'],
-            'is_default' => ['bail', 'sometimes', 'boolean'],
+            'zip_code' => ['bail', 'required', 'string', 'max:20', Rule::unique('delivery_zones', 'zip_code')->ignore($this->route('delivery_zone'))],
+            'city' => ['bail', 'nullable', 'string', 'max:100'],
+            'delivery_charge' => ['bail', 'required', 'numeric', 'min:0'],
             'status' => ['bail', 'sometimes', 'boolean'],
         ];
     }
