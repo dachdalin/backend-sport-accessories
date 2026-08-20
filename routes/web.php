@@ -17,6 +17,7 @@ use App\Http\Controllers\Backend\SizeController;
 use App\Http\Controllers\Backend\SocialMediaController;
 use App\Http\Controllers\Backend\SoftCredentialController;
 use App\Http\Controllers\Backend\TagController;
+use App\Http\Controllers\Backend\TaxRateController;
 use App\Http\Controllers\Backend\TestimonialController;
 use Illuminate\Support\Facades\Route;
 
@@ -43,6 +44,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('faqs', FaqController::class)->except(['show']);
     Route::resource('coupons', CouponController::class)->except(['show']);
     Route::resource('newsletter-subscribers', NewsletterSubscriberController::class)->only(['index', 'store', 'update', 'destroy']);
+    Route::resource('tax-rates', TaxRateController::class)->except(['show']);
 });
 
 require __DIR__.'/settings.php';
