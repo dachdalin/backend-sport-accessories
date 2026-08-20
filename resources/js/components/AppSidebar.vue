@@ -26,6 +26,7 @@ import {
     ScrollText,
     Search,
     Share2,
+    ShoppingBag,
     Store,
     Tag,
     Tags,
@@ -67,6 +68,7 @@ import { index as materialsIndex } from '@/routes/materials';
 import { index as newsletterSubscribersIndex } from '@/routes/newsletter-subscribers';
 import { index as offlinePaymentMethodsIndex } from '@/routes/offline-payment-methods';
 import { index as pagesIndex } from '@/routes/pages';
+import { index as productsIndex } from '@/routes/products';
 import { index as returnPoliciesIndex } from '@/routes/return-policies';
 import { index as searchFunctionsIndex } from '@/routes/search-functions';
 import { index as shippingMethodsIndex } from '@/routes/shipping-methods';
@@ -86,6 +88,11 @@ const mainNavItems: NavItem[] = [
         title: 'Dashboard',
         href: dashboard(),
         icon: LayoutGrid,
+    },
+    {
+        title: 'Products',
+        href: productsIndex(),
+        icon: ShoppingBag,
     },
     {
         title: 'Colors',

@@ -17,6 +17,7 @@ use App\Http\Controllers\Backend\MaterialController;
 use App\Http\Controllers\Backend\NewsletterSubscriberController;
 use App\Http\Controllers\Backend\OfflinePaymentMethodController;
 use App\Http\Controllers\Backend\PageController;
+use App\Http\Controllers\Backend\ProductController;
 use App\Http\Controllers\Backend\ReturnPolicyController;
 use App\Http\Controllers\Backend\SearchFunctionController;
 use App\Http\Controllers\Backend\ShippingMethodController;
@@ -67,6 +68,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('job-openings', JobOpeningController::class)->except(['show']);
     Route::resource('analytic-scripts', AnalyticScriptController::class)->except(['show']);
     Route::resource('delivery-zones', DeliveryZoneController::class)->except(['show']);
+    Route::resource('products', ProductController::class)->except(['show']);
 });
 
 require __DIR__.'/settings.php';
