@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { Link } from '@inertiajs/vue3';
 import {
+    Award,
+    Banknote,
     BookOpen,
     Coins,
     FolderGit2,
@@ -50,6 +52,7 @@ import { index as couponsIndex } from '@/routes/coupons';
 import { index as credentialsIndex } from '@/routes/credentials';
 import { index as currenciesIndex } from '@/routes/currencies';
 import { index as helpTopicsIndex } from '@/routes/help-topics';
+import { index as loyaltyTiersIndex } from '@/routes/loyalty-tiers';
 import { index as materialsIndex } from '@/routes/materials';
 import { index as newsletterSubscribersIndex } from '@/routes/newsletter-subscribers';
 import { index as offlinePaymentMethodsIndex } from '@/routes/offline-payment-methods';
@@ -63,6 +66,7 @@ import { index as storeLocationsIndex } from '@/routes/store-locations';
 import { index as tagsIndex } from '@/routes/tags';
 import { index as teamMembersIndex } from '@/routes/team-members';
 import { index as testimonialsIndex } from '@/routes/testimonials';
+import { index as withdrawalMethodsIndex } from '@/routes/withdrawal-methods';
 import type { NavItem } from '@/types';
 
 const mainNavItems: NavItem[] = [
@@ -180,6 +184,16 @@ const mainNavItems: NavItem[] = [
         title: 'Team members',
         href: teamMembersIndex(),
         icon: Users,
+    },
+    {
+        title: 'Loyalty tiers',
+        href: loyaltyTiersIndex(),
+        icon: Award,
+    },
+    {
+        title: 'Withdrawal methods',
+        href: withdrawalMethodsIndex(),
+        icon: Banknote,
     },
 ];
 

@@ -9,6 +9,8 @@ use App\Http\Controllers\Backend\CurrencyController;
 use App\Http\Controllers\Backend\FaqController;
 use App\Http\Controllers\Backend\GiftCardController;
 use App\Http\Controllers\Backend\HelpTopicController;
+use App\Http\Controllers\Backend\JobOpeningController;
+use App\Http\Controllers\Backend\LoyaltyTierController;
 use App\Http\Controllers\Backend\MaterialController;
 use App\Http\Controllers\Backend\NewsletterSubscriberController;
 use App\Http\Controllers\Backend\OfflinePaymentMethodController;
@@ -26,6 +28,7 @@ use App\Http\Controllers\Backend\TaxRateController;
 use App\Http\Controllers\Backend\TeamMemberController;
 use App\Http\Controllers\Backend\TestimonialController;
 use App\Http\Controllers\Backend\WarehouseController;
+use App\Http\Controllers\Backend\WithdrawalMethodController;
 use Illuminate\Support\Facades\Route;
 
 Route::inertia('/', 'Welcome')->name('home');
@@ -59,6 +62,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('store-locations', StoreLocationController::class)->except(['show']);
     Route::resource('gift-cards', GiftCardController::class)->except(['show']);
     Route::resource('team-members', TeamMemberController::class)->except(['show']);
+    Route::resource('loyalty-tiers', LoyaltyTierController::class)->except(['show']);
+    Route::resource('job-openings', JobOpeningController::class)->except(['show']);
+    Route::resource('withdrawal-methods', WithdrawalMethodController::class)->except(['show']);
 });
 
 require __DIR__.'/settings.php';
