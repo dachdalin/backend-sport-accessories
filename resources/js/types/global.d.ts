@@ -1,4 +1,5 @@
 import type { Auth } from '@/types/auth';
+import type { Locale, NotificationSummary } from '@/types/ui';
 
 // Extend ImportMeta interface for Vite...
 declare module 'vite/client' {
@@ -19,6 +20,8 @@ declare module '@inertiajs/core' {
             name: string;
             auth: Auth;
             sidebarOpen: boolean;
+            locale: Locale;
+            notifications: NotificationSummary | null;
             [key: string]: unknown;
         };
     }

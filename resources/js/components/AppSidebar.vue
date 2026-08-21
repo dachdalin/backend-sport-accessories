@@ -117,258 +117,298 @@ import { index as teamMembersIndex } from '@/routes/team-members';
 import { index as testimonialsIndex } from '@/routes/testimonials';
 import { index as warehousesIndex } from '@/routes/warehouses';
 import { index as wishlistsIndex } from '@/routes/wishlists';
-import type { NavItem } from '@/types';
+import type { NavGroup, NavItem } from '@/types';
 
-const mainNavItems: NavItem[] = [
+const navGroups: NavGroup[] = [
     {
-        title: 'Dashboard',
-        href: dashboard(),
-        icon: LayoutGrid,
+        label: 'Overview',
+        items: [
+            {
+                title: 'Dashboard',
+                href: dashboard(),
+                icon: LayoutGrid,
+            },
+            {
+                title: 'Business settings',
+                href: businessSettingsEdit(),
+                icon: Settings,
+            },
+        ],
     },
     {
-        title: 'Business settings',
-        href: businessSettingsEdit(),
-        icon: Settings,
+        label: 'Catalog',
+        items: [
+            {
+                title: 'Products',
+                href: productsIndex(),
+                icon: ShoppingBag,
+            },
+            {
+                title: 'Categories',
+                href: categoriesIndex(),
+                icon: FolderTree,
+            },
+            {
+                title: 'Attributes',
+                href: attributesIndex(),
+                icon: SlidersHorizontal,
+            },
+            {
+                title: 'Colors',
+                href: colorsIndex(),
+                icon: Palette,
+            },
+            {
+                title: 'Sizes',
+                href: sizesIndex(),
+                icon: Ruler,
+            },
+            {
+                title: 'Materials',
+                href: materialsIndex(),
+                icon: Layers,
+            },
+            {
+                title: 'Brands',
+                href: brandsIndex(),
+                icon: Tag,
+            },
+            {
+                title: 'Tags',
+                href: tagsIndex(),
+                icon: Tags,
+            },
+        ],
     },
     {
-        title: 'Products',
-        href: productsIndex(),
-        icon: ShoppingBag,
+        label: 'Merchandising',
+        items: [
+            {
+                title: 'Flash deals',
+                href: flashDealsIndex(),
+                icon: Zap,
+            },
+            {
+                title: 'Feature deals',
+                href: featureDealsIndex(),
+                icon: BadgePercent,
+            },
+            {
+                title: 'Deal of the day',
+                href: dealOfTheDaysIndex(),
+                icon: Flame,
+            },
+            {
+                title: 'Most demanded',
+                href: mostDemandedsIndex(),
+                icon: TrendingUp,
+            },
+            {
+                title: 'Stock clearance',
+                href: stockClearanceSetupsIndex(),
+                icon: Sparkles,
+            },
+            {
+                title: 'Coupons',
+                href: couponsIndex(),
+                icon: Ticket,
+            },
+            {
+                title: 'Gift cards',
+                href: giftCardsIndex(),
+                icon: Gift,
+            },
+            {
+                title: 'Banners',
+                href: bannersIndex(),
+                icon: GalleryHorizontal,
+            },
+        ],
     },
     {
-        title: 'Orders',
-        href: ordersIndex(),
-        icon: Receipt,
+        label: 'Sales',
+        items: [
+            {
+                title: 'Orders',
+                href: ordersIndex(),
+                icon: Receipt,
+            },
+            {
+                title: 'Refund requests',
+                href: refundRequestsIndex(),
+                icon: RefreshCcw,
+            },
+            {
+                title: 'Return policies',
+                href: returnPoliciesIndex(),
+                icon: RotateCcw,
+            },
+        ],
     },
     {
-        title: 'Flash deals',
-        href: flashDealsIndex(),
-        icon: Zap,
+        label: 'Customers',
+        items: [
+            {
+                title: 'Customers',
+                href: customersIndex(),
+                icon: UserRound,
+            },
+            {
+                title: 'Wishlists',
+                href: wishlistsIndex(),
+                icon: Heart,
+            },
+            {
+                title: 'Reviews',
+                href: reviewsIndex(),
+                icon: Star,
+            },
+            {
+                title: 'Testimonials',
+                href: testimonialsIndex(),
+                icon: MessageSquareQuote,
+            },
+            {
+                title: 'Contacts',
+                href: contactsIndex(),
+                icon: Inbox,
+            },
+            {
+                title: 'Support tickets',
+                href: supportTicketsIndex(),
+                icon: LifeBuoy,
+            },
+            {
+                title: 'Newsletter subscribers',
+                href: newsletterSubscribersIndex(),
+                icon: Mail,
+            },
+        ],
     },
     {
-        title: 'Feature deals',
-        href: featureDealsIndex(),
-        icon: BadgePercent,
+        label: 'Content',
+        items: [
+            {
+                title: 'Pages',
+                href: pagesIndex(),
+                icon: ScrollText,
+            },
+            {
+                title: 'Blogs',
+                href: blogsIndex(),
+                icon: FileText,
+            },
+            {
+                title: 'Blog categories',
+                href: blogCategoriesIndex(),
+                icon: Newspaper,
+            },
+            {
+                title: 'FAQs',
+                href: faqsIndex(),
+                icon: MessageCircleQuestion,
+            },
+            {
+                title: 'Help topics',
+                href: helpTopicsIndex(),
+                icon: HelpCircle,
+            },
+            {
+                title: 'Team members',
+                href: teamMembersIndex(),
+                icon: Users,
+            },
+            {
+                title: 'Store locations',
+                href: storeLocationsIndex(),
+                icon: Store,
+            },
+            {
+                title: 'Job openings',
+                href: jobOpeningsIndex(),
+                icon: Briefcase,
+            },
+            {
+                title: 'Loyalty tiers',
+                href: loyaltyTiersIndex(),
+                icon: Award,
+            },
+        ],
     },
     {
-        title: 'Reviews',
-        href: reviewsIndex(),
-        icon: Star,
+        label: 'Operations',
+        items: [
+            {
+                title: 'Currencies',
+                href: currenciesIndex(),
+                icon: Coins,
+            },
+            {
+                title: 'Tax rates',
+                href: taxRatesIndex(),
+                icon: Percent,
+            },
+            {
+                title: 'Shipping methods',
+                href: shippingMethodsIndex(),
+                icon: Truck,
+            },
+            {
+                title: 'Shipping addresses',
+                href: shippingAddressesIndex(),
+                icon: MapPin,
+            },
+            {
+                title: 'Delivery zones',
+                href: deliveryZonesIndex(),
+                icon: MapPinned,
+            },
+            {
+                title: 'Offline payment methods',
+                href: offlinePaymentMethodsIndex(),
+                icon: Wallet,
+            },
+            {
+                title: 'Suppliers',
+                href: suppliersIndex(),
+                icon: Factory,
+            },
+            {
+                title: 'Warehouses',
+                href: warehousesIndex(),
+                icon: Warehouse,
+            },
+        ],
     },
     {
-        title: 'Wishlists',
-        href: wishlistsIndex(),
-        icon: Heart,
-    },
-    {
-        title: 'Customers',
-        href: customersIndex(),
-        icon: UserRound,
-    },
-    {
-        title: 'Contacts',
-        href: contactsIndex(),
-        icon: Inbox,
-    },
-    {
-        title: 'Support tickets',
-        href: supportTicketsIndex(),
-        icon: LifeBuoy,
-    },
-    {
-        title: 'Attributes',
-        href: attributesIndex(),
-        icon: SlidersHorizontal,
-    },
-    {
-        title: 'Colors',
-        href: colorsIndex(),
-        icon: Palette,
-    },
-    {
-        title: 'Brands',
-        href: brandsIndex(),
-        icon: Tag,
-    },
-    {
-        title: 'Sizes',
-        href: sizesIndex(),
-        icon: Ruler,
-    },
-    {
-        title: 'Materials',
-        href: materialsIndex(),
-        icon: Layers,
-    },
-    {
-        title: 'Tags',
-        href: tagsIndex(),
-        icon: Tags,
-    },
-    {
-        title: 'Currencies',
-        href: currenciesIndex(),
-        icon: Coins,
-    },
-    {
-        title: 'Categories',
-        href: categoriesIndex(),
-        icon: FolderTree,
-    },
-    {
-        title: 'Blogs',
-        href: blogsIndex(),
-        icon: FileText,
-    },
-    {
-        title: 'Blog categories',
-        href: blogCategoriesIndex(),
-        icon: Newspaper,
-    },
-    {
-        title: 'Help topics',
-        href: helpTopicsIndex(),
-        icon: HelpCircle,
-    },
-    {
-        title: 'Shipping methods',
-        href: shippingMethodsIndex(),
-        icon: Truck,
-    },
-    {
-        title: 'Shipping addresses',
-        href: shippingAddressesIndex(),
-        icon: MapPin,
-    },
-    {
-        title: 'Search functions',
-        href: searchFunctionsIndex(),
-        icon: Search,
-    },
-    {
-        title: 'Offline payment methods',
-        href: offlinePaymentMethodsIndex(),
-        icon: Wallet,
-    },
-    {
-        title: 'Social media',
-        href: socialMediasIndex(),
-        icon: Share2,
-    },
-    {
-        title: 'Credentials',
-        href: credentialsIndex(),
-        icon: KeyRound,
-    },
-    {
-        title: 'Banners',
-        href: bannersIndex(),
-        icon: GalleryHorizontal,
-    },
-    {
-        title: 'Testimonials',
-        href: testimonialsIndex(),
-        icon: MessageSquareQuote,
-    },
-    {
-        title: 'FAQs',
-        href: faqsIndex(),
-        icon: MessageCircleQuestion,
-    },
-    {
-        title: 'Coupons',
-        href: couponsIndex(),
-        icon: Ticket,
-    },
-    {
-        title: 'Newsletter subscribers',
-        href: newsletterSubscribersIndex(),
-        icon: Mail,
-    },
-    {
-        title: 'Email templates',
-        href: emailTemplatesIndex(),
-        icon: MailOpen,
-    },
-    {
-        title: 'Return policies',
-        href: returnPoliciesIndex(),
-        icon: RotateCcw,
-    },
-    {
-        title: 'Pages',
-        href: pagesIndex(),
-        icon: ScrollText,
-    },
-    {
-        title: 'Store locations',
-        href: storeLocationsIndex(),
-        icon: Store,
-    },
-    {
-        title: 'Team members',
-        href: teamMembersIndex(),
-        icon: Users,
-    },
-    {
-        title: 'Loyalty tiers',
-        href: loyaltyTiersIndex(),
-        icon: Award,
-    },
-    {
-        title: 'Tax rates',
-        href: taxRatesIndex(),
-        icon: Percent,
-    },
-    {
-        title: 'Warehouses',
-        href: warehousesIndex(),
-        icon: Warehouse,
-    },
-    {
-        title: 'Suppliers',
-        href: suppliersIndex(),
-        icon: Factory,
-    },
-    {
-        title: 'Gift cards',
-        href: giftCardsIndex(),
-        icon: Gift,
-    },
-    {
-        title: 'Job openings',
-        href: jobOpeningsIndex(),
-        icon: Briefcase,
-    },
-    {
-        title: 'Analytic scripts',
-        href: analyticScriptsIndex(),
-        icon: BarChart3,
-    },
-    {
-        title: 'Delivery zones',
-        href: deliveryZonesIndex(),
-        icon: MapPinned,
-    },
-    {
-        title: 'Stock clearance',
-        href: stockClearanceSetupsIndex(),
-        icon: Sparkles,
-    },
-    {
-        title: 'Deal of the day',
-        href: dealOfTheDaysIndex(),
-        icon: Flame,
-    },
-    {
-        title: 'Most demanded',
-        href: mostDemandedsIndex(),
-        icon: TrendingUp,
-    },
-    {
-        title: 'Refund requests',
-        href: refundRequestsIndex(),
-        icon: RefreshCcw,
+        label: 'System',
+        items: [
+            {
+                title: 'Social media',
+                href: socialMediasIndex(),
+                icon: Share2,
+            },
+            {
+                title: 'Credentials',
+                href: credentialsIndex(),
+                icon: KeyRound,
+            },
+            {
+                title: 'Email templates',
+                href: emailTemplatesIndex(),
+                icon: MailOpen,
+            },
+            {
+                title: 'Analytic scripts',
+                href: analyticScriptsIndex(),
+                icon: BarChart3,
+            },
+            {
+                title: 'Search functions',
+                href: searchFunctionsIndex(),
+                icon: Search,
+            },
+        ],
     },
 ];
 
@@ -401,7 +441,7 @@ const footerNavItems: NavItem[] = [
         </SidebarHeader>
 
         <SidebarContent>
-            <NavMain :items="mainNavItems" />
+            <NavMain :groups="navGroups" />
         </SidebarContent>
 
         <SidebarFooter>

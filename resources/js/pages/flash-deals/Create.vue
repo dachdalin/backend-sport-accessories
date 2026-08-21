@@ -161,7 +161,7 @@ function removeItem(index: number) {
                 <div
                     v-for="(item, itemIndex) in items"
                     :key="item.key"
-                    class="grid grid-cols-[2fr_1fr_1fr_auto] items-start gap-2 rounded-md border border-sidebar-border/70 p-3 dark:border-sidebar-border"
+                    class="grid grid-cols-1 gap-3 rounded-md border border-sidebar-border/70 p-3 sm:grid-cols-[2fr_1fr_1fr_auto] sm:items-start sm:gap-2 dark:border-sidebar-border"
                 >
                     <div class="grid gap-2">
                         <Label :for="`item-product-${item.key}`">Product</Label>
@@ -220,16 +220,19 @@ function removeItem(index: number) {
                         <InputError :message="errors[`items.${itemIndex}.discount_type`]" />
                     </div>
 
-                    <Button
-                        type="button"
-                        variant="destructive"
-                        size="sm"
-                        class="mt-7"
-                        :disabled="items.length === 1"
-                        @click="removeItem(itemIndex)"
-                    >
-                        Remove
-                    </Button>
+                    <div class="grid gap-2">
+                        <Label class="invisible hidden sm:block">Remove</Label>
+                        <Button
+                            type="button"
+                            variant="destructive"
+                            size="sm"
+                            class="w-full sm:w-auto"
+                            :disabled="items.length === 1"
+                            @click="removeItem(itemIndex)"
+                        >
+                            Remove
+                        </Button>
+                    </div>
                 </div>
             </div>
 

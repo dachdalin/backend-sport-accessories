@@ -13,6 +13,7 @@ use App\Http\Controllers\Backend\ContactController;
 use App\Http\Controllers\Backend\CouponController;
 use App\Http\Controllers\Backend\CurrencyController;
 use App\Http\Controllers\Backend\CustomerController;
+use App\Http\Controllers\Backend\DashboardController;
 use App\Http\Controllers\Backend\DealOfTheDayController;
 use App\Http\Controllers\Backend\DeliveryZoneController;
 use App\Http\Controllers\Backend\EmailTemplateController;
@@ -55,7 +56,7 @@ use Illuminate\Support\Facades\Route;
 Route::inertia('/', 'Welcome')->name('home');
 
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::inertia('dashboard', 'Dashboard')->name('dashboard');
+    Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     Route::resource('attributes', AttributeController::class)->only(['index', 'store', 'update', 'destroy']);
     Route::resource('colors', ColorController::class)->only(['index', 'store', 'update', 'destroy']);
