@@ -2,12 +2,14 @@
 import { Link } from '@inertiajs/vue3';
 import {
     Award,
+    BadgePercent,
     BarChart3,
     BookOpen,
     Briefcase,
     Coins,
     Factory,
     FileText,
+    Flame,
     FolderGit2,
     FolderTree,
     GalleryHorizontal,
@@ -21,6 +23,7 @@ import {
     LifeBuoy,
     Mail,
     MailOpen,
+    MapPin,
     MapPinned,
     MessageCircleQuestion,
     MessageSquareQuote,
@@ -41,6 +44,7 @@ import {
     Tag,
     Tags,
     Ticket,
+    TrendingUp,
     Truck,
     UserRound,
     Users,
@@ -68,6 +72,7 @@ import { index as bannersIndex } from '@/routes/banners';
 import { index as faqsIndex } from '@/routes/faqs';
 import { index as blogCategoriesIndex } from '@/routes/blog-categories';
 import { index as blogsIndex } from '@/routes/blogs';
+import { index as featureDealsIndex } from '@/routes/feature-deals';
 import { index as flashDealsIndex } from '@/routes/flash-deals';
 import { index as brandsIndex } from '@/routes/brands';
 import { index as categoriesIndex } from '@/routes/categories';
@@ -77,6 +82,7 @@ import { index as couponsIndex } from '@/routes/coupons';
 import { index as credentialsIndex } from '@/routes/credentials';
 import { index as currenciesIndex } from '@/routes/currencies';
 import { index as customersIndex } from '@/routes/customers';
+import { index as dealOfTheDaysIndex } from '@/routes/deal-of-the-days';
 import { index as deliveryZonesIndex } from '@/routes/delivery-zones';
 import { index as emailTemplatesIndex } from '@/routes/email-templates';
 import { index as giftCardsIndex } from '@/routes/gift-cards';
@@ -84,6 +90,7 @@ import { index as helpTopicsIndex } from '@/routes/help-topics';
 import { index as jobOpeningsIndex } from '@/routes/job-openings';
 import { index as loyaltyTiersIndex } from '@/routes/loyalty-tiers';
 import { index as materialsIndex } from '@/routes/materials';
+import { index as mostDemandedsIndex } from '@/routes/most-demandeds';
 import { index as newsletterSubscribersIndex } from '@/routes/newsletter-subscribers';
 import { index as offlinePaymentMethodsIndex } from '@/routes/offline-payment-methods';
 import { index as ordersIndex } from '@/routes/orders';
@@ -92,6 +99,7 @@ import { index as productsIndex } from '@/routes/products';
 import { index as returnPoliciesIndex } from '@/routes/return-policies';
 import { index as reviewsIndex } from '@/routes/reviews';
 import { index as searchFunctionsIndex } from '@/routes/search-functions';
+import { index as shippingAddressesIndex } from '@/routes/shipping-addresses';
 import { index as shippingMethodsIndex } from '@/routes/shipping-methods';
 import { index as sizesIndex } from '@/routes/sizes';
 import { index as socialMediasIndex } from '@/routes/social-medias';
@@ -127,6 +135,11 @@ const mainNavItems: NavItem[] = [
         title: 'Flash deals',
         href: flashDealsIndex(),
         icon: Zap,
+    },
+    {
+        title: 'Feature deals',
+        href: featureDealsIndex(),
+        icon: BadgePercent,
     },
     {
         title: 'Reviews',
@@ -212,6 +225,11 @@ const mainNavItems: NavItem[] = [
         title: 'Shipping methods',
         href: shippingMethodsIndex(),
         icon: Truck,
+    },
+    {
+        title: 'Shipping addresses',
+        href: shippingAddressesIndex(),
+        icon: MapPin,
     },
     {
         title: 'Search functions',
@@ -327,6 +345,16 @@ const mainNavItems: NavItem[] = [
         title: 'Stock clearance',
         href: stockClearanceSetupsIndex(),
         icon: Sparkles,
+    },
+    {
+        title: 'Deal of the day',
+        href: dealOfTheDaysIndex(),
+        icon: Flame,
+    },
+    {
+        title: 'Most demanded',
+        href: mostDemandedsIndex(),
+        icon: TrendingUp,
     },
 ];
 

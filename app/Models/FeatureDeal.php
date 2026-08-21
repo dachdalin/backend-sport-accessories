@@ -2,24 +2,22 @@
 
 namespace App\Models;
 
-use Database\Factories\CustomerFactory;
+use Database\Factories\FeatureDealFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class Customer extends Model
+class FeatureDeal extends Model
 {
-    /** @use HasFactory<CustomerFactory> */
+    /** @use HasFactory<FeatureDealFactory> */
     use HasFactory;
 
     /**
      * @var array<int, string>
      */
     protected $fillable = [
-        'name',
-        'email',
-        'phone',
-        'address',
+        'photo',
+        'photo_storage_type',
+        'url',
         'status',
     ];
 
@@ -27,6 +25,8 @@ class Customer extends Model
      * @var array<string, mixed>
      */
     protected $attributes = [
+        'photo' => 'def.png',
+        'photo_storage_type' => 'public',
         'status' => true,
     ];
 
@@ -40,13 +40,5 @@ class Customer extends Model
         return [
             'status' => 'boolean',
         ];
-    }
-
-    /**
-     * @return HasMany<ShippingAddress, $this>
-     */
-    public function shippingAddresses(): HasMany
-    {
-        return $this->hasMany(ShippingAddress::class);
     }
 }

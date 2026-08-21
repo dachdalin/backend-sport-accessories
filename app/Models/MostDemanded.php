@@ -2,24 +2,23 @@
 
 namespace App\Models;
 
-use Database\Factories\CustomerFactory;
+use Database\Factories\MostDemandedFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class Customer extends Model
+class MostDemanded extends Model
 {
-    /** @use HasFactory<CustomerFactory> */
+    /** @use HasFactory<MostDemandedFactory> */
     use HasFactory;
 
     /**
      * @var array<int, string>
      */
     protected $fillable = [
-        'name',
-        'email',
-        'phone',
-        'address',
+        'banner',
+        'banner_storage_type',
+        'product_id',
         'status',
     ];
 
@@ -27,7 +26,9 @@ class Customer extends Model
      * @var array<string, mixed>
      */
     protected $attributes = [
-        'status' => true,
+        'banner' => 'def.png',
+        'banner_storage_type' => 'public',
+        'status' => false,
     ];
 
     /**
@@ -43,10 +44,10 @@ class Customer extends Model
     }
 
     /**
-     * @return HasMany<ShippingAddress, $this>
+     * @return BelongsTo<Product, $this>
      */
-    public function shippingAddresses(): HasMany
+    public function product(): BelongsTo
     {
-        return $this->hasMany(ShippingAddress::class);
+        return $this->belongsTo(Product::class);
     }
 }
