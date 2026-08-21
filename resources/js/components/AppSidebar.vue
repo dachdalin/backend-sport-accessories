@@ -32,9 +32,11 @@ import {
     Percent,
     Receipt,
     Ruler,
+    RefreshCcw,
     RotateCcw,
     ScrollText,
     Search,
+    Settings,
     Share2,
     ShoppingBag,
     SlidersHorizontal,
@@ -69,6 +71,7 @@ import { dashboard } from '@/routes';
 import { index as analyticScriptsIndex } from '@/routes/analytic-scripts';
 import { index as attributesIndex } from '@/routes/attributes';
 import { index as bannersIndex } from '@/routes/banners';
+import { edit as businessSettingsEdit } from '@/routes/business-settings';
 import { index as faqsIndex } from '@/routes/faqs';
 import { index as blogCategoriesIndex } from '@/routes/blog-categories';
 import { index as blogsIndex } from '@/routes/blogs';
@@ -96,6 +99,7 @@ import { index as offlinePaymentMethodsIndex } from '@/routes/offline-payment-me
 import { index as ordersIndex } from '@/routes/orders';
 import { index as pagesIndex } from '@/routes/pages';
 import { index as productsIndex } from '@/routes/products';
+import { index as refundRequestsIndex } from '@/routes/refund-requests';
 import { index as returnPoliciesIndex } from '@/routes/return-policies';
 import { index as reviewsIndex } from '@/routes/reviews';
 import { index as searchFunctionsIndex } from '@/routes/search-functions';
@@ -120,6 +124,11 @@ const mainNavItems: NavItem[] = [
         title: 'Dashboard',
         href: dashboard(),
         icon: LayoutGrid,
+    },
+    {
+        title: 'Business settings',
+        href: businessSettingsEdit(),
+        icon: Settings,
     },
     {
         title: 'Products',
@@ -355,6 +364,11 @@ const mainNavItems: NavItem[] = [
         title: 'Most demanded',
         href: mostDemandedsIndex(),
         icon: TrendingUp,
+    },
+    {
+        title: 'Refund requests',
+        href: refundRequestsIndex(),
+        icon: RefreshCcw,
     },
 ];
 

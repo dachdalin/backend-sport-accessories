@@ -6,6 +6,7 @@ use App\Http\Controllers\Backend\BannerController;
 use App\Http\Controllers\Backend\BlogCategoryController;
 use App\Http\Controllers\Backend\BlogController;
 use App\Http\Controllers\Backend\BrandController;
+use App\Http\Controllers\Backend\BusinessSettingController;
 use App\Http\Controllers\Backend\CategoryController;
 use App\Http\Controllers\Backend\ColorController;
 use App\Http\Controllers\Backend\ContactController;
@@ -30,6 +31,7 @@ use App\Http\Controllers\Backend\OrderController;
 use App\Http\Controllers\Backend\PageController;
 use App\Http\Controllers\Backend\ProductController;
 use App\Http\Controllers\Backend\ProductImageController;
+use App\Http\Controllers\Backend\RefundRequestController;
 use App\Http\Controllers\Backend\ReturnPolicyController;
 use App\Http\Controllers\Backend\ReviewController;
 use App\Http\Controllers\Backend\SearchFunctionController;
@@ -103,6 +105,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('stock-clearance-setups', StockClearanceSetupController::class)->except(['show']);
     Route::resource('deal-of-the-days', DealOfTheDayController::class)->except(['show']);
     Route::resource('most-demandeds', MostDemandedController::class)->except(['show']);
+    Route::resource('refund-requests', RefundRequestController::class)->except(['show']);
+
+    Route::get('business-settings', [BusinessSettingController::class, 'edit'])->name('business-settings.edit');
+    Route::patch('business-settings', [BusinessSettingController::class, 'update'])->name('business-settings.update');
 });
 
 require __DIR__.'/settings.php';
