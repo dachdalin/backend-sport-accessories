@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Form, Head } from '@inertiajs/vue3';
 import ProductController from '@/actions/App/Http/Controllers/Backend/ProductController';
+import ProductImageController from '@/actions/App/Http/Controllers/Backend/ProductImageController';
 import Heading from '@/components/Heading.vue';
 import InputError from '@/components/InputError.vue';
 import { Button } from '@/components/ui/button';
@@ -46,8 +47,14 @@ type Product = {
     status: boolean;
 };
 
+type ProductImage = {
+    id: number;
+    image: string;
+};
+
 defineProps<{
     product: Product;
+    images: ProductImage[];
     categories: SelectOption[];
     brands: SelectOption[];
     taxTypes: SelectOption[];
@@ -380,5 +387,50 @@ defineOptions({
                 <Button :disabled="processing">Save product</Button>
             </div>
         </Form>
+
+        <div class="max-w-xl space-y-4">
+            <Heading title="Gallery" description="Extra images shown on the product page" />
+
+            <div v-if="images.length" class="grid grid-cols-4 gap-3">
+                <div
+                    v-for="galleryImage in images"
+                    :key="galleryImage.id"
+                    class="group relative"
+                >
+                    <img
+                        :src="`/storage/${galleryImage.image}`"
+                        alt="Product gallery image"
+                        class="aspect-square w-full rounded object-cover"
+                    />
+                    <Form
+                        v-bind="ProductImageController.destroy.form(galleryImage)"
+                        v-slot="{ processing: destroying }"
+                    >
+                        <Button
+                            type="submit"
+                            variant="destructive"
+                            size="sm"
+                            :disabled="destroying"
+                            class="absolute top-1 right-1 opacity-0 group-hover:opacity-100"
+                        >
+                            Remove
+                        </Button>
+                    </Form>
+                </div>
+            </div>
+
+            <Form
+                v-bind="ProductImageController.store.form(product)"
+                v-slot="{ errors, processing: uploading }"
+                class="grid gap-2"
+            >
+                <Label for="image">Add image</Label>
+                <Input id="image" name="image" type="file" accept="image/*" required />
+                <InputError :message="errors.image" />
+                <div>
+                    <Button :disabled="uploading" type="submit" variant="outline">Upload</Button>
+                </div>
+            </Form>
+        </div>
     </div>
 </template>

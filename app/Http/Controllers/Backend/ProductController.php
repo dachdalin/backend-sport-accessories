@@ -77,6 +77,7 @@ class ProductController extends Controller
     {
         return Inertia::render('products/Edit', [
             'product' => $product,
+            'images' => $product->images,
             'categories' => $this->categoryOptions(),
             'brands' => $this->brandOptions(),
             'taxTypes' => $this->taxTypeOptions(),

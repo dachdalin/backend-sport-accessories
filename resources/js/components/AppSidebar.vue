@@ -21,6 +21,7 @@ import {
     MessageSquareQuote,
     Palette,
     Percent,
+    Receipt,
     Ruler,
     RotateCcw,
     ScrollText,
@@ -67,6 +68,7 @@ import { index as loyaltyTiersIndex } from '@/routes/loyalty-tiers';
 import { index as materialsIndex } from '@/routes/materials';
 import { index as newsletterSubscribersIndex } from '@/routes/newsletter-subscribers';
 import { index as offlinePaymentMethodsIndex } from '@/routes/offline-payment-methods';
+import { index as ordersIndex } from '@/routes/orders';
 import { index as pagesIndex } from '@/routes/pages';
 import { index as productsIndex } from '@/routes/products';
 import { index as returnPoliciesIndex } from '@/routes/return-policies';
@@ -93,6 +95,11 @@ const mainNavItems: NavItem[] = [
         title: 'Products',
         href: productsIndex(),
         icon: ShoppingBag,
+    },
+    {
+        title: 'Orders',
+        href: ordersIndex(),
+        icon: Receipt,
     },
     {
         title: 'Colors',
