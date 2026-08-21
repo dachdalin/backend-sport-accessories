@@ -3,9 +3,11 @@
 use App\Http\Controllers\Backend\AnalyticScriptController;
 use App\Http\Controllers\Backend\BannerController;
 use App\Http\Controllers\Backend\BlogCategoryController;
+use App\Http\Controllers\Backend\BlogController;
 use App\Http\Controllers\Backend\BrandController;
 use App\Http\Controllers\Backend\CategoryController;
 use App\Http\Controllers\Backend\ColorController;
+use App\Http\Controllers\Backend\ContactController;
 use App\Http\Controllers\Backend\CouponController;
 use App\Http\Controllers\Backend\CurrencyController;
 use App\Http\Controllers\Backend\CustomerController;
@@ -31,6 +33,7 @@ use App\Http\Controllers\Backend\SocialMediaController;
 use App\Http\Controllers\Backend\SoftCredentialController;
 use App\Http\Controllers\Backend\StoreLocationController;
 use App\Http\Controllers\Backend\SupplierController;
+use App\Http\Controllers\Backend\SupportTicketController;
 use App\Http\Controllers\Backend\TagController;
 use App\Http\Controllers\Backend\TaxRateController;
 use App\Http\Controllers\Backend\TeamMemberController;
@@ -54,6 +57,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('customers', CustomerController::class)->except(['show']);
     Route::resource('categories', CategoryController::class)->except(['show']);
     Route::resource('blog-categories', BlogCategoryController::class)->only(['index', 'store', 'update', 'destroy']);
+    Route::resource('blogs', BlogController::class)->except(['show']);
     Route::resource('help-topics', HelpTopicController::class)->except(['show']);
     Route::resource('shipping-methods', ShippingMethodController::class)->except(['show']);
     Route::resource('search-functions', SearchFunctionController::class)->except(['show']);
@@ -81,6 +85,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('orders', OrderController::class)->except(['show']);
     Route::resource('reviews', ReviewController::class)->except(['show']);
     Route::resource('wishlists', WishlistController::class)->only(['index', 'store', 'update', 'destroy']);
+    Route::resource('contacts', ContactController::class)->except(['show']);
+    Route::resource('support-tickets', SupportTicketController::class)->except(['show']);
 });
 
 require __DIR__.'/settings.php';

@@ -7,15 +7,18 @@ import {
     Briefcase,
     Coins,
     Factory,
+    FileText,
     FolderGit2,
     FolderTree,
     GalleryHorizontal,
     Gift,
     Heart,
     HelpCircle,
+    Inbox,
     KeyRound,
     Layers,
     LayoutGrid,
+    LifeBuoy,
     Mail,
     MapPinned,
     MessageCircleQuestion,
@@ -59,9 +62,11 @@ import { index as analyticScriptsIndex } from '@/routes/analytic-scripts';
 import { index as bannersIndex } from '@/routes/banners';
 import { index as faqsIndex } from '@/routes/faqs';
 import { index as blogCategoriesIndex } from '@/routes/blog-categories';
+import { index as blogsIndex } from '@/routes/blogs';
 import { index as brandsIndex } from '@/routes/brands';
 import { index as categoriesIndex } from '@/routes/categories';
 import { index as colorsIndex } from '@/routes/colors';
+import { index as contactsIndex } from '@/routes/contacts';
 import { index as couponsIndex } from '@/routes/coupons';
 import { index as credentialsIndex } from '@/routes/credentials';
 import { index as currenciesIndex } from '@/routes/currencies';
@@ -85,6 +90,7 @@ import { index as sizesIndex } from '@/routes/sizes';
 import { index as socialMediasIndex } from '@/routes/social-medias';
 import { index as storeLocationsIndex } from '@/routes/store-locations';
 import { index as suppliersIndex } from '@/routes/suppliers';
+import { index as supportTicketsIndex } from '@/routes/support-tickets';
 import { index as tagsIndex } from '@/routes/tags';
 import { index as taxRatesIndex } from '@/routes/tax-rates';
 import { index as teamMembersIndex } from '@/routes/team-members';
@@ -125,6 +131,16 @@ const mainNavItems: NavItem[] = [
         icon: UserRound,
     },
     {
+        title: 'Contacts',
+        href: contactsIndex(),
+        icon: Inbox,
+    },
+    {
+        title: 'Support tickets',
+        href: supportTicketsIndex(),
+        icon: LifeBuoy,
+    },
+    {
         title: 'Colors',
         href: colorsIndex(),
         icon: Palette,
@@ -158,6 +174,11 @@ const mainNavItems: NavItem[] = [
         title: 'Categories',
         href: categoriesIndex(),
         icon: FolderTree,
+    },
+    {
+        title: 'Blogs',
+        href: blogsIndex(),
+        icon: FileText,
     },
     {
         title: 'Blog categories',
