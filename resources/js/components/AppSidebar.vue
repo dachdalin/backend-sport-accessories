@@ -20,6 +20,7 @@ import {
     LayoutGrid,
     LifeBuoy,
     Mail,
+    MailOpen,
     MapPinned,
     MessageCircleQuestion,
     MessageSquareQuote,
@@ -33,6 +34,8 @@ import {
     Search,
     Share2,
     ShoppingBag,
+    SlidersHorizontal,
+    Sparkles,
     Star,
     Store,
     Tag,
@@ -43,6 +46,7 @@ import {
     Users,
     Wallet,
     Warehouse,
+    Zap,
 } from '@lucide/vue';
 import AppLogo from '@/components/AppLogo.vue';
 import NavFooter from '@/components/NavFooter.vue';
@@ -59,10 +63,12 @@ import {
 } from '@/components/ui/sidebar';
 import { dashboard } from '@/routes';
 import { index as analyticScriptsIndex } from '@/routes/analytic-scripts';
+import { index as attributesIndex } from '@/routes/attributes';
 import { index as bannersIndex } from '@/routes/banners';
 import { index as faqsIndex } from '@/routes/faqs';
 import { index as blogCategoriesIndex } from '@/routes/blog-categories';
 import { index as blogsIndex } from '@/routes/blogs';
+import { index as flashDealsIndex } from '@/routes/flash-deals';
 import { index as brandsIndex } from '@/routes/brands';
 import { index as categoriesIndex } from '@/routes/categories';
 import { index as colorsIndex } from '@/routes/colors';
@@ -72,6 +78,7 @@ import { index as credentialsIndex } from '@/routes/credentials';
 import { index as currenciesIndex } from '@/routes/currencies';
 import { index as customersIndex } from '@/routes/customers';
 import { index as deliveryZonesIndex } from '@/routes/delivery-zones';
+import { index as emailTemplatesIndex } from '@/routes/email-templates';
 import { index as giftCardsIndex } from '@/routes/gift-cards';
 import { index as helpTopicsIndex } from '@/routes/help-topics';
 import { index as jobOpeningsIndex } from '@/routes/job-openings';
@@ -88,6 +95,7 @@ import { index as searchFunctionsIndex } from '@/routes/search-functions';
 import { index as shippingMethodsIndex } from '@/routes/shipping-methods';
 import { index as sizesIndex } from '@/routes/sizes';
 import { index as socialMediasIndex } from '@/routes/social-medias';
+import { index as stockClearanceSetupsIndex } from '@/routes/stock-clearance-setups';
 import { index as storeLocationsIndex } from '@/routes/store-locations';
 import { index as suppliersIndex } from '@/routes/suppliers';
 import { index as supportTicketsIndex } from '@/routes/support-tickets';
@@ -116,6 +124,11 @@ const mainNavItems: NavItem[] = [
         icon: Receipt,
     },
     {
+        title: 'Flash deals',
+        href: flashDealsIndex(),
+        icon: Zap,
+    },
+    {
         title: 'Reviews',
         href: reviewsIndex(),
         icon: Star,
@@ -139,6 +152,11 @@ const mainNavItems: NavItem[] = [
         title: 'Support tickets',
         href: supportTicketsIndex(),
         icon: LifeBuoy,
+    },
+    {
+        title: 'Attributes',
+        href: attributesIndex(),
+        icon: SlidersHorizontal,
     },
     {
         title: 'Colors',
@@ -241,6 +259,11 @@ const mainNavItems: NavItem[] = [
         icon: Mail,
     },
     {
+        title: 'Email templates',
+        href: emailTemplatesIndex(),
+        icon: MailOpen,
+    },
+    {
         title: 'Return policies',
         href: returnPoliciesIndex(),
         icon: RotateCcw,
@@ -299,6 +322,11 @@ const mainNavItems: NavItem[] = [
         title: 'Delivery zones',
         href: deliveryZonesIndex(),
         icon: MapPinned,
+    },
+    {
+        title: 'Stock clearance',
+        href: stockClearanceSetupsIndex(),
+        icon: Sparkles,
     },
 ];
 

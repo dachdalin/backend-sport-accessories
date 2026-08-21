@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Backend\AnalyticScriptController;
+use App\Http\Controllers\Backend\AttributeController;
 use App\Http\Controllers\Backend\BannerController;
 use App\Http\Controllers\Backend\BlogCategoryController;
 use App\Http\Controllers\Backend\BlogController;
@@ -12,7 +13,9 @@ use App\Http\Controllers\Backend\CouponController;
 use App\Http\Controllers\Backend\CurrencyController;
 use App\Http\Controllers\Backend\CustomerController;
 use App\Http\Controllers\Backend\DeliveryZoneController;
+use App\Http\Controllers\Backend\EmailTemplateController;
 use App\Http\Controllers\Backend\FaqController;
+use App\Http\Controllers\Backend\FlashDealController;
 use App\Http\Controllers\Backend\GiftCardController;
 use App\Http\Controllers\Backend\HelpTopicController;
 use App\Http\Controllers\Backend\JobOpeningController;
@@ -31,6 +34,7 @@ use App\Http\Controllers\Backend\ShippingMethodController;
 use App\Http\Controllers\Backend\SizeController;
 use App\Http\Controllers\Backend\SocialMediaController;
 use App\Http\Controllers\Backend\SoftCredentialController;
+use App\Http\Controllers\Backend\StockClearanceSetupController;
 use App\Http\Controllers\Backend\StoreLocationController;
 use App\Http\Controllers\Backend\SupplierController;
 use App\Http\Controllers\Backend\SupportTicketController;
@@ -47,6 +51,7 @@ Route::inertia('/', 'Welcome')->name('home');
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::inertia('dashboard', 'Dashboard')->name('dashboard');
 
+    Route::resource('attributes', AttributeController::class)->only(['index', 'store', 'update', 'destroy']);
     Route::resource('colors', ColorController::class)->only(['index', 'store', 'update', 'destroy']);
     Route::resource('sizes', SizeController::class)->only(['index', 'store', 'update', 'destroy']);
     Route::resource('materials', MaterialController::class)->only(['index', 'store', 'update', 'destroy']);
@@ -87,6 +92,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('wishlists', WishlistController::class)->only(['index', 'store', 'update', 'destroy']);
     Route::resource('contacts', ContactController::class)->except(['show']);
     Route::resource('support-tickets', SupportTicketController::class)->except(['show']);
+    Route::resource('email-templates', EmailTemplateController::class)->except(['show']);
+    Route::resource('flash-deals', FlashDealController::class)->except(['show']);
+    Route::resource('stock-clearance-setups', StockClearanceSetupController::class)->except(['show']);
 });
 
 require __DIR__.'/settings.php';
