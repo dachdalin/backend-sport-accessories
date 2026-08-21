@@ -1,0 +1,164 @@
+<script setup lang="ts">
+import { Form, Head } from '@inertiajs/vue3';
+import ReviewController from '@/actions/App/Http/Controllers/Backend/ReviewController';
+import Heading from '@/components/Heading.vue';
+import InputError from '@/components/InputError.vue';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select';
+import { Textarea } from '@/components/ui/textarea';
+import { create, index } from '@/routes/reviews';
+
+interface SelectOption {
+    value: number | string;
+    label: string;
+}
+
+defineProps<{
+    products: SelectOption[];
+    statuses: SelectOption[];
+}>();
+
+defineOptions({
+    layout: {
+        breadcrumbs: [
+            {
+                title: 'Reviews',
+                href: index(),
+            },
+            {
+                title: 'Add review',
+                href: create(),
+            },
+        ],
+    },
+});
+</script>
+
+<template>
+    <Head title="Add review" />
+
+    <div class="flex flex-col space-y-6">
+        <Heading
+            title="Add review"
+            description="Record a customer review for a product"
+        />
+
+        <Form
+            v-bind="ReviewController.store.form()"
+            class="max-w-xl space-y-6"
+            v-slot="{ errors, processing }"
+        >
+            <div class="grid gap-2">
+                <Label for="product_id">Product</Label>
+                <Select name="product_id">
+                    <SelectTrigger id="product_id" class="w-full">
+                        <SelectValue placeholder="Select product" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem
+                            v-for="option in products"
+                            :key="option.value"
+                            :value="String(option.value)"
+                        >
+                            {{ option.label }}
+                        </SelectItem>
+                    </SelectContent>
+                </Select>
+                <InputError :message="errors.product_id" />
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+                <div class="grid gap-2">
+                    <Label for="customer_name">Customer name</Label>
+                    <Input
+                        id="customer_name"
+                        name="customer_name"
+                        required
+                        autofocus
+                        placeholder="Jane Doe"
+                    />
+                    <InputError :message="errors.customer_name" />
+                </div>
+
+                <div class="grid gap-2">
+                    <Label for="customer_email">Customer email</Label>
+                    <Input
+                        id="customer_email"
+                        name="customer_email"
+                        type="email"
+                        placeholder="jane@example.com"
+                    />
+                    <InputError :message="errors.customer_email" />
+                </div>
+            </div>
+
+            <div class="grid gap-2">
+                <Label for="rating">Rating (1-5)</Label>
+                <Input
+                    id="rating"
+                    name="rating"
+                    type="number"
+                    min="1"
+                    max="5"
+                    required
+                    default-value="5"
+                />
+                <InputError :message="errors.rating" />
+            </div>
+
+            <div class="grid gap-2">
+                <Label for="comment">Comment</Label>
+                <Textarea
+                    id="comment"
+                    name="comment"
+                    required
+                    placeholder="What the customer said about this product"
+                    rows="4"
+                />
+                <InputError :message="errors.comment" />
+            </div>
+
+            <div class="grid gap-2">
+                <Label for="admin_reply">Admin reply</Label>
+                <Textarea
+                    id="admin_reply"
+                    name="admin_reply"
+                    placeholder="Optional public reply from the store"
+                    rows="3"
+                />
+                <InputError :message="errors.admin_reply" />
+            </div>
+
+            <div class="grid gap-2">
+                <Label for="status">Status</Label>
+                <Select name="status" default-value="pending">
+                    <SelectTrigger id="status" class="w-full">
+                        <SelectValue placeholder="Select status" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem
+                            v-for="option in statuses"
+                            :key="option.value"
+                            :value="String(option.value)"
+                        >
+                            {{ option.label }}
+                        </SelectItem>
+                    </SelectContent>
+                </Select>
+                <InputError :message="errors.status" />
+            </div>
+
+            <div class="flex items-center gap-4">
+                <Button :disabled="processing">Create review</Button>
+            </div>
+        </Form>
+    </div>
+</template>

@@ -2,11 +2,13 @@
 
 use App\Http\Controllers\Backend\AnalyticScriptController;
 use App\Http\Controllers\Backend\BannerController;
+use App\Http\Controllers\Backend\BlogCategoryController;
 use App\Http\Controllers\Backend\BrandController;
 use App\Http\Controllers\Backend\CategoryController;
 use App\Http\Controllers\Backend\ColorController;
 use App\Http\Controllers\Backend\CouponController;
 use App\Http\Controllers\Backend\CurrencyController;
+use App\Http\Controllers\Backend\CustomerController;
 use App\Http\Controllers\Backend\DeliveryZoneController;
 use App\Http\Controllers\Backend\FaqController;
 use App\Http\Controllers\Backend\GiftCardController;
@@ -21,6 +23,7 @@ use App\Http\Controllers\Backend\PageController;
 use App\Http\Controllers\Backend\ProductController;
 use App\Http\Controllers\Backend\ProductImageController;
 use App\Http\Controllers\Backend\ReturnPolicyController;
+use App\Http\Controllers\Backend\ReviewController;
 use App\Http\Controllers\Backend\SearchFunctionController;
 use App\Http\Controllers\Backend\ShippingMethodController;
 use App\Http\Controllers\Backend\SizeController;
@@ -33,6 +36,7 @@ use App\Http\Controllers\Backend\TaxRateController;
 use App\Http\Controllers\Backend\TeamMemberController;
 use App\Http\Controllers\Backend\TestimonialController;
 use App\Http\Controllers\Backend\WarehouseController;
+use App\Http\Controllers\Backend\WishlistController;
 use Illuminate\Support\Facades\Route;
 
 Route::inertia('/', 'Welcome')->name('home');
@@ -47,7 +51,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('banners', BannerController::class)->except(['show']);
     Route::resource('tags', TagController::class)->only(['index', 'store', 'update', 'destroy']);
     Route::resource('currencies', CurrencyController::class)->except(['show']);
+    Route::resource('customers', CustomerController::class)->except(['show']);
     Route::resource('categories', CategoryController::class)->except(['show']);
+    Route::resource('blog-categories', BlogCategoryController::class)->only(['index', 'store', 'update', 'destroy']);
     Route::resource('help-topics', HelpTopicController::class)->except(['show']);
     Route::resource('shipping-methods', ShippingMethodController::class)->except(['show']);
     Route::resource('search-functions', SearchFunctionController::class)->except(['show']);
@@ -73,6 +79,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('products', ProductController::class)->except(['show']);
     Route::resource('products.images', ProductImageController::class)->shallow()->only(['store', 'destroy']);
     Route::resource('orders', OrderController::class)->except(['show']);
+    Route::resource('reviews', ReviewController::class)->except(['show']);
+    Route::resource('wishlists', WishlistController::class)->only(['index', 'store', 'update', 'destroy']);
 });
 
 require __DIR__.'/settings.php';

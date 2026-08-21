@@ -11,6 +11,7 @@ import {
     FolderTree,
     GalleryHorizontal,
     Gift,
+    Heart,
     HelpCircle,
     KeyRound,
     Layers,
@@ -19,6 +20,7 @@ import {
     MapPinned,
     MessageCircleQuestion,
     MessageSquareQuote,
+    Newspaper,
     Palette,
     Percent,
     Receipt,
@@ -28,11 +30,13 @@ import {
     Search,
     Share2,
     ShoppingBag,
+    Star,
     Store,
     Tag,
     Tags,
     Ticket,
     Truck,
+    UserRound,
     Users,
     Wallet,
     Warehouse,
@@ -54,12 +58,14 @@ import { dashboard } from '@/routes';
 import { index as analyticScriptsIndex } from '@/routes/analytic-scripts';
 import { index as bannersIndex } from '@/routes/banners';
 import { index as faqsIndex } from '@/routes/faqs';
+import { index as blogCategoriesIndex } from '@/routes/blog-categories';
 import { index as brandsIndex } from '@/routes/brands';
 import { index as categoriesIndex } from '@/routes/categories';
 import { index as colorsIndex } from '@/routes/colors';
 import { index as couponsIndex } from '@/routes/coupons';
 import { index as credentialsIndex } from '@/routes/credentials';
 import { index as currenciesIndex } from '@/routes/currencies';
+import { index as customersIndex } from '@/routes/customers';
 import { index as deliveryZonesIndex } from '@/routes/delivery-zones';
 import { index as giftCardsIndex } from '@/routes/gift-cards';
 import { index as helpTopicsIndex } from '@/routes/help-topics';
@@ -72,6 +78,7 @@ import { index as ordersIndex } from '@/routes/orders';
 import { index as pagesIndex } from '@/routes/pages';
 import { index as productsIndex } from '@/routes/products';
 import { index as returnPoliciesIndex } from '@/routes/return-policies';
+import { index as reviewsIndex } from '@/routes/reviews';
 import { index as searchFunctionsIndex } from '@/routes/search-functions';
 import { index as shippingMethodsIndex } from '@/routes/shipping-methods';
 import { index as sizesIndex } from '@/routes/sizes';
@@ -83,6 +90,7 @@ import { index as taxRatesIndex } from '@/routes/tax-rates';
 import { index as teamMembersIndex } from '@/routes/team-members';
 import { index as testimonialsIndex } from '@/routes/testimonials';
 import { index as warehousesIndex } from '@/routes/warehouses';
+import { index as wishlistsIndex } from '@/routes/wishlists';
 import type { NavItem } from '@/types';
 
 const mainNavItems: NavItem[] = [
@@ -100,6 +108,21 @@ const mainNavItems: NavItem[] = [
         title: 'Orders',
         href: ordersIndex(),
         icon: Receipt,
+    },
+    {
+        title: 'Reviews',
+        href: reviewsIndex(),
+        icon: Star,
+    },
+    {
+        title: 'Wishlists',
+        href: wishlistsIndex(),
+        icon: Heart,
+    },
+    {
+        title: 'Customers',
+        href: customersIndex(),
+        icon: UserRound,
     },
     {
         title: 'Colors',
@@ -135,6 +158,11 @@ const mainNavItems: NavItem[] = [
         title: 'Categories',
         href: categoriesIndex(),
         icon: FolderTree,
+    },
+    {
+        title: 'Blog categories',
+        href: blogCategoriesIndex(),
+        icon: Newspaper,
     },
     {
         title: 'Help topics',
