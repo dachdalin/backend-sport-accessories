@@ -4,13 +4,11 @@ import {
     Award,
     BadgePercent,
     BarChart3,
-    BookOpen,
     Briefcase,
     Coins,
     Factory,
     FileText,
     Flame,
-    FolderGit2,
     FolderTree,
     GalleryHorizontal,
     Gift,
@@ -55,7 +53,6 @@ import {
     Zap,
 } from '@lucide/vue';
 import AppLogo from '@/components/AppLogo.vue';
-import NavFooter from '@/components/NavFooter.vue';
 import NavMain from '@/components/NavMain.vue';
 import NavUser from '@/components/NavUser.vue';
 import {
@@ -71,13 +68,10 @@ import { dashboard } from '@/routes';
 import { index as analyticScriptsIndex } from '@/routes/analytic-scripts';
 import { index as attributesIndex } from '@/routes/attributes';
 import { index as bannersIndex } from '@/routes/banners';
-import { edit as businessSettingsEdit } from '@/routes/business-settings';
-import { index as faqsIndex } from '@/routes/faqs';
 import { index as blogCategoriesIndex } from '@/routes/blog-categories';
 import { index as blogsIndex } from '@/routes/blogs';
-import { index as featureDealsIndex } from '@/routes/feature-deals';
-import { index as flashDealsIndex } from '@/routes/flash-deals';
 import { index as brandsIndex } from '@/routes/brands';
+import { edit as businessSettingsEdit } from '@/routes/business-settings';
 import { index as categoriesIndex } from '@/routes/categories';
 import { index as colorsIndex } from '@/routes/colors';
 import { index as contactsIndex } from '@/routes/contacts';
@@ -88,6 +82,9 @@ import { index as customersIndex } from '@/routes/customers';
 import { index as dealOfTheDaysIndex } from '@/routes/deal-of-the-days';
 import { index as deliveryZonesIndex } from '@/routes/delivery-zones';
 import { index as emailTemplatesIndex } from '@/routes/email-templates';
+import { index as faqsIndex } from '@/routes/faqs';
+import { index as featureDealsIndex } from '@/routes/feature-deals';
+import { index as flashDealsIndex } from '@/routes/flash-deals';
 import { index as giftCardsIndex } from '@/routes/gift-cards';
 import { index as helpTopicsIndex } from '@/routes/help-topics';
 import { index as jobOpeningsIndex } from '@/routes/job-openings';
@@ -117,7 +114,7 @@ import { index as teamMembersIndex } from '@/routes/team-members';
 import { index as testimonialsIndex } from '@/routes/testimonials';
 import { index as warehousesIndex } from '@/routes/warehouses';
 import { index as wishlistsIndex } from '@/routes/wishlists';
-import type { NavGroup, NavItem } from '@/types';
+import type { NavGroup } from '@/types';
 
 const navGroups: NavGroup[] = [
     {
@@ -411,19 +408,6 @@ const navGroups: NavGroup[] = [
         ],
     },
 ];
-
-const footerNavItems: NavItem[] = [
-    {
-        title: 'Repository',
-        href: 'https://github.com/laravel/vue-starter-kit',
-        icon: FolderGit2,
-    },
-    {
-        title: 'Documentation',
-        href: 'https://laravel.com/docs/starter-kits#vue',
-        icon: BookOpen,
-    },
-];
 </script>
 
 <template>
@@ -445,7 +429,6 @@ const footerNavItems: NavItem[] = [
         </SidebarContent>
 
         <SidebarFooter>
-            <NavFooter :items="footerNavItems" />
             <NavUser />
         </SidebarFooter>
     </Sidebar>

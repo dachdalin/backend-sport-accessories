@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import { Deferred, Head, router } from '@inertiajs/vue3';
+import { Receipt, ShoppingBag, Users, Wallet } from '@lucide/vue';
 import { computed } from 'vue';
-import DateRangeFilter, {
-    type DashboardFilter,
-} from '@/components/dashboard/DateRangeFilter.vue';
+import DateRangeFilter from '@/components/dashboard/DateRangeFilter.vue';
+import type { DashboardFilter } from '@/components/dashboard/DateRangeFilter.vue';
 import RevenueChart from '@/components/dashboard/RevenueChart.vue';
 import StatCard from '@/components/dashboard/StatCard.vue';
+import type { StatAccent } from '@/components/dashboard/StatCard.vue';
 import TopProductsCard from '@/components/dashboard/TopProductsCard.vue';
 import Heading from '@/components/Heading.vue';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -61,7 +62,86 @@ const filterLabels: Record<DashboardFilter, string> = {
 
 const periodLabel = computed(() => filterLabels[props.filter]);
 
-function applyFilter(filter: DashboardFilter, from: string | null, to: string | null) {
+function parseIsoDate(value: string): Date {
+    const [year, month, day] = value.split('-').map(Number);
+
+    return new Date(year, month - 1, day);
+}
+
+const dayFormatter = new Intl.DateTimeFormat(undefined, {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+});
+const shortDayFormatter = new Intl.DateTimeFormat(undefined, {
+    month: 'short',
+    day: 'numeric',
+});
+const monthFormatter = new Intl.DateTimeFormat(undefined, {
+    month: 'long',
+    year: 'numeric',
+});
+
+const periodRange = computed(() => {
+    const now = new Date();
+
+    if (props.filter === 'this_month') {
+        return monthFormatter.format(now);
+    }
+
+    if (props.filter === 'this_year') {
+        return String(now.getFullYear());
+    }
+
+    if (props.filter === 'this_week') {
+        const mondayOffset = (now.getDay() + 6) % 7;
+        const start = new Date(now);
+        start.setDate(now.getDate() - mondayOffset);
+        const end = new Date(start);
+        end.setDate(start.getDate() + 6);
+
+        return `${shortDayFormatter.format(start)} – ${dayFormatter.format(end)}`;
+    }
+
+    if (props.filter === 'custom' && props.from && props.to) {
+        return `${shortDayFormatter.format(parseIsoDate(props.from))} – ${dayFormatter.format(parseIsoDate(props.to))}`;
+    }
+
+    return dayFormatter.format(now);
+});
+
+const statCards = computed(() => [
+    {
+        label: 'Revenue',
+        value: `$${props.stats?.revenue ?? '0.00'}`,
+        icon: Wallet,
+        accent: 'chart-1' as const satisfies StatAccent,
+    },
+    {
+        label: 'Orders',
+        value: String(props.stats?.orders ?? 0),
+        icon: ShoppingBag,
+        accent: 'chart-2' as const satisfies StatAccent,
+    },
+    {
+        label: 'Avg. order value',
+        value: `$${props.stats?.averageOrderValue ?? '0.00'}`,
+        icon: Receipt,
+        accent: 'chart-3' as const satisfies StatAccent,
+    },
+    {
+        label: 'Customers',
+        value: String(props.stats?.customers ?? 0),
+        icon: Users,
+        accent: 'chart-4' as const satisfies StatAccent,
+    },
+]);
+
+function applyFilter(
+    filter: DashboardFilter,
+    from: string | null,
+    to: string | null,
+) {
     router.get(
         dashboard.url({
             query: {
@@ -83,7 +163,7 @@ function applyFilter(filter: DashboardFilter, from: string | null, to: string | 
         <div class="flex flex-wrap items-center justify-between gap-4">
             <Heading
                 title="Overview"
-                :description="`Store performance for ${periodLabel}`"
+                :description="`Store performance for ${periodLabel} · ${periodRange}`"
             />
 
             <DateRangeFilter
@@ -101,11 +181,18 @@ function applyFilter(filter: DashboardFilter, from: string | null, to: string | 
                         <div
                             v-for="i in 4"
                             :key="i"
-                            class="rounded-xl border border-sidebar-border/70 bg-card p-5 dark:border-sidebar-border"
+                            class="relative overflow-hidden rounded-xl border border-sidebar-border/70 bg-card p-5 dark:border-sidebar-border"
                         >
-                            <Skeleton class="h-3 w-20" />
-                            <Skeleton class="mt-3 h-7 w-24" />
-                            <Skeleton class="mt-2 h-3 w-16" />
+                            <Skeleton
+                                class="absolute inset-x-0 top-0 h-0.5 rounded-none"
+                            />
+                            <div class="flex items-start justify-between gap-3">
+                                <div>
+                                    <Skeleton class="h-3 w-20" />
+                                    <Skeleton class="mt-3 h-7 w-24" />
+                                </div>
+                                <Skeleton class="size-9 shrink-0 rounded-lg" />
+                            </div>
                         </div>
                     </div>
 
@@ -129,10 +216,17 @@ function applyFilter(filter: DashboardFilter, from: string | null, to: string | 
                                     :key="i"
                                     class="flex items-center gap-3"
                                 >
-                                    <Skeleton class="size-9 shrink-0 rounded-md" />
+                                    <Skeleton
+                                        class="size-6 shrink-0 rounded-full"
+                                    />
+                                    <Skeleton
+                                        class="size-9 shrink-0 rounded-md"
+                                    />
                                     <div class="flex-1 space-y-1.5">
                                         <Skeleton class="h-3.5 w-3/4" />
-                                        <Skeleton class="h-3 w-1/3" />
+                                        <Skeleton
+                                            class="h-1 w-full rounded-full"
+                                        />
                                     </div>
                                 </div>
                             </div>
@@ -144,27 +238,20 @@ function applyFilter(filter: DashboardFilter, from: string | null, to: string | 
             <div class="flex flex-col gap-6">
                 <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
                     <StatCard
-                        label="Revenue"
-                        :value="`$${stats?.revenue ?? '0.00'}`"
-                    />
-                    <StatCard
-                        label="Orders"
-                        :value="String(stats?.orders ?? 0)"
-                    />
-                    <StatCard
-                        label="Avg. order value"
-                        :value="`$${stats?.averageOrderValue ?? '0.00'}`"
-                    />
-                    <StatCard
-                        label="Customers"
-                        :value="String(stats?.customers ?? 0)"
+                        v-for="(card, index) in statCards"
+                        :key="card.label"
+                        v-bind="card"
+                        class="motion-safe:animate-in motion-safe:fill-mode-backwards motion-safe:fade-in motion-safe:slide-in-from-bottom-1"
+                        :style="{ animationDelay: `${index * 60}ms` }"
                     />
                 </div>
 
                 <div class="grid gap-4 lg:grid-cols-3">
                     <Card class="lg:col-span-2">
                         <CardHeader>
-                            <CardTitle class="text-sm font-medium text-muted-foreground">
+                            <CardTitle
+                                class="text-sm font-medium text-muted-foreground"
+                            >
                                 Revenue trend
                             </CardTitle>
                         </CardHeader>
@@ -175,7 +262,9 @@ function applyFilter(filter: DashboardFilter, from: string | null, to: string | 
 
                     <Card class="gap-3 py-5">
                         <CardHeader class="px-5">
-                            <CardTitle class="text-sm font-medium text-muted-foreground">
+                            <CardTitle
+                                class="text-sm font-medium text-muted-foreground"
+                            >
                                 Top products
                             </CardTitle>
                         </CardHeader>

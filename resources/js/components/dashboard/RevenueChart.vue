@@ -7,14 +7,19 @@ import {
     LineElement,
     PointElement,
     Tooltip,
-    type ChartData,
-    type ChartOptions,
-    type TooltipItem,
 } from 'chart.js';
+import type { ChartData, ChartOptions, TooltipItem } from 'chart.js';
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 import { Line } from 'vue-chartjs';
 
-ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Filler, Tooltip);
+ChartJS.register(
+    CategoryScale,
+    LinearScale,
+    PointElement,
+    LineElement,
+    Filler,
+    Tooltip,
+);
 
 const props = defineProps<{
     points: { label: string; revenue: string }[];
@@ -35,7 +40,9 @@ onBeforeUnmount(() => {
 });
 
 function cssVar(name: string): string {
-    return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+    return getComputedStyle(document.documentElement)
+        .getPropertyValue(name)
+        .trim();
 }
 
 const chartData = computed<ChartData<'line'>>(() => {
