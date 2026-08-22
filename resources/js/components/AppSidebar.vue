@@ -36,6 +36,7 @@ import {
     Search,
     Settings,
     Share2,
+    ShieldCheck,
     ShoppingBag,
     SlidersHorizontal,
     Sparkles,
@@ -46,6 +47,7 @@ import {
     Ticket,
     TrendingUp,
     Truck,
+    UserCog,
     UserRound,
     Users,
     Wallet,
@@ -99,6 +101,7 @@ import { index as productsIndex } from '@/routes/products';
 import { index as refundRequestsIndex } from '@/routes/refund-requests';
 import { index as returnPoliciesIndex } from '@/routes/return-policies';
 import { index as reviewsIndex } from '@/routes/reviews';
+import { index as rolesIndex } from '@/routes/roles';
 import { index as searchFunctionsIndex } from '@/routes/search-functions';
 import { index as shippingAddressesIndex } from '@/routes/shipping-addresses';
 import { index as shippingMethodsIndex } from '@/routes/shipping-methods';
@@ -112,6 +115,7 @@ import { index as tagsIndex } from '@/routes/tags';
 import { index as taxRatesIndex } from '@/routes/tax-rates';
 import { index as teamMembersIndex } from '@/routes/team-members';
 import { index as testimonialsIndex } from '@/routes/testimonials';
+import { index as usersIndex } from '@/routes/users';
 import { index as warehousesIndex } from '@/routes/warehouses';
 import { index as wishlistsIndex } from '@/routes/wishlists';
 import type { NavGroup } from '@/types';
@@ -404,6 +408,21 @@ const navGroups: NavGroup[] = [
                 title: 'Search functions',
                 href: searchFunctionsIndex(),
                 icon: Search,
+            },
+        ],
+    },
+    {
+        label: 'Administrator',
+        items: [
+            {
+                title: 'Users',
+                href: usersIndex(),
+                icon: UserCog,
+            },
+            {
+                title: 'Roles',
+                href: rolesIndex(),
+                icon: ShieldCheck,
             },
         ],
     },

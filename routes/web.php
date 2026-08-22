@@ -35,6 +35,7 @@ use App\Http\Controllers\Backend\ProductImageController;
 use App\Http\Controllers\Backend\RefundRequestController;
 use App\Http\Controllers\Backend\ReturnPolicyController;
 use App\Http\Controllers\Backend\ReviewController;
+use App\Http\Controllers\Backend\RoleController;
 use App\Http\Controllers\Backend\SearchFunctionController;
 use App\Http\Controllers\Backend\ShippingAddressController;
 use App\Http\Controllers\Backend\ShippingMethodController;
@@ -49,6 +50,7 @@ use App\Http\Controllers\Backend\TagController;
 use App\Http\Controllers\Backend\TaxRateController;
 use App\Http\Controllers\Backend\TeamMemberController;
 use App\Http\Controllers\Backend\TestimonialController;
+use App\Http\Controllers\Backend\UserController;
 use App\Http\Controllers\Backend\WarehouseController;
 use App\Http\Controllers\Backend\WishlistController;
 use Illuminate\Support\Facades\Route;
@@ -107,6 +109,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('deal-of-the-days', DealOfTheDayController::class)->except(['show']);
     Route::resource('most-demandeds', MostDemandedController::class)->except(['show']);
     Route::resource('refund-requests', RefundRequestController::class)->except(['show']);
+    Route::resource('roles', RoleController::class)->only(['index', 'store', 'update', 'destroy']);
+    Route::resource('users', UserController::class);
 
     Route::get('business-settings', [BusinessSettingController::class, 'edit'])->name('business-settings.edit');
     Route::patch('business-settings', [BusinessSettingController::class, 'update'])->name('business-settings.update');

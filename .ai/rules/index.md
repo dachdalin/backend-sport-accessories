@@ -13,3 +13,4 @@ Before planning or editing, find the row whose globs match the file's path and r
 | app/Models/*.php | .ai/rules/models.md |
 | resources/js/pages/** | .ai/rules/pages.md |
 | app/Services/** | .ai/rules/services.md |
+| app/Http/Controllers/Backend/UserController.php,resources/js/pages/users/** | .ai/rules/users.md |
