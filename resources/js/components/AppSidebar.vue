@@ -129,10 +129,20 @@ const navGroups: NavGroup[] = [
                 href: dashboard(),
                 icon: LayoutGrid,
             },
+        ],
+    },
+    {
+        label: 'Administrator',
+        items: [
             {
-                title: 'Business settings',
-                href: businessSettingsEdit(),
-                icon: Settings,
+                title: 'Users',
+                href: usersIndex(),
+                icon: UserCog,
+            },
+            {
+                title: 'Roles',
+                href: rolesIndex(),
+                icon: ShieldCheck,
             },
         ],
     },
@@ -409,20 +419,10 @@ const navGroups: NavGroup[] = [
                 href: searchFunctionsIndex(),
                 icon: Search,
             },
-        ],
-    },
-    {
-        label: 'Administrator',
-        items: [
             {
-                title: 'Users',
-                href: usersIndex(),
-                icon: UserCog,
-            },
-            {
-                title: 'Roles',
-                href: rolesIndex(),
-                icon: ShieldCheck,
+                title: 'Business settings',
+                href: businessSettingsEdit(),
+                icon: Settings,
             },
         ],
     },
