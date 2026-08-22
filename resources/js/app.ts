@@ -4,6 +4,7 @@ import AppLayout from '@/layouts/AppLayout.vue';
 import AuthLayout from '@/layouts/AuthLayout.vue';
 import SettingsLayout from '@/layouts/settings/Layout.vue';
 import { initializeFlashToast } from '@/lib/flashToast';
+import { initializeSessionExpiryHandling } from '@/lib/sessionExpiry';
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 
@@ -31,3 +32,6 @@ initializeTheme();
 
 // This will listen for flash toast data from the server...
 initializeFlashToast();
+
+// This will reload the page instead of showing a blank error page when the session expires...
+initializeSessionExpiryHandling();

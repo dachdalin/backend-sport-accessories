@@ -16,7 +16,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::delete('settings/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     Route::get('settings/security', [SecurityController::class, 'edit'])
-        ->middleware(RequirePassword::class)
+        ->middleware(RequirePassword::using(passwordTimeoutSeconds: config('auth.password_timeout')))
         ->name('security.edit');
 
     Route::put('settings/password', [SecurityController::class, 'update'])

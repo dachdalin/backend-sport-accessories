@@ -56,6 +56,26 @@ class SecurityTest extends TestCase
         $response->assertRedirect(route('password.confirm'));
     }
 
+    public function test_security_page_requires_reconfirmation_once_password_timeout_expires()
+    {
+        $this->skipUnlessFortifyHas(Features::twoFactorAuthentication());
+
+        Features::twoFactorAuthentication([
+            'confirm' => true,
+            'confirmPassword' => true,
+        ]);
+
+        $user = User::factory()->create();
+
+        $expiredConfirmationAt = time() - config('auth.password_timeout') - 1;
+
+        $response = $this->actingAs($user)
+            ->withSession(['auth.password_confirmed_at' => $expiredConfirmationAt])
+            ->get(route('security.edit'));
+
+        $response->assertRedirect(route('password.confirm'));
+    }
+
     public function test_security_page_renders_without_two_factor_when_feature_is_disabled()
     {
         $this->skipUnlessFortifyHas(Features::twoFactorAuthentication());
