@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Models\Product;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Inertia\Testing\AssertableInertia as Assert;
 use Tests\TestCase;
 
 class ProductControllerTest extends TestCase
@@ -20,7 +21,12 @@ class ProductControllerTest extends TestCase
             ->actingAs($user)
             ->get(route('products.index'));
 
-        $response->assertOk();
+        $response
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('products/Index')
+                ->has('products.data', 3),
+            );
     }
 
     public function test_product_create_page_is_displayed(): void

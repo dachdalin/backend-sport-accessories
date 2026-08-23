@@ -32,7 +32,8 @@ class RoleController extends Controller
                 ->with('permissions:id,name')
                 ->withCount('permissions')
                 ->latest()
-                ->get(),
+                ->paginate(15)
+                ->withQueryString(),
             'permissions' => Permission::query()->orderBy('name')->get(['id', 'name']),
         ]);
     }

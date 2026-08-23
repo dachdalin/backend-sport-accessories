@@ -27,8 +27,19 @@ type User = {
     roles: Role[];
 };
 
+type PaginationLink = {
+    url: string | null;
+    label: string;
+    active: boolean;
+};
+
+type Paginated<T> = {
+    data: T[];
+    links: PaginationLink[];
+};
+
 defineProps<{
-    users: User[];
+    users: Paginated<User>;
 }>();
 
 defineOptions({
@@ -73,7 +84,7 @@ defineOptions({
                 </thead>
                 <tbody>
                     <tr
-                        v-for="user in users"
+                        v-for="user in users.data"
                         :key="user.id"
                         class="border-b border-sidebar-border/70 last:border-b-0 dark:border-sidebar-border"
                     >
@@ -154,7 +165,7 @@ defineOptions({
                         </td>
                     </tr>
 
-                    <tr v-if="users.length === 0">
+                    <tr v-if="users.data.length === 0">
                         <td
                             class="p-6 text-center text-muted-foreground"
                             colspan="4"
@@ -164,6 +175,31 @@ defineOptions({
                     </tr>
                 </tbody>
             </table>
+        </div>
+
+        <div
+            v-if="users.links.length > 3"
+            class="flex flex-wrap items-center justify-center gap-1"
+        >
+            <template v-for="(link, index) in users.links" :key="index">
+                <span
+                    v-if="!link.url"
+                    class="rounded-md px-3 py-1.5 text-sm text-muted-foreground"
+                    v-html="link.label"
+                />
+                <Link
+                    v-else
+                    :href="link.url"
+                    preserve-scroll
+                    class="rounded-md px-3 py-1.5 text-sm"
+                    :class="
+                        link.active
+                            ? 'bg-primary text-primary-foreground'
+                            : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
+                    "
+                    v-html="link.label"
+                />
+            </template>
         </div>
     </div>
 </template>

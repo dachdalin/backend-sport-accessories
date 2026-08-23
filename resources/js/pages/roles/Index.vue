@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Form, Head } from '@inertiajs/vue3';
+import { Form, Head, Link } from '@inertiajs/vue3';
 import { Lock, Pencil, Plus, ShieldCheck, Trash2 } from '@lucide/vue';
 import { ref } from 'vue';
 import RoleController from '@/actions/App/Http/Controllers/Backend/RoleController';
@@ -34,8 +34,19 @@ interface Role {
     permissions_count: number;
 }
 
+type PaginationLink = {
+    url: string | null;
+    label: string;
+    active: boolean;
+};
+
+type Paginated<T> = {
+    data: T[];
+    links: PaginationLink[];
+};
+
 const props = defineProps<{
-    roles: Role[];
+    roles: Paginated<Role>;
     permissions: Permission[];
 }>();
 
@@ -170,7 +181,7 @@ function hasPermission(role: Role, permissionId: number) {
                 </thead>
                 <tbody>
                     <tr
-                        v-for="role in roles"
+                        v-for="role in roles.data"
                         :key="role.id"
                         class="border-b border-sidebar-border/70 last:border-0 dark:border-sidebar-border"
                     >
@@ -266,7 +277,7 @@ function hasPermission(role: Role, permissionId: number) {
                             </div>
                         </td>
                     </tr>
-                    <tr v-if="roles.length === 0">
+                    <tr v-if="roles.data.length === 0">
                         <td
                             colspan="3"
                             class="px-4 py-6 text-center text-muted-foreground"
@@ -276,6 +287,31 @@ function hasPermission(role: Role, permissionId: number) {
                     </tr>
                 </tbody>
             </table>
+        </div>
+
+        <div
+            v-if="roles.links.length > 3"
+            class="flex flex-wrap items-center justify-center gap-1"
+        >
+            <template v-for="(link, index) in roles.links" :key="index">
+                <span
+                    v-if="!link.url"
+                    class="rounded-md px-3 py-1.5 text-sm text-muted-foreground"
+                    v-html="link.label"
+                />
+                <Link
+                    v-else
+                    :href="link.url"
+                    preserve-scroll
+                    class="rounded-md px-3 py-1.5 text-sm"
+                    :class="
+                        link.active
+                            ? 'bg-primary text-primary-foreground'
+                            : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
+                    "
+                    v-html="link.label"
+                />
+            </template>
         </div>
 
         <Dialog

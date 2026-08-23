@@ -24,8 +24,8 @@ class RoleControllerTest extends TestCase
             ->assertOk()
             ->assertInertia(fn (Assert $page) => $page
                 ->component('roles/Index')
-                ->has('roles', 1)
-                ->where('roles.0.id', $role->id),
+                ->has('roles.data', 1)
+                ->where('roles.data.0.id', $role->id),
             );
     }
 

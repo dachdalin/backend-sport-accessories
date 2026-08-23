@@ -3,22 +3,23 @@
 namespace App\Services;
 
 use App\Models\Product;
-use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Str;
 
 class ProductService
 {
     /**
-     * List all products with relationships, most recently added first.
+     * List products with relationships, most recently added first.
      *
-     * @return Collection<int, Product>
+     * @return LengthAwarePaginator<int, Product>
      */
-    public function list(): Collection
+    public function list(): LengthAwarePaginator
     {
         return Product::query()
             ->with(['category:id,name', 'brand:id,name'])
             ->latest()
-            ->get();
+            ->paginate(15)
+            ->withQueryString();
     }
 
     /**

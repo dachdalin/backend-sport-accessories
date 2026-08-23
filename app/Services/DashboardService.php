@@ -34,17 +34,20 @@ class DashboardService
      */
     public function stats(CarbonInterface $start, CarbonInterface $end): array
     {
-        $orders = Order::query()->whereBetween('created_at', [$start, $end]);
+        $row = Order::query()
+            ->whereBetween('created_at', [$start, $end])
+            ->toBase()
+            ->selectRaw('count(*) as orders_count, sum(order_amount) as revenue, count(distinct customer_email) as customers')
+            ->first();
 
-        $revenue = (clone $orders)->sum('order_amount');
-        $count = (clone $orders)->count();
-        $customers = (clone $orders)->distinct()->count('customer_email');
+        $count = (int) $row->orders_count;
+        $revenue = (float) $row->revenue;
 
         return [
-            'revenue' => number_format((float) $revenue, 2, '.', ''),
+            'revenue' => number_format($revenue, 2, '.', ''),
             'orders' => $count,
             'averageOrderValue' => number_format($count > 0 ? $revenue / $count : 0, 2, '.', ''),
-            'customers' => $customers,
+            'customers' => (int) $row->customers,
         ];
     }
 
