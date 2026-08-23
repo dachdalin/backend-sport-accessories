@@ -23,8 +23,8 @@ class ColorControllerTest extends TestCase
             ->assertOk()
             ->assertInertia(fn (Assert $page) => $page
                 ->component('colors/Index')
-                ->has('colors', 1)
-                ->where('colors.0.id', $color->id),
+                ->has('colors.data', 1)
+                ->where('colors.data.0.id', $color->id),
             );
     }
 

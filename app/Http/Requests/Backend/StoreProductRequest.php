@@ -21,6 +21,8 @@ class StoreProductRequest extends FormRequest
             'code' => ['bail', 'nullable', 'string', 'max:50'],
             'description' => ['bail', 'nullable', 'string', 'max:10000'],
             'thumbnail' => ['bail', 'nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
+            'images' => ['bail', 'nullable', 'array', 'max:10'],
+            'images.*' => ['bail', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
             'unit_price' => ['bail', 'required', 'numeric', 'min:0', 'max:99999999.99'],
             'purchase_price' => ['bail', 'nullable', 'numeric', 'min:0', 'max:99999999.99'],
             'current_stock' => ['bail', 'required', 'integer', 'min:0'],

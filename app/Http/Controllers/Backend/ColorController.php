@@ -22,7 +22,7 @@ class ColorController extends Controller
     public function index(): Response
     {
         return Inertia::render('colors/Index', [
-            'colors' => Color::query()->latest()->get(),
+            'colors' => Color::query()->latest()->paginate(15)->withQueryString(),
         ]);
     }
 

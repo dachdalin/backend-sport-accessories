@@ -23,8 +23,8 @@ class AttributeControllerTest extends TestCase
             ->assertOk()
             ->assertInertia(fn (Assert $page) => $page
                 ->component('attributes/Index')
-                ->has('attributes', 1)
-                ->where('attributes.0.id', $attribute->id),
+                ->has('attributes.data', 1)
+                ->where('attributes.data.0.id', $attribute->id),
             );
     }
 

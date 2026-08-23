@@ -49,14 +49,14 @@ class ProductController extends Controller
      */
     public function store(StoreProductRequest $request, CreateProductAction $action): RedirectResponse
     {
-        $data = $request->safe()->except('thumbnail');
+        $data = $request->safe()->except('thumbnail', 'images');
         $data['status'] = $request->boolean('status');
         $data['free_shipping'] = $request->boolean('free_shipping');
         $data['refundable'] = $request->boolean('refundable');
         $data['featured'] = $request->boolean('featured');
 
         try {
-            $action->handle($data, $request->file('thumbnail'));
+            $action->handle($data, $request->file('thumbnail'), $request->file('images'));
         } catch (Throwable $e) {
             report($e);
 

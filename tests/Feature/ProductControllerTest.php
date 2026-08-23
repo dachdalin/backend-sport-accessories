@@ -5,6 +5,8 @@ namespace Tests\Feature;
 use App\Models\Product;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Testing\AssertableInertia as Assert;
 use Tests\TestCase;
 
@@ -65,6 +67,37 @@ class ProductControllerTest extends TestCase
         $this->assertSame('99.99', $product->unit_price);
         $this->assertSame('def.png', $product->thumbnail);
         $this->assertTrue($product->status);
+    }
+
+    public function test_product_can_be_created_with_gallery_images(): void
+    {
+        Storage::fake('public');
+        $user = User::factory()->create();
+
+        $response = $this
+            ->actingAs($user)
+            ->post(route('products.store'), [
+                'name' => 'Running Shoes Pro',
+                'unit_price' => '99.99',
+                'current_stock' => 50,
+                'minimum_order_qty' => 1,
+                'status' => '1',
+                'images' => [
+                    UploadedFile::fake()->image('gallery-1.jpg'),
+                    UploadedFile::fake()->image('gallery-2.jpg'),
+                ],
+            ]);
+
+        $response
+            ->assertSessionHasNoErrors()
+            ->assertRedirect(route('products.index'));
+
+        $product = Product::sole();
+
+        $this->assertCount(2, $product->images);
+        $product->images->each(
+            fn ($image) => Storage::disk('public')->assertExists($image->image),
+        );
     }
 
     public function test_product_name_is_required(): void

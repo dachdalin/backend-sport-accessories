@@ -22,7 +22,11 @@ class CategoryController extends Controller
     public function index(): Response
     {
         return Inertia::render('categories/Index', [
-            'categories' => Category::query()->with('parent')->orderBy('position')->get(),
+            'categories' => Category::query()
+                ->with('parent:id,name')
+                ->orderBy('position')
+                ->paginate(15)
+                ->withQueryString(),
         ]);
     }
 

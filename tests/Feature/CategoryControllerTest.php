@@ -23,8 +23,8 @@ class CategoryControllerTest extends TestCase
             ->assertOk()
             ->assertInertia(fn (Assert $page) => $page
                 ->component('categories/Index')
-                ->has('categories', 1)
-                ->where('categories.0.id', $category->id),
+                ->has('categories.data', 1)
+                ->where('categories.data.0.id', $category->id),
             );
     }
 

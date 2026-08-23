@@ -102,6 +102,18 @@ defineOptions({
                 <InputError :message="errors.thumbnail" />
             </div>
 
+            <div class="grid gap-2">
+                <Label for="images">Gallery images</Label>
+                <Input
+                    id="images"
+                    name="images[]"
+                    type="file"
+                    accept="image/*"
+                    multiple
+                />
+                <InputError :message="errors.images" />
+            </div>
+
             <div class="grid grid-cols-2 gap-4">
                 <div class="grid gap-2">
                     <Label for="unit_price">Unit price</Label>

@@ -22,7 +22,7 @@ class AttributeController extends Controller
     public function index(): Response
     {
         return Inertia::render('attributes/Index', [
-            'attributes' => Attribute::query()->latest()->get(),
+            'attributes' => Attribute::query()->latest()->paginate(15)->withQueryString(),
         ]);
     }
 

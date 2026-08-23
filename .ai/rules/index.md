@@ -6,6 +6,7 @@ Before planning or editing, find the row whose globs match the file's path and r
 | --- | --- |
 | app/Http/Controllers/**,app/Actions/**,app/Services/** | .ai/rules/actions-services.md |
 | app/Http/Controllers/**,app/Http/Requests/**,app/Actions/** | .ai/rules/actions.md |
+| app/Http/Controllers/Backend/AttributeController.php,resources/js/pages/attributes/** | .ai/rules/attributes.md |
 | resources/js/layouts/auth/** | .ai/rules/auth.md |
 | app/Models/*.php,app/Http/Controllers/Backend/**,database/migrations/** | .ai/rules/backend-migrations.md |
 | resources/js/pages/**,app/Http/Controllers/** | .ai/rules/controllers.md |
