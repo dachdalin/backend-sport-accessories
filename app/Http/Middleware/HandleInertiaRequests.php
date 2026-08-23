@@ -2,12 +2,16 @@
 
 namespace App\Http\Middleware;
 
+use App\Services\BusinessSettingService;
 use App\Services\NotificationService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Middleware;
 
 class HandleInertiaRequests extends Middleware
 {
+    public function __construct(private readonly BusinessSettingService $businessSettings) {}
+
     /**
      * The root template that's loaded on the first page visit.
      *
@@ -36,9 +40,14 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
+        $settings = $this->businessSettings->all();
+
         return [
             ...parent::share($request),
-            'name' => config('app.name'),
+            'name' => $settings['site_name'] !== '' ? $settings['site_name'] : config('app.name'),
+            'logoUrl' => $settings['logo'] !== 'def.png'
+                ? Storage::disk($settings['logo_storage_type'])->url($settings['logo'])
+                : null,
             'auth' => [
                 'user' => $request->user(),
             ],

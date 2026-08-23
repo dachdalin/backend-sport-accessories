@@ -69,12 +69,24 @@ defineOptions({
             </div>
 
             <div class="grid gap-2">
-                <img
-                    :src="`/storage/${props.settings.logo}`"
-                    alt="Store logo"
-                    class="size-16 rounded object-cover"
-                />
-                <Label for="logo">Replace logo</Label>
+                <div
+                    class="flex size-16 items-center justify-center rounded-md border bg-white"
+                >
+                    <img
+                        v-if="props.settings.logo !== 'def.png'"
+                        :src="`/storage/${props.settings.logo}`"
+                        alt="Store logo"
+                        class="size-full rounded-md object-contain p-1"
+                    />
+                    <span v-else class="text-xs text-muted-foreground"
+                        >No logo</span
+                    >
+                </div>
+                <Label for="logo">{{
+                    props.settings.logo !== 'def.png'
+                        ? 'Replace logo'
+                        : 'Upload logo'
+                }}</Label>
                 <Input id="logo" name="logo" type="file" accept="image/*" />
                 <InputError :message="errors.logo" />
             </div>

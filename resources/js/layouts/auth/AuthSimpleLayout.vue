@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import { Head, Link, usePage } from '@inertiajs/vue3';
+import { computed } from 'vue';
 import AppLogoIcon from '@/components/AppLogoIcon.vue';
 import { home } from '@/routes';
 
 const page = usePage();
-const name = page.props.name;
+const name = computed(() => page.props.name);
+const logoUrl = computed(() => page.props.logoUrl);
 
 defineProps<{
     title?: string;
@@ -38,6 +40,17 @@ defineProps<{
                     class="mb-6 flex items-center justify-center gap-2.5"
                 >
                     <span
+                        v-if="logoUrl"
+                        class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white ring-1 ring-[var(--court-line)]"
+                    >
+                        <img
+                            :src="logoUrl"
+                            :alt="`${name} logo`"
+                            class="size-full rounded-full object-contain p-0.5"
+                        />
+                    </span>
+                    <span
+                        v-else
                         class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[var(--whistle)]"
                     >
                         <AppLogoIcon
