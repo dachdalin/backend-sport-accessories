@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Models\Banner;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Inertia\Testing\AssertableInertia as Assert;
 use Tests\TestCase;
 
 class BannerControllerTest extends TestCase
@@ -20,7 +21,12 @@ class BannerControllerTest extends TestCase
             ->actingAs($user)
             ->get(route('banners.index'));
 
-        $response->assertOk();
+        $response
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('banners/Index')
+                ->has('banners.data', 3),
+            );
     }
 
     public function test_banner_create_page_is_displayed(): void

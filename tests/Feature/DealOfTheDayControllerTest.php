@@ -6,6 +6,7 @@ use App\Models\DealOfTheDay;
 use App\Models\Product;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Inertia\Testing\AssertableInertia as Assert;
 use Tests\TestCase;
 
 class DealOfTheDayControllerTest extends TestCase
@@ -21,7 +22,12 @@ class DealOfTheDayControllerTest extends TestCase
             ->actingAs($user)
             ->get(route('deal-of-the-days.index'));
 
-        $response->assertOk();
+        $response
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('deal-of-the-days/Index')
+                ->has('deals.data', 3),
+            );
     }
 
     public function test_deal_of_the_day_create_page_is_displayed(): void

@@ -26,7 +26,8 @@ class MostDemandedController extends Controller
             'mostDemandeds' => MostDemanded::query()
                 ->with('product:id,name')
                 ->latest()
-                ->get(),
+                ->paginate(15)
+                ->withQueryString(),
         ]);
     }
 

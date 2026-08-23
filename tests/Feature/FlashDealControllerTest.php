@@ -109,6 +109,44 @@ class FlashDealControllerTest extends TestCase
         $response->assertSessionHasErrors('end_date');
     }
 
+    public function test_flash_deal_percent_discount_cannot_exceed_100(): void
+    {
+        $user = User::factory()->create();
+        $product = Product::factory()->create();
+
+        $response = $this
+            ->actingAs($user)
+            ->post(route('flash-deals.store'), [
+                'title' => 'Too Much Off',
+                'start_date' => '2026-09-01',
+                'end_date' => '2026-09-07',
+                'items' => [
+                    ['product_id' => $product->id, 'discount' => 150, 'discount_type' => 'percent'],
+                ],
+            ]);
+
+        $response->assertSessionHasErrors('items.0.discount');
+    }
+
+    public function test_flash_deal_amount_discount_can_exceed_100(): void
+    {
+        $user = User::factory()->create();
+        $product = Product::factory()->create();
+
+        $response = $this
+            ->actingAs($user)
+            ->post(route('flash-deals.store'), [
+                'title' => 'Big Fixed Discount',
+                'start_date' => '2026-09-01',
+                'end_date' => '2026-09-07',
+                'items' => [
+                    ['product_id' => $product->id, 'discount' => 150, 'discount_type' => 'amount'],
+                ],
+            ]);
+
+        $response->assertSessionHasNoErrors();
+    }
+
     public function test_flash_deal_requires_at_least_one_item(): void
     {
         $user = User::factory()->create();

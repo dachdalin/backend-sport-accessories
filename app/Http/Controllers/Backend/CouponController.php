@@ -23,7 +23,7 @@ class CouponController extends Controller
     public function index(): Response
     {
         return Inertia::render('coupons/Index', [
-            'coupons' => Coupon::query()->latest()->get(),
+            'coupons' => Coupon::query()->latest()->paginate(15)->withQueryString(),
         ]);
     }
 

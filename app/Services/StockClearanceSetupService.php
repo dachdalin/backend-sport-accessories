@@ -3,20 +3,19 @@
 namespace App\Services;
 
 use App\Models\StockClearanceSetup;
-use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class StockClearanceSetupService
 {
     /**
-     * List all stock clearance setups with their item counts, most recently created first.
-     *
-     * @return Collection<int, StockClearanceSetup>
+     * List stock clearance setups with their item counts, most recently created first.
      */
-    public function list(): Collection
+    public function list(): LengthAwarePaginator
     {
         return StockClearanceSetup::query()
             ->withCount('items')
             ->latest()
-            ->get();
+            ->paginate(15)
+            ->withQueryString();
     }
 }

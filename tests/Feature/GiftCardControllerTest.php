@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Models\GiftCard;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Inertia\Testing\AssertableInertia as Assert;
 use Tests\TestCase;
 
 class GiftCardControllerTest extends TestCase
@@ -20,7 +21,29 @@ class GiftCardControllerTest extends TestCase
             ->actingAs($user)
             ->get(route('gift-cards.index'));
 
-        $response->assertOk();
+        $response
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('gift-cards/Index')
+                ->has('giftCards.data', 3),
+            );
+    }
+
+    public function test_gift_cards_index_page_is_paginated(): void
+    {
+        $user = User::factory()->create();
+        GiftCard::factory()->count(16)->create();
+
+        $response = $this
+            ->actingAs($user)
+            ->get(route('gift-cards.index'));
+
+        $response
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('gift-cards/Index')
+                ->has('giftCards.data', 15),
+            );
     }
 
     public function test_gift_card_create_page_is_displayed(): void

@@ -22,7 +22,7 @@ class BannerController extends Controller
     public function index(): Response
     {
         return Inertia::render('banners/Index', [
-            'banners' => Banner::query()->orderBy('sort_order')->latest()->get(),
+            'banners' => Banner::query()->orderBy('sort_order')->latest()->paginate(15)->withQueryString(),
         ]);
     }
 

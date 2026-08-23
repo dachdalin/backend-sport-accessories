@@ -27,7 +27,8 @@ class DealOfTheDayController extends Controller
             'deals' => DealOfTheDay::query()
                 ->with('product:id,name')
                 ->latest()
-                ->get(),
+                ->paginate(15)
+                ->withQueryString(),
         ]);
     }
 

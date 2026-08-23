@@ -22,7 +22,7 @@ class GiftCardController extends Controller
     public function index(): Response
     {
         return Inertia::render('gift-cards/Index', [
-            'giftCards' => GiftCard::query()->latest()->get(),
+            'giftCards' => GiftCard::query()->latest()->paginate(15)->withQueryString(),
         ]);
     }
 

@@ -3,20 +3,19 @@
 namespace App\Services;
 
 use App\Models\FlashDeal;
-use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 class FlashDealService
 {
     /**
-     * List all flash deals with their items, most recently created first.
-     *
-     * @return Collection<int, FlashDeal>
+     * Paginate flash deals with their item count, most recently created first.
      */
-    public function list(): Collection
+    public function list(): LengthAwarePaginator
     {
         return FlashDeal::query()
             ->withCount('items')
             ->latest()
-            ->get();
+            ->paginate(15)
+            ->withQueryString();
     }
 }

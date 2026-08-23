@@ -9,7 +9,10 @@ Before planning or editing, find the row whose globs match the file's path and r
 | app/Http/Controllers/Backend/AttributeController.php,resources/js/pages/attributes/** | .ai/rules/attributes.md |
 | resources/js/layouts/auth/** | .ai/rules/auth.md |
 | app/Models/*.php,app/Http/Controllers/Backend/**,database/migrations/** | .ai/rules/backend-migrations.md |
+| app/Http/Controllers/Backend/BannerController.php,resources/js/pages/banners/** | .ai/rules/banners.md |
 | resources/js/pages/**,app/Http/Controllers/** | .ai/rules/controllers.md |
+| app/Http/Controllers/Backend/FlashDealController.php,app/Services/FlashDealService.php,resources/js/pages/flash-deals/** | .ai/rules/flash-deals.md |
+| app/Http/Controllers/Backend/GiftCardController.php,resources/js/pages/gift-cards/** | .ai/rules/gift-cards.md |
 | app/Models/*.php,app/Http/**,bootstrap/app.php | .ai/rules/http.md |
 | app/Http/Middleware/HandleInertiaRequests.php,resources/js/components/AppLogo.vue,resources/js/layouts/auth/** | .ai/rules/layouts-auth.md |
 | app/Http/Controllers/Backend/MaterialController.php,resources/js/pages/materials/** | .ai/rules/materials.md |
@@ -18,4 +21,5 @@ Before planning or editing, find the row whose globs match the file's path and r
 | resources/js/pages/** | .ai/rules/pages.md |
 | app/Services/DashboardService.php,database/migrations/** | .ai/rules/services-migrations.md |
 | app/Services/** | .ai/rules/services.md |
+| app/Services/StockClearanceSetupService.php,app/Http/Controllers/Backend/StockClearanceSetupController.php,resources/js/pages/stock-clearance-setups/** | .ai/rules/stock-clearance-setups.md |
 | app/Http/Controllers/Backend/UserController.php,resources/js/pages/users/** | .ai/rules/users.md |

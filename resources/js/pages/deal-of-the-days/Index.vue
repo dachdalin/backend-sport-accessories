@@ -24,8 +24,19 @@ type Deal = {
     product: { id: number; name: string } | null;
 };
 
+type PaginationLink = {
+    url: string | null;
+    label: string;
+    active: boolean;
+};
+
+type Paginated<T> = {
+    data: T[];
+    links: PaginationLink[];
+};
+
 defineProps<{
-    deals: Deal[];
+    deals: Paginated<Deal>;
 }>();
 
 defineOptions({
@@ -75,7 +86,7 @@ function formatDiscount(deal: Deal) {
                 </thead>
                 <tbody>
                     <tr
-                        v-for="deal in deals"
+                        v-for="deal in deals.data"
                         :key="deal.id"
                         class="border-b border-sidebar-border/70 last:border-b-0 dark:border-sidebar-border"
                     >
@@ -138,7 +149,7 @@ function formatDiscount(deal: Deal) {
                         </td>
                     </tr>
 
-                    <tr v-if="deals.length === 0">
+                    <tr v-if="deals.data.length === 0">
                         <td
                             class="p-6 text-center text-muted-foreground"
                             colspan="5"
@@ -148,6 +159,31 @@ function formatDiscount(deal: Deal) {
                     </tr>
                 </tbody>
             </table>
+        </div>
+
+        <div
+            v-if="deals.links.length > 3"
+            class="flex flex-wrap items-center justify-center gap-1"
+        >
+            <template v-for="(link, index) in deals.links" :key="index">
+                <span
+                    v-if="!link.url"
+                    class="rounded-md px-3 py-1.5 text-sm text-muted-foreground"
+                    v-html="link.label"
+                />
+                <Link
+                    v-else
+                    :href="link.url"
+                    preserve-scroll
+                    class="rounded-md px-3 py-1.5 text-sm"
+                    :class="
+                        link.active
+                            ? 'bg-primary text-primary-foreground'
+                            : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
+                    "
+                    v-html="link.label"
+                />
+            </template>
         </div>
     </div>
 </template>
