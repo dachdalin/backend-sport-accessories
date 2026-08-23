@@ -55,7 +55,7 @@ use App\Http\Controllers\Backend\WarehouseController;
 use App\Http\Controllers\Backend\WishlistController;
 use Illuminate\Support\Facades\Route;
 
-Route::inertia('/', 'Welcome')->name('home');
+Route::redirect('/', '/login')->name('home');
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
