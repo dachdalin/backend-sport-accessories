@@ -23,8 +23,8 @@ class SizeControllerTest extends TestCase
             ->assertOk()
             ->assertInertia(fn (Assert $page) => $page
                 ->component('sizes/Index')
-                ->has('sizes', 1)
-                ->where('sizes.0.id', $size->id),
+                ->has('sizes.data', 1)
+                ->where('sizes.data.0.id', $size->id),
             );
     }
 

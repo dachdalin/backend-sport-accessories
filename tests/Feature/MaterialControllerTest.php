@@ -23,8 +23,8 @@ class MaterialControllerTest extends TestCase
             ->assertOk()
             ->assertInertia(fn (Assert $page) => $page
                 ->component('materials/Index')
-                ->has('materials', 1)
-                ->where('materials.0.id', $material->id),
+                ->has('materials.data', 1)
+                ->where('materials.data.0.id', $material->id),
             );
     }
 

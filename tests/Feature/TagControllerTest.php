@@ -23,8 +23,8 @@ class TagControllerTest extends TestCase
             ->assertOk()
             ->assertInertia(fn (Assert $page) => $page
                 ->component('tags/Index')
-                ->has('tags', 1)
-                ->where('tags.0.id', $tag->id),
+                ->has('tags.data', 1)
+                ->where('tags.data.0.id', $tag->id),
             );
     }
 

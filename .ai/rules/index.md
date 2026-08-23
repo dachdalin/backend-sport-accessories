@@ -12,6 +12,7 @@ Before planning or editing, find the row whose globs match the file's path and r
 | resources/js/pages/**,app/Http/Controllers/** | .ai/rules/controllers.md |
 | app/Models/*.php,app/Http/**,bootstrap/app.php | .ai/rules/http.md |
 | app/Http/Middleware/HandleInertiaRequests.php,resources/js/components/AppLogo.vue,resources/js/layouts/auth/** | .ai/rules/layouts-auth.md |
+| app/Http/Controllers/Backend/MaterialController.php,resources/js/pages/materials/** | .ai/rules/materials.md |
 | app/Http/Controllers/Backend/**,database/migrations/** | .ai/rules/migrations.md |
 | app/Models/*.php | .ai/rules/models.md |
 | resources/js/pages/** | .ai/rules/pages.md |

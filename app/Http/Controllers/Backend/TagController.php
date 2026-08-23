@@ -22,7 +22,7 @@ class TagController extends Controller
     public function index(): Response
     {
         return Inertia::render('tags/Index', [
-            'tags' => Tag::query()->latest()->get(),
+            'tags' => Tag::query()->latest()->paginate(15)->withQueryString(),
         ]);
     }
 

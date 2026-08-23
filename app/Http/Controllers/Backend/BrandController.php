@@ -22,7 +22,7 @@ class BrandController extends Controller
     public function index(): Response
     {
         return Inertia::render('brands/Index', [
-            'brands' => Brand::query()->latest()->get(),
+            'brands' => Brand::query()->latest()->paginate(15)->withQueryString(),
         ]);
     }
 

@@ -22,7 +22,7 @@ class MaterialController extends Controller
     public function index(): Response
     {
         return Inertia::render('materials/Index', [
-            'materials' => Material::query()->latest()->get(),
+            'materials' => Material::query()->latest()->paginate(15)->withQueryString(),
         ]);
     }
 

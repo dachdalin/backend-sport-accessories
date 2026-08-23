@@ -22,7 +22,7 @@ class SizeController extends Controller
     public function index(): Response
     {
         return Inertia::render('sizes/Index', [
-            'sizes' => Size::query()->latest()->get(),
+            'sizes' => Size::query()->latest()->paginate(15)->withQueryString(),
         ]);
     }
 

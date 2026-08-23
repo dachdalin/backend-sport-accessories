@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Form, Head } from '@inertiajs/vue3';
+import { Form, Head, Link } from '@inertiajs/vue3';
 import { Pencil, Plus, Trash2 } from '@lucide/vue';
 import { ref } from 'vue';
 import TagController from '@/actions/App/Http/Controllers/Backend/TagController';
@@ -26,8 +26,19 @@ interface Tag {
     visit_count: number;
 }
 
+type PaginationLink = {
+    url: string | null;
+    label: string;
+    active: boolean;
+};
+
+type Paginated<T> = {
+    data: T[];
+    links: PaginationLink[];
+};
+
 defineProps<{
-    tags: Tag[];
+    tags: Paginated<Tag>;
 }>();
 
 defineOptions({
@@ -119,7 +130,7 @@ function openEdit(tag: Tag) {
                 </thead>
                 <tbody>
                     <tr
-                        v-for="tag in tags"
+                        v-for="tag in tags.data"
                         :key="tag.id"
                         class="border-b border-sidebar-border/70 last:border-0 dark:border-sidebar-border"
                     >
@@ -194,7 +205,7 @@ function openEdit(tag: Tag) {
                             </div>
                         </td>
                     </tr>
-                    <tr v-if="tags.length === 0">
+                    <tr v-if="tags.data.length === 0">
                         <td
                             colspan="3"
                             class="px-4 py-6 text-center text-muted-foreground"
@@ -204,6 +215,31 @@ function openEdit(tag: Tag) {
                     </tr>
                 </tbody>
             </table>
+        </div>
+
+        <div
+            v-if="tags.links.length > 3"
+            class="flex flex-wrap items-center justify-center gap-1"
+        >
+            <template v-for="(link, index) in tags.links" :key="index">
+                <span
+                    v-if="!link.url"
+                    class="rounded-md px-3 py-1.5 text-sm text-muted-foreground"
+                    v-html="link.label"
+                />
+                <Link
+                    v-else
+                    :href="link.url"
+                    preserve-scroll
+                    class="rounded-md px-3 py-1.5 text-sm"
+                    :class="
+                        link.active
+                            ? 'bg-primary text-primary-foreground'
+                            : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
+                    "
+                    v-html="link.label"
+                />
+            </template>
         </div>
 
         <Dialog
