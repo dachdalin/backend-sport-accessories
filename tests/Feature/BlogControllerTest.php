@@ -8,6 +8,7 @@ use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
+use Inertia\Testing\AssertableInertia as Assert;
 use Tests\TestCase;
 
 class BlogControllerTest extends TestCase
@@ -23,7 +24,29 @@ class BlogControllerTest extends TestCase
             ->actingAs($user)
             ->get(route('blogs.index'));
 
-        $response->assertOk();
+        $response
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('blogs/Index')
+                ->has('blogs.data', 3),
+            );
+    }
+
+    public function test_blogs_index_page_is_paginated(): void
+    {
+        $user = User::factory()->create();
+        Blog::factory()->count(16)->create();
+
+        $response = $this
+            ->actingAs($user)
+            ->get(route('blogs.index'));
+
+        $response
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('blogs/Index')
+                ->has('blogs.data', 15),
+            );
     }
 
     public function test_blog_create_page_is_displayed(): void

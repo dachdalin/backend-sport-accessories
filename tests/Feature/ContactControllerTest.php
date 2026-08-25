@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Models\Contact;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Inertia\Testing\AssertableInertia as Assert;
 use Tests\TestCase;
 
 class ContactControllerTest extends TestCase
@@ -20,7 +21,29 @@ class ContactControllerTest extends TestCase
             ->actingAs($user)
             ->get(route('contacts.index'));
 
-        $response->assertOk();
+        $response
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('contacts/Index')
+                ->has('contacts.data', 3),
+            );
+    }
+
+    public function test_contacts_index_page_is_paginated(): void
+    {
+        $user = User::factory()->create();
+        Contact::factory()->count(16)->create();
+
+        $response = $this
+            ->actingAs($user)
+            ->get(route('contacts.index'));
+
+        $response
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('contacts/Index')
+                ->has('contacts.data', 15),
+            );
     }
 
     public function test_contact_create_page_is_displayed(): void

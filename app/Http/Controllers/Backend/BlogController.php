@@ -23,7 +23,7 @@ class BlogController extends Controller
     public function index(): Response
     {
         return Inertia::render('blogs/Index', [
-            'blogs' => Blog::query()->with('category:id,name')->latest()->get(),
+            'blogs' => Blog::query()->with('category:id,name')->latest()->paginate(15)->withQueryString(),
         ]);
     }
 

@@ -22,7 +22,7 @@ class ContactController extends Controller
     public function index(): Response
     {
         return Inertia::render('contacts/Index', [
-            'contacts' => Contact::query()->latest()->get(),
+            'contacts' => Contact::query()->latest()->paginate(15)->withQueryString(),
         ]);
     }
 
