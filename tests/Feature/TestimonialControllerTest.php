@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Models\Testimonial;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Inertia\Testing\AssertableInertia as Assert;
 use Tests\TestCase;
 
 class TestimonialControllerTest extends TestCase
@@ -20,7 +21,29 @@ class TestimonialControllerTest extends TestCase
             ->actingAs($user)
             ->get(route('testimonials.index'));
 
-        $response->assertOk();
+        $response
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('testimonials/Index')
+                ->has('testimonials.data', 3),
+            );
+    }
+
+    public function test_testimonials_index_page_is_paginated(): void
+    {
+        $user = User::factory()->create();
+        Testimonial::factory()->count(16)->create();
+
+        $response = $this
+            ->actingAs($user)
+            ->get(route('testimonials.index'));
+
+        $response
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('testimonials/Index')
+                ->has('testimonials.data', 15),
+            );
     }
 
     public function test_testimonial_create_page_is_displayed(): void

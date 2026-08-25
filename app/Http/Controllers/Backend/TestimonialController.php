@@ -22,7 +22,7 @@ class TestimonialController extends Controller
     public function index(): Response
     {
         return Inertia::render('testimonials/Index', [
-            'testimonials' => Testimonial::query()->latest()->get(),
+            'testimonials' => Testimonial::query()->latest()->paginate(15)->withQueryString(),
         ]);
     }
 

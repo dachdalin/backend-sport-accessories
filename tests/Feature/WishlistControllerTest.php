@@ -6,6 +6,7 @@ use App\Models\Product;
 use App\Models\User;
 use App\Models\Wishlist;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Inertia\Testing\AssertableInertia as Assert;
 use Tests\TestCase;
 
 class WishlistControllerTest extends TestCase
@@ -21,7 +22,29 @@ class WishlistControllerTest extends TestCase
             ->actingAs($user)
             ->get(route('wishlists.index'));
 
-        $response->assertOk();
+        $response
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('wishlists/Index')
+                ->has('wishlists.data', 3),
+            );
+    }
+
+    public function test_wishlists_index_page_is_paginated(): void
+    {
+        $user = User::factory()->create();
+        Wishlist::factory()->count(16)->create();
+
+        $response = $this
+            ->actingAs($user)
+            ->get(route('wishlists.index'));
+
+        $response
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('wishlists/Index')
+                ->has('wishlists.data', 15),
+            );
     }
 
     public function test_wishlist_entry_can_be_created(): void

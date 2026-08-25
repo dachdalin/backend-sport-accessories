@@ -3,20 +3,19 @@
 namespace App\Services;
 
 use App\Models\Wishlist;
-use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 class WishlistService
 {
     /**
      * List all wishlist entries with their product, most recently added first.
-     *
-     * @return Collection<int, Wishlist>
      */
-    public function list(): Collection
+    public function list(): LengthAwarePaginator
     {
         return Wishlist::query()
             ->with('product:id,name')
             ->latest()
-            ->get();
+            ->paginate(15)
+            ->withQueryString();
     }
 }

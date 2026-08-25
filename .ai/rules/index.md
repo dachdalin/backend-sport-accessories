@@ -24,3 +24,4 @@ Before planning or editing, find the row whose globs match the file's path and r
 | app/Services/** | .ai/rules/services.md |
 | app/Services/StockClearanceSetupService.php,app/Http/Controllers/Backend/StockClearanceSetupController.php,resources/js/pages/stock-clearance-setups/** | .ai/rules/stock-clearance-setups.md |
 | app/Http/Controllers/Backend/UserController.php,resources/js/pages/users/** | .ai/rules/users.md |
+| app/Http/Controllers/Backend/WishlistController.php,app/Services/WishlistService.php,resources/js/pages/wishlists/** | .ai/rules/wishlists.md |
