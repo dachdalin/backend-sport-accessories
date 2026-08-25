@@ -6,10 +6,12 @@ Before planning or editing, find the row whose globs match the file's path and r
 | --- | --- |
 | app/Http/Controllers/**,app/Actions/**,app/Services/** | .ai/rules/actions-services.md |
 | app/Http/Controllers/**,app/Http/Requests/**,app/Actions/** | .ai/rules/actions.md |
+| app/Http/Controllers/Api/**,app/Http/Requests/Api/**,app/Http/Resources/Api/**,routes/api.php | .ai/rules/api.md |
 | app/Http/Controllers/Backend/AttributeController.php,resources/js/pages/attributes/** | .ai/rules/attributes.md |
 | resources/js/layouts/auth/** | .ai/rules/auth.md |
 | app/Models/*.php,app/Http/Controllers/Backend/**,database/migrations/** | .ai/rules/backend-migrations.md |
 | app/Http/Controllers/Backend/BannerController.php,resources/js/pages/banners/** | .ai/rules/banners.md |
+| app/Http/Controllers/Backend/BlogCategoryController.php,resources/js/pages/blog-categories/** | .ai/rules/blog-categories.md |
 | app/Http/Controllers/Backend/ContactController.php,resources/js/pages/contacts/** | .ai/rules/contacts.md |
 | resources/js/pages/**,app/Http/Controllers/** | .ai/rules/controllers.md |
 | app/Http/Controllers/Backend/FeatureDealController.php,resources/js/pages/feature-deals/** | .ai/rules/feature-deals.md |

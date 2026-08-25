@@ -4,13 +4,14 @@ namespace App\Models;
 
 use Database\Factories\CustomerFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Laravel\Sanctum\HasApiTokens;
 
-class Customer extends Model
+class Customer extends Authenticatable
 {
     /** @use HasFactory<CustomerFactory> */
-    use HasFactory;
+    use HasApiTokens, HasFactory;
 
     /**
      * @var array<int, string>
@@ -18,9 +19,17 @@ class Customer extends Model
     protected $fillable = [
         'name',
         'email',
+        'password',
         'phone',
         'address',
         'status',
+    ];
+
+    /**
+     * @var array<int, string>
+     */
+    protected $hidden = [
+        'password',
     ];
 
     /**
@@ -39,6 +48,7 @@ class Customer extends Model
     {
         return [
             'status' => 'boolean',
+            'password' => 'hashed',
         ];
     }
 

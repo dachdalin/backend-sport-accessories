@@ -23,8 +23,23 @@ class BlogCategoryControllerTest extends TestCase
             ->assertOk()
             ->assertInertia(fn (Assert $page) => $page
                 ->component('blog-categories/Index')
-                ->has('blogCategories', 1)
-                ->where('blogCategories.0.id', $blogCategory->id),
+                ->has('blogCategories.data', 1)
+                ->where('blogCategories.data.0.id', $blogCategory->id),
+            );
+    }
+
+    public function test_blog_categories_index_page_is_paginated(): void
+    {
+        $user = User::factory()->create();
+        BlogCategory::factory()->count(16)->create();
+
+        $response = $this->actingAs($user)->get(route('blog-categories.index'));
+
+        $response
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('blog-categories/Index')
+                ->has('blogCategories.data', 15),
             );
     }
 

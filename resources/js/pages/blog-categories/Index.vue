@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Form, Head } from '@inertiajs/vue3';
+import { Form, Head, Link } from '@inertiajs/vue3';
 import { Pencil, Plus, Trash2 } from '@lucide/vue';
 import { ref } from 'vue';
 import BlogCategoryController from '@/actions/App/Http/Controllers/Backend/BlogCategoryController';
@@ -30,8 +30,19 @@ interface BlogCategory {
     click_count: number;
 }
 
+interface PaginationLink {
+    url: string | null;
+    label: string;
+    active: boolean;
+}
+
+interface Paginated<T> {
+    data: T[];
+    links: PaginationLink[];
+}
+
 defineProps<{
-    blogCategories: BlogCategory[];
+    blogCategories: Paginated<BlogCategory>;
 }>();
 
 defineOptions({
@@ -138,7 +149,7 @@ function openEdit(blogCategory: BlogCategory) {
                 </thead>
                 <tbody>
                     <tr
-                        v-for="blogCategory in blogCategories"
+                        v-for="blogCategory in blogCategories.data"
                         :key="blogCategory.id"
                         class="border-b border-sidebar-border/70 last:border-0 dark:border-sidebar-border"
                     >
@@ -236,7 +247,7 @@ function openEdit(blogCategory: BlogCategory) {
                             </div>
                         </td>
                     </tr>
-                    <tr v-if="blogCategories.length === 0">
+                    <tr v-if="blogCategories.data.length === 0">
                         <td
                             colspan="5"
                             class="px-4 py-6 text-center text-muted-foreground"
@@ -246,6 +257,34 @@ function openEdit(blogCategory: BlogCategory) {
                     </tr>
                 </tbody>
             </table>
+        </div>
+
+        <div
+            v-if="blogCategories.links.length > 3"
+            class="flex flex-wrap items-center justify-center gap-1"
+        >
+            <template
+                v-for="(link, index) in blogCategories.links"
+                :key="index"
+            >
+                <span
+                    v-if="!link.url"
+                    class="rounded-md px-3 py-1.5 text-sm text-muted-foreground"
+                    v-html="link.label"
+                />
+                <Link
+                    v-else
+                    :href="link.url"
+                    preserve-scroll
+                    class="rounded-md px-3 py-1.5 text-sm"
+                    :class="
+                        link.active
+                            ? 'bg-primary text-primary-foreground'
+                            : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
+                    "
+                    v-html="link.label"
+                />
+            </template>
         </div>
 
         <Dialog

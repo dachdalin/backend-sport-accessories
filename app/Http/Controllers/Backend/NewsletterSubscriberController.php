@@ -22,7 +22,7 @@ class NewsletterSubscriberController extends Controller
     public function index(): Response
     {
         return Inertia::render('newsletter-subscribers/Index', [
-            'subscribers' => NewsletterSubscriber::query()->latest()->get(),
+            'subscribers' => NewsletterSubscriber::query()->latest()->paginate(15)->withQueryString(),
         ]);
     }
 

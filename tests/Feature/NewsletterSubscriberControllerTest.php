@@ -23,8 +23,23 @@ class NewsletterSubscriberControllerTest extends TestCase
             ->assertOk()
             ->assertInertia(fn (Assert $page) => $page
                 ->component('newsletter-subscribers/Index')
-                ->has('subscribers', 1)
-                ->where('subscribers.0.id', $subscriber->id),
+                ->has('subscribers.data', 1)
+                ->where('subscribers.data.0.id', $subscriber->id),
+            );
+    }
+
+    public function test_newsletter_subscribers_index_page_is_paginated(): void
+    {
+        $user = User::factory()->create();
+        NewsletterSubscriber::factory()->count(16)->create();
+
+        $response = $this->actingAs($user)->get(route('newsletter-subscribers.index'));
+
+        $response
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('newsletter-subscribers/Index')
+                ->has('subscribers.data', 15),
             );
     }
 
