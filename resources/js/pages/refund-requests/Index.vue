@@ -24,8 +24,19 @@ type RefundRequest = {
     order_item: { id: number; product_name: string } | null;
 };
 
+type PaginationLink = {
+    url: string | null;
+    label: string;
+    active: boolean;
+};
+
+type Paginated<T> = {
+    data: T[];
+    links: PaginationLink[];
+};
+
 defineProps<{
-    refundRequests: RefundRequest[];
+    refundRequests: Paginated<RefundRequest>;
 }>();
 
 defineOptions({
@@ -78,7 +89,7 @@ const statusVariant: Record<string, 'default' | 'secondary' | 'destructive'> = {
                 </thead>
                 <tbody>
                     <tr
-                        v-for="refundRequest in refundRequests"
+                        v-for="refundRequest in refundRequests.data"
                         :key="refundRequest.id"
                         class="border-b border-sidebar-border/70 last:border-b-0 dark:border-sidebar-border"
                     >
@@ -150,7 +161,7 @@ const statusVariant: Record<string, 'default' | 'secondary' | 'destructive'> = {
                         </td>
                     </tr>
 
-                    <tr v-if="refundRequests.length === 0">
+                    <tr v-if="refundRequests.data.length === 0">
                         <td
                             class="p-6 text-center text-muted-foreground"
                             colspan="6"
@@ -160,6 +171,31 @@ const statusVariant: Record<string, 'default' | 'secondary' | 'destructive'> = {
                     </tr>
                 </tbody>
             </table>
+        </div>
+
+        <div
+            v-if="refundRequests.links.length > 3"
+            class="flex flex-wrap items-center justify-center gap-1"
+        >
+            <template v-for="(link, index) in refundRequests.links" :key="index">
+                <span
+                    v-if="!link.url"
+                    class="rounded-md px-3 py-1.5 text-sm text-muted-foreground"
+                    v-html="link.label"
+                />
+                <Link
+                    v-else
+                    :href="link.url"
+                    preserve-scroll
+                    class="rounded-md px-3 py-1.5 text-sm"
+                    :class="
+                        link.active
+                            ? 'bg-primary text-primary-foreground'
+                            : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
+                    "
+                    v-html="link.label"
+                />
+            </template>
         </div>
     </div>
 </template>

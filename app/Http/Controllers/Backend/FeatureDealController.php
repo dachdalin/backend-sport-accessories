@@ -22,7 +22,7 @@ class FeatureDealController extends Controller
     public function index(): Response
     {
         return Inertia::render('feature-deals/Index', [
-            'featureDeals' => FeatureDeal::query()->latest()->get(),
+            'featureDeals' => FeatureDeal::query()->latest()->paginate(15)->withQueryString(),
         ]);
     }
 

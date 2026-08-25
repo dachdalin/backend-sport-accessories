@@ -22,7 +22,7 @@ class CustomerController extends Controller
     public function index(): Response
     {
         return Inertia::render('customers/Index', [
-            'customers' => Customer::query()->latest()->get(),
+            'customers' => Customer::query()->latest()->paginate(15)->withQueryString(),
         ]);
     }
 

@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Models\Customer;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Inertia\Testing\AssertableInertia as Assert;
 use Tests\TestCase;
 
 class CustomerControllerTest extends TestCase
@@ -20,7 +21,29 @@ class CustomerControllerTest extends TestCase
             ->actingAs($user)
             ->get(route('customers.index'));
 
-        $response->assertOk();
+        $response
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('customers/Index')
+                ->has('customers.data', 3),
+            );
+    }
+
+    public function test_customers_index_page_is_paginated(): void
+    {
+        $user = User::factory()->create();
+        Customer::factory()->count(16)->create();
+
+        $response = $this
+            ->actingAs($user)
+            ->get(route('customers.index'));
+
+        $response
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('customers/Index')
+                ->has('customers.data', 15),
+            );
     }
 
     public function test_customer_create_page_is_displayed(): void

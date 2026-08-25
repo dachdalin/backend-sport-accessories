@@ -27,7 +27,8 @@ class RefundRequestController extends Controller
             'refundRequests' => RefundRequest::query()
                 ->with(['order:id,order_number,customer_name', 'orderItem:id,product_name'])
                 ->latest()
-                ->get(),
+                ->paginate(15)
+                ->withQueryString(),
         ]);
     }
 

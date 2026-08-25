@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Models\FeatureDeal;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Inertia\Testing\AssertableInertia as Assert;
 use Tests\TestCase;
 
 class FeatureDealControllerTest extends TestCase
@@ -20,7 +21,29 @@ class FeatureDealControllerTest extends TestCase
             ->actingAs($user)
             ->get(route('feature-deals.index'));
 
-        $response->assertOk();
+        $response
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('feature-deals/Index')
+                ->has('featureDeals.data', 3),
+            );
+    }
+
+    public function test_feature_deals_index_page_is_paginated(): void
+    {
+        $user = User::factory()->create();
+        FeatureDeal::factory()->count(16)->create();
+
+        $response = $this
+            ->actingAs($user)
+            ->get(route('feature-deals.index'));
+
+        $response
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('feature-deals/Index')
+                ->has('featureDeals.data', 15),
+            );
     }
 
     public function test_feature_deal_create_page_is_displayed(): void

@@ -7,6 +7,7 @@ use App\Models\OrderItem;
 use App\Models\RefundRequest;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Inertia\Testing\AssertableInertia as Assert;
 use Tests\TestCase;
 
 class RefundRequestControllerTest extends TestCase
@@ -22,7 +23,29 @@ class RefundRequestControllerTest extends TestCase
             ->actingAs($user)
             ->get(route('refund-requests.index'));
 
-        $response->assertOk();
+        $response
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('refund-requests/Index')
+                ->has('refundRequests.data', 3),
+            );
+    }
+
+    public function test_refund_requests_index_page_is_paginated(): void
+    {
+        $user = User::factory()->create();
+        RefundRequest::factory()->count(16)->create();
+
+        $response = $this
+            ->actingAs($user)
+            ->get(route('refund-requests.index'));
+
+        $response
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('refund-requests/Index')
+                ->has('refundRequests.data', 15),
+            );
     }
 
     public function test_refund_request_create_page_is_displayed(): void
