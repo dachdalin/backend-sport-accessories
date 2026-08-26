@@ -1,9 +1,11 @@
 <script setup lang="ts">
-import { Form, Head } from '@inertiajs/vue3';
+import { Form, Head, Link } from '@inertiajs/vue3';
+import { onBeforeUnmount, ref, computed } from 'vue';
 import ProductController from '@/actions/App/Http/Controllers/Backend/ProductController';
 import ProductImageController from '@/actions/App/Http/Controllers/Backend/ProductImageController';
 import Heading from '@/components/Heading.vue';
 import InputError from '@/components/InputError.vue';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
@@ -15,6 +17,8 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
+import { Separator } from '@/components/ui/separator';
+import { Spinner } from '@/components/ui/spinner';
 import { Textarea } from '@/components/ui/textarea';
 import { edit, index } from '@/routes/products';
 
@@ -52,7 +56,7 @@ type ProductImage = {
     image: string;
 };
 
-defineProps<{
+const props = defineProps<{
     product: Product;
     images: ProductImage[];
     categories: SelectOption[];
@@ -74,6 +78,48 @@ defineOptions({
         ],
     }),
 });
+
+const thumbnailPreview = ref<string>(`/storage/${props.product.thumbnail}`);
+const uploadedThumbnailPreview = ref<string | null>(null);
+
+function onThumbnailChange(event: Event): void {
+    const file = (event.target as HTMLInputElement).files?.[0];
+
+    if (uploadedThumbnailPreview.value) {
+        URL.revokeObjectURL(uploadedThumbnailPreview.value);
+    }
+
+    uploadedThumbnailPreview.value = file ? URL.createObjectURL(file) : null;
+}
+
+onBeforeUnmount(() => {
+    if (uploadedThumbnailPreview.value) {
+        URL.revokeObjectURL(uploadedThumbnailPreview.value);
+    }
+});
+
+const unitPrice = ref(props.product.unit_price);
+const discount = ref(props.product.discount);
+const discountType = ref(props.product.discount_type ?? 'percent');
+
+const unitPriceNumber = computed(() => parseFloat(unitPrice.value) || 0);
+const discountNumber = computed(() => parseFloat(discount.value) || 0);
+const hasDiscount = computed(
+    () => unitPriceNumber.value > 0 && discountNumber.value > 0,
+);
+const finalPrice = computed(() => {
+    if (discountNumber.value <= 0) {
+        return unitPriceNumber.value;
+    }
+
+    const reduced =
+        discountType.value === 'percent'
+            ? unitPriceNumber.value -
+              (unitPriceNumber.value * discountNumber.value) / 100
+            : unitPriceNumber.value - discountNumber.value;
+
+    return Math.max(0, reduced);
+});
 </script>
 
 <template>
@@ -90,6 +136,12 @@ defineOptions({
             class="max-w-xl space-y-6"
             v-slot="{ errors, processing }"
         >
+            <Heading
+                variant="small"
+                title="Basic info"
+                description="What the product is called and how it's described."
+            />
+
             <div class="grid gap-2">
                 <Label for="name">Name</Label>
                 <Input
@@ -125,21 +177,40 @@ defineOptions({
                 <InputError :message="errors.description" />
             </div>
 
+            <Separator />
+
+            <Heading
+                variant="small"
+                title="Media"
+                description="Replacing the thumbnail swaps what's shown in listings."
+            />
+
             <div class="grid gap-2">
-                <img
-                    :src="`/storage/${product.thumbnail}`"
-                    :alt="product.name"
-                    class="size-16 rounded object-cover"
-                />
-                <Label for="thumbnail">Replace thumbnail</Label>
-                <Input
-                    id="thumbnail"
-                    name="thumbnail"
-                    type="file"
-                    accept="image/*"
-                />
+                <Label for="thumbnail">Thumbnail</Label>
+                <div class="flex items-center gap-3">
+                    <img
+                        :src="uploadedThumbnailPreview ?? thumbnailPreview"
+                        :alt="product.name"
+                        class="size-16 shrink-0 rounded-md border border-input object-cover"
+                    />
+                    <Input
+                        id="thumbnail"
+                        name="thumbnail"
+                        type="file"
+                        accept="image/*"
+                        @change="onThumbnailChange"
+                    />
+                </div>
                 <InputError :message="errors.thumbnail" />
             </div>
+
+            <Separator />
+
+            <Heading
+                variant="small"
+                title="Pricing & inventory"
+                description="What it costs, what it's sold for, and how much is in stock."
+            />
 
             <div class="grid grid-cols-2 gap-4">
                 <div class="grid gap-2">
@@ -151,7 +222,7 @@ defineOptions({
                         step="0.01"
                         min="0"
                         required
-                        :default-value="product.unit_price"
+                        v-model="unitPrice"
                     />
                     <InputError :message="errors.unit_price" />
                 </div>
@@ -167,80 +238,6 @@ defineOptions({
                         :default-value="product.purchase_price ?? ''"
                     />
                     <InputError :message="errors.purchase_price" />
-                </div>
-            </div>
-
-            <div class="grid grid-cols-2 gap-4">
-                <div class="grid gap-2">
-                    <Label for="current_stock">Current stock</Label>
-                    <Input
-                        id="current_stock"
-                        name="current_stock"
-                        type="number"
-                        min="0"
-                        required
-                        :default-value="String(product.current_stock)"
-                    />
-                    <InputError :message="errors.current_stock" />
-                </div>
-
-                <div class="grid gap-2">
-                    <Label for="minimum_order_qty">Min. order qty</Label>
-                    <Input
-                        id="minimum_order_qty"
-                        name="minimum_order_qty"
-                        type="number"
-                        min="1"
-                        required
-                        :default-value="String(product.minimum_order_qty)"
-                    />
-                    <InputError :message="errors.minimum_order_qty" />
-                </div>
-            </div>
-
-            <div class="grid grid-cols-2 gap-4">
-                <div class="grid gap-2">
-                    <Label for="category_id">Category</Label>
-                    <Select
-                        name="category_id"
-                        :default-value="product.category_id ? String(product.category_id) : undefined"
-                    >
-                        <SelectTrigger id="category_id" class="w-full">
-                            <SelectValue placeholder="Select category" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem
-                                v-for="option in categories"
-                                :key="option.value"
-                                :value="String(option.value)"
-                            >
-                                {{ option.label }}
-                            </SelectItem>
-                        </SelectContent>
-                    </Select>
-                    <InputError :message="errors.category_id" />
-                </div>
-
-                <div class="grid gap-2">
-                    <Label for="brand_id">Brand</Label>
-                    <Select
-                        name="brand_id"
-                        :default-value="product.brand_id ? String(product.brand_id) : undefined"
-                    >
-                        <SelectTrigger id="brand_id" class="w-full">
-                            <SelectValue placeholder="Select brand" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem
-                                v-for="option in brands"
-                                :key="option.value"
-                                :value="String(option.value)"
-                            >
-                                {{ option.label }}
-                            </SelectItem>
-                        </SelectContent>
-                    </Select>
-                    <InputError :message="errors.brand_id" />
                 </div>
             </div>
 
@@ -290,17 +287,14 @@ defineOptions({
                         type="number"
                         step="0.01"
                         min="0"
-                        :default-value="product.discount"
+                        v-model="discount"
                     />
                     <InputError :message="errors.discount" />
                 </div>
 
                 <div class="grid gap-2">
                     <Label for="discount_type">Discount type</Label>
-                    <Select
-                        name="discount_type"
-                        :default-value="product.discount_type ?? undefined"
-                    >
+                    <Select name="discount_type" v-model="discountType">
                         <SelectTrigger id="discount_type" class="w-full">
                             <SelectValue placeholder="Select type" />
                         </SelectTrigger>
@@ -317,6 +311,190 @@ defineOptions({
                     <InputError :message="errors.discount_type" />
                 </div>
             </div>
+
+            <div
+                v-if="unitPriceNumber > 0"
+                class="flex flex-wrap items-center gap-3 rounded-lg border border-dashed border-input p-3"
+            >
+                <span class="text-lg font-semibold"
+                    >${{ finalPrice.toFixed(2) }}</span
+                >
+                <span
+                    v-if="hasDiscount"
+                    class="text-sm text-muted-foreground line-through"
+                    >${{ unitPriceNumber.toFixed(2) }}</span
+                >
+                <Badge v-if="hasDiscount" variant="secondary">
+                    {{
+                        discountType === 'percent'
+                            ? `${discountNumber}% off`
+                            : `$${discountNumber.toFixed(2)} off`
+                    }}
+                </Badge>
+                <span class="w-full text-xs text-muted-foreground">
+                    Price shown to customers after your discount.
+                </span>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+                <div class="grid gap-2">
+                    <Label for="current_stock">Current stock</Label>
+                    <Input
+                        id="current_stock"
+                        name="current_stock"
+                        type="number"
+                        min="0"
+                        required
+                        :default-value="String(product.current_stock)"
+                    />
+                    <InputError :message="errors.current_stock" />
+                </div>
+
+                <div class="grid gap-2">
+                    <Label for="minimum_order_qty">Min. order qty</Label>
+                    <Input
+                        id="minimum_order_qty"
+                        name="minimum_order_qty"
+                        type="number"
+                        min="1"
+                        required
+                        :default-value="String(product.minimum_order_qty)"
+                    />
+                    <InputError :message="errors.minimum_order_qty" />
+                </div>
+            </div>
+
+            <Separator />
+
+            <Heading
+                variant="small"
+                title="Organization"
+                description="Where this product lives in your catalog."
+            />
+
+            <div class="grid grid-cols-2 gap-4">
+                <div class="grid gap-2">
+                    <Label for="category_id">Category</Label>
+                    <Select
+                        name="category_id"
+                        :default-value="
+                            product.category_id
+                                ? String(product.category_id)
+                                : undefined
+                        "
+                    >
+                        <SelectTrigger id="category_id" class="w-full">
+                            <SelectValue placeholder="Select category" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem
+                                v-for="option in categories"
+                                :key="option.value"
+                                :value="String(option.value)"
+                            >
+                                {{ option.label }}
+                            </SelectItem>
+                        </SelectContent>
+                    </Select>
+                    <InputError :message="errors.category_id" />
+                </div>
+
+                <div class="grid gap-2">
+                    <Label for="brand_id">Brand</Label>
+                    <Select
+                        name="brand_id"
+                        :default-value="
+                            product.brand_id
+                                ? String(product.brand_id)
+                                : undefined
+                        "
+                    >
+                        <SelectTrigger id="brand_id" class="w-full">
+                            <SelectValue placeholder="Select brand" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem
+                                v-for="option in brands"
+                                :key="option.value"
+                                :value="String(option.value)"
+                            >
+                                {{ option.label }}
+                            </SelectItem>
+                        </SelectContent>
+                    </Select>
+                    <InputError :message="errors.brand_id" />
+                </div>
+            </div>
+
+            <Separator />
+
+            <Heading
+                variant="small"
+                title="Visibility"
+                description="How this product behaves in the storefront."
+            />
+
+            <div class="grid gap-2 sm:grid-cols-2">
+                <label
+                    for="status"
+                    class="flex cursor-pointer items-center gap-3 rounded-lg border border-input px-3 py-2.5 transition-colors has-[[data-state=checked]]:border-primary has-[[data-state=checked]]:bg-primary/5"
+                >
+                    <Checkbox
+                        id="status"
+                        name="status"
+                        :default-value="product.status"
+                    />
+                    <span class="text-sm font-medium">Active</span>
+                </label>
+
+                <label
+                    for="featured"
+                    class="flex cursor-pointer items-center gap-3 rounded-lg border border-input px-3 py-2.5 transition-colors has-[[data-state=checked]]:border-primary has-[[data-state=checked]]:bg-primary/5"
+                >
+                    <Checkbox
+                        id="featured"
+                        name="featured"
+                        :default-value="product.featured"
+                    />
+                    <span class="text-sm font-medium">Featured</span>
+                </label>
+
+                <label
+                    for="free_shipping"
+                    class="flex cursor-pointer items-center gap-3 rounded-lg border border-input px-3 py-2.5 transition-colors has-[[data-state=checked]]:border-primary has-[[data-state=checked]]:bg-primary/5"
+                >
+                    <Checkbox
+                        id="free_shipping"
+                        name="free_shipping"
+                        :default-value="product.free_shipping"
+                    />
+                    <span class="text-sm font-medium">Free shipping</span>
+                </label>
+
+                <label
+                    for="refundable"
+                    class="flex cursor-pointer items-center gap-3 rounded-lg border border-input px-3 py-2.5 transition-colors has-[[data-state=checked]]:border-primary has-[[data-state=checked]]:bg-primary/5"
+                >
+                    <Checkbox
+                        id="refundable"
+                        name="refundable"
+                        :default-value="product.refundable"
+                    />
+                    <span class="text-sm font-medium">Refundable</span>
+                </label>
+            </div>
+            <InputError :message="errors.free_shipping" />
+            <InputError :message="errors.refundable" />
+            <InputError :message="errors.featured" />
+            <InputError :message="errors.status" />
+
+            <Separator />
+
+            <Heading
+                variant="small"
+                title="Search visibility"
+                description="Optional. Controls how this product looks in search engine results."
+            />
 
             <div class="grid gap-2">
                 <Label for="meta_title">Meta title</Label>
@@ -341,55 +519,24 @@ defineOptions({
                 <InputError :message="errors.meta_description" />
             </div>
 
-            <div class="flex flex-col gap-3">
-                <div class="flex items-center gap-2">
-                    <Checkbox
-                        id="free_shipping"
-                        name="free_shipping"
-                        :default-value="product.free_shipping"
-                    />
-                    <Label for="free_shipping">Free shipping</Label>
-                    <InputError :message="errors.free_shipping" />
-                </div>
+            <Separator />
 
-                <div class="flex items-center gap-2">
-                    <Checkbox
-                        id="refundable"
-                        name="refundable"
-                        :default-value="product.refundable"
-                    />
-                    <Label for="refundable">Refundable</Label>
-                    <InputError :message="errors.refundable" />
-                </div>
-
-                <div class="flex items-center gap-2">
-                    <Checkbox
-                        id="featured"
-                        name="featured"
-                        :default-value="product.featured"
-                    />
-                    <Label for="featured">Featured</Label>
-                    <InputError :message="errors.featured" />
-                </div>
-
-                <div class="flex items-center gap-2">
-                    <Checkbox
-                        id="status"
-                        name="status"
-                        :default-value="product.status"
-                    />
-                    <Label for="status">Active</Label>
-                    <InputError :message="errors.status" />
-                </div>
-            </div>
-
-            <div class="flex items-center gap-4">
-                <Button :disabled="processing">Save product</Button>
+            <div class="flex items-center gap-3">
+                <Button :disabled="processing">
+                    <Spinner v-if="processing" />
+                    Save product
+                </Button>
+                <Button variant="outline" as-child>
+                    <Link :href="index()">Cancel</Link>
+                </Button>
             </div>
         </Form>
 
         <div class="max-w-xl space-y-4">
-            <Heading title="Gallery" description="Extra images shown on the product page" />
+            <Heading
+                title="Gallery"
+                description="Extra images shown on the product page"
+            />
 
             <div v-if="images.length" class="grid grid-cols-4 gap-3">
                 <div
@@ -403,7 +550,9 @@ defineOptions({
                         class="aspect-square w-full rounded object-cover"
                     />
                     <Form
-                        v-bind="ProductImageController.destroy.form(galleryImage)"
+                        v-bind="
+                            ProductImageController.destroy.form(galleryImage)
+                        "
                         v-slot="{ processing: destroying }"
                     >
                         <Button
@@ -425,10 +574,21 @@ defineOptions({
                 class="grid gap-2"
             >
                 <Label for="image">Add image</Label>
-                <Input id="image" name="image" type="file" accept="image/*" required />
+                <Input
+                    id="image"
+                    name="image"
+                    type="file"
+                    accept="image/*"
+                    required
+                />
                 <InputError :message="errors.image" />
                 <div>
-                    <Button :disabled="uploading" type="submit" variant="outline">Upload</Button>
+                    <Button
+                        :disabled="uploading"
+                        type="submit"
+                        variant="outline"
+                        >Upload</Button
+                    >
                 </div>
             </Form>
         </div>

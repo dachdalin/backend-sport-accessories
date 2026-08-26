@@ -1,8 +1,10 @@
 <script setup lang="ts">
-import { Form, Head } from '@inertiajs/vue3';
+import { Form, Head, Link } from '@inertiajs/vue3';
+import { onBeforeUnmount, ref, computed } from 'vue';
 import ProductController from '@/actions/App/Http/Controllers/Backend/ProductController';
 import Heading from '@/components/Heading.vue';
 import InputError from '@/components/InputError.vue';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
@@ -14,6 +16,8 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
+import { Separator } from '@/components/ui/separator';
+import { Spinner } from '@/components/ui/spinner';
 import { Textarea } from '@/components/ui/textarea';
 import { create, index } from '@/routes/products';
 
@@ -42,6 +46,57 @@ defineOptions({
         ],
     },
 });
+
+const thumbnailPreview = ref<string | null>(null);
+const galleryPreviews = ref<string[]>([]);
+
+function onThumbnailChange(event: Event): void {
+    const file = (event.target as HTMLInputElement).files?.[0];
+
+    if (thumbnailPreview.value) {
+        URL.revokeObjectURL(thumbnailPreview.value);
+    }
+
+    thumbnailPreview.value = file ? URL.createObjectURL(file) : null;
+}
+
+function onGalleryChange(event: Event): void {
+    galleryPreviews.value.forEach((url) => URL.revokeObjectURL(url));
+
+    const files = [...((event.target as HTMLInputElement).files ?? [])];
+    galleryPreviews.value = files.map((file) => URL.createObjectURL(file));
+}
+
+onBeforeUnmount(() => {
+    if (thumbnailPreview.value) {
+        URL.revokeObjectURL(thumbnailPreview.value);
+    }
+
+    galleryPreviews.value.forEach((url) => URL.revokeObjectURL(url));
+});
+
+const unitPrice = ref('');
+const discount = ref('0');
+const discountType = ref('percent');
+
+const unitPriceNumber = computed(() => parseFloat(unitPrice.value) || 0);
+const discountNumber = computed(() => parseFloat(discount.value) || 0);
+const hasDiscount = computed(
+    () => unitPriceNumber.value > 0 && discountNumber.value > 0,
+);
+const finalPrice = computed(() => {
+    if (discountNumber.value <= 0) {
+        return unitPriceNumber.value;
+    }
+
+    const reduced =
+        discountType.value === 'percent'
+            ? unitPriceNumber.value -
+              (unitPriceNumber.value * discountNumber.value) / 100
+            : unitPriceNumber.value - discountNumber.value;
+
+    return Math.max(0, reduced);
+});
 </script>
 
 <template>
@@ -58,6 +113,12 @@ defineOptions({
             class="max-w-xl space-y-6"
             v-slot="{ errors, processing }"
         >
+            <Heading
+                variant="small"
+                title="Basic info"
+                description="What the product is called and how it's described."
+            />
+
             <div class="grid gap-2">
                 <Label for="name">Name</Label>
                 <Input
@@ -72,11 +133,7 @@ defineOptions({
 
             <div class="grid gap-2">
                 <Label for="code">SKU / Code</Label>
-                <Input
-                    id="code"
-                    name="code"
-                    placeholder="SKU-0001"
-                />
+                <Input id="code" name="code" placeholder="SKU-0001" />
                 <InputError :message="errors.code" />
             </div>
 
@@ -91,14 +148,37 @@ defineOptions({
                 <InputError :message="errors.description" />
             </div>
 
+            <Separator />
+
+            <Heading
+                variant="small"
+                title="Media"
+                description="The thumbnail is shown in listings; gallery images appear on the product page."
+            />
+
             <div class="grid gap-2">
                 <Label for="thumbnail">Thumbnail</Label>
-                <Input
-                    id="thumbnail"
-                    name="thumbnail"
-                    type="file"
-                    accept="image/*"
-                />
+                <div class="flex items-center gap-3">
+                    <img
+                        v-if="thumbnailPreview"
+                        :src="thumbnailPreview"
+                        alt="Thumbnail preview"
+                        class="size-16 shrink-0 rounded-md border border-input object-cover"
+                    />
+                    <div
+                        v-else
+                        class="flex size-16 shrink-0 items-center justify-center rounded-md border border-dashed border-input text-xs text-muted-foreground"
+                    >
+                        No image
+                    </div>
+                    <Input
+                        id="thumbnail"
+                        name="thumbnail"
+                        type="file"
+                        accept="image/*"
+                        @change="onThumbnailChange"
+                    />
+                </div>
                 <InputError :message="errors.thumbnail" />
             </div>
 
@@ -110,9 +190,30 @@ defineOptions({
                     type="file"
                     accept="image/*"
                     multiple
+                    @change="onGalleryChange"
                 />
+                <div
+                    v-if="galleryPreviews.length"
+                    class="grid grid-cols-5 gap-2"
+                >
+                    <img
+                        v-for="(url, index) in galleryPreviews"
+                        :key="index"
+                        :src="url"
+                        alt="Gallery preview"
+                        class="aspect-square rounded-md border border-input object-cover"
+                    />
+                </div>
                 <InputError :message="errors.images" />
             </div>
+
+            <Separator />
+
+            <Heading
+                variant="small"
+                title="Pricing & inventory"
+                description="What it costs, what it's sold for, and how much is in stock."
+            />
 
             <div class="grid grid-cols-2 gap-4">
                 <div class="grid gap-2">
@@ -125,6 +226,7 @@ defineOptions({
                         min="0"
                         required
                         placeholder="0.00"
+                        v-model="unitPrice"
                     />
                     <InputError :message="errors.unit_price" />
                 </div>
@@ -140,74 +242,6 @@ defineOptions({
                         placeholder="0.00"
                     />
                     <InputError :message="errors.purchase_price" />
-                </div>
-            </div>
-
-            <div class="grid grid-cols-2 gap-4">
-                <div class="grid gap-2">
-                    <Label for="current_stock">Current stock</Label>
-                    <Input
-                        id="current_stock"
-                        name="current_stock"
-                        type="number"
-                        min="0"
-                        required
-                        default-value="0"
-                    />
-                    <InputError :message="errors.current_stock" />
-                </div>
-
-                <div class="grid gap-2">
-                    <Label for="minimum_order_qty">Min. order qty</Label>
-                    <Input
-                        id="minimum_order_qty"
-                        name="minimum_order_qty"
-                        type="number"
-                        min="1"
-                        required
-                        default-value="1"
-                    />
-                    <InputError :message="errors.minimum_order_qty" />
-                </div>
-            </div>
-
-            <div class="grid grid-cols-2 gap-4">
-                <div class="grid gap-2">
-                    <Label for="category_id">Category</Label>
-                    <Select name="category_id">
-                        <SelectTrigger id="category_id" class="w-full">
-                            <SelectValue placeholder="Select category" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem
-                                v-for="option in categories"
-                                :key="option.value"
-                                :value="String(option.value)"
-                            >
-                                {{ option.label }}
-                            </SelectItem>
-                        </SelectContent>
-                    </Select>
-                    <InputError :message="errors.category_id" />
-                </div>
-
-                <div class="grid gap-2">
-                    <Label for="brand_id">Brand</Label>
-                    <Select name="brand_id">
-                        <SelectTrigger id="brand_id" class="w-full">
-                            <SelectValue placeholder="Select brand" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem
-                                v-for="option in brands"
-                                :key="option.value"
-                                :value="String(option.value)"
-                            >
-                                {{ option.label }}
-                            </SelectItem>
-                        </SelectContent>
-                    </Select>
-                    <InputError :message="errors.brand_id" />
                 </div>
             </div>
 
@@ -255,13 +289,14 @@ defineOptions({
                         step="0.01"
                         min="0"
                         placeholder="0.00"
+                        v-model="discount"
                     />
                     <InputError :message="errors.discount" />
                 </div>
 
                 <div class="grid gap-2">
                     <Label for="discount_type">Discount type</Label>
-                    <Select name="discount_type">
+                    <Select name="discount_type" v-model="discountType">
                         <SelectTrigger id="discount_type" class="w-full">
                             <SelectValue placeholder="Select type" />
                         </SelectTrigger>
@@ -278,6 +313,164 @@ defineOptions({
                     <InputError :message="errors.discount_type" />
                 </div>
             </div>
+
+            <div
+                v-if="unitPriceNumber > 0"
+                class="flex flex-wrap items-center gap-3 rounded-lg border border-dashed border-input p-3"
+            >
+                <span class="text-lg font-semibold"
+                    >${{ finalPrice.toFixed(2) }}</span
+                >
+                <span
+                    v-if="hasDiscount"
+                    class="text-sm text-muted-foreground line-through"
+                    >${{ unitPriceNumber.toFixed(2) }}</span
+                >
+                <Badge v-if="hasDiscount" variant="secondary">
+                    {{
+                        discountType === 'percent'
+                            ? `${discountNumber}% off`
+                            : `$${discountNumber.toFixed(2)} off`
+                    }}
+                </Badge>
+                <span class="w-full text-xs text-muted-foreground">
+                    Price shown to customers after your discount.
+                </span>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+                <div class="grid gap-2">
+                    <Label for="current_stock">Current stock</Label>
+                    <Input
+                        id="current_stock"
+                        name="current_stock"
+                        type="number"
+                        min="0"
+                        required
+                        default-value="0"
+                    />
+                    <InputError :message="errors.current_stock" />
+                </div>
+
+                <div class="grid gap-2">
+                    <Label for="minimum_order_qty">Min. order qty</Label>
+                    <Input
+                        id="minimum_order_qty"
+                        name="minimum_order_qty"
+                        type="number"
+                        min="1"
+                        required
+                        default-value="1"
+                    />
+                    <InputError :message="errors.minimum_order_qty" />
+                </div>
+            </div>
+
+            <Separator />
+
+            <Heading
+                variant="small"
+                title="Organization"
+                description="Where this product lives in your catalog."
+            />
+
+            <div class="grid grid-cols-2 gap-4">
+                <div class="grid gap-2">
+                    <Label for="category_id">Category</Label>
+                    <Select name="category_id">
+                        <SelectTrigger id="category_id" class="w-full">
+                            <SelectValue placeholder="Select category" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem
+                                v-for="option in categories"
+                                :key="option.value"
+                                :value="String(option.value)"
+                            >
+                                {{ option.label }}
+                            </SelectItem>
+                        </SelectContent>
+                    </Select>
+                    <InputError :message="errors.category_id" />
+                </div>
+
+                <div class="grid gap-2">
+                    <Label for="brand_id">Brand</Label>
+                    <Select name="brand_id">
+                        <SelectTrigger id="brand_id" class="w-full">
+                            <SelectValue placeholder="Select brand" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem
+                                v-for="option in brands"
+                                :key="option.value"
+                                :value="String(option.value)"
+                            >
+                                {{ option.label }}
+                            </SelectItem>
+                        </SelectContent>
+                    </Select>
+                    <InputError :message="errors.brand_id" />
+                </div>
+            </div>
+
+            <Separator />
+
+            <Heading
+                variant="small"
+                title="Visibility"
+                description="How this product behaves in the storefront."
+            />
+
+            <div class="grid gap-2 sm:grid-cols-2">
+                <label
+                    for="status"
+                    class="flex cursor-pointer items-center gap-3 rounded-lg border border-input px-3 py-2.5 transition-colors has-[[data-state=checked]]:border-primary has-[[data-state=checked]]:bg-primary/5"
+                >
+                    <Checkbox id="status" name="status" :default-value="true" />
+                    <span class="text-sm font-medium">Active</span>
+                </label>
+
+                <label
+                    for="featured"
+                    class="flex cursor-pointer items-center gap-3 rounded-lg border border-input px-3 py-2.5 transition-colors has-[[data-state=checked]]:border-primary has-[[data-state=checked]]:bg-primary/5"
+                >
+                    <Checkbox id="featured" name="featured" />
+                    <span class="text-sm font-medium">Featured</span>
+                </label>
+
+                <label
+                    for="free_shipping"
+                    class="flex cursor-pointer items-center gap-3 rounded-lg border border-input px-3 py-2.5 transition-colors has-[[data-state=checked]]:border-primary has-[[data-state=checked]]:bg-primary/5"
+                >
+                    <Checkbox id="free_shipping" name="free_shipping" />
+                    <span class="text-sm font-medium">Free shipping</span>
+                </label>
+
+                <label
+                    for="refundable"
+                    class="flex cursor-pointer items-center gap-3 rounded-lg border border-input px-3 py-2.5 transition-colors has-[[data-state=checked]]:border-primary has-[[data-state=checked]]:bg-primary/5"
+                >
+                    <Checkbox
+                        id="refundable"
+                        name="refundable"
+                        :default-value="true"
+                    />
+                    <span class="text-sm font-medium">Refundable</span>
+                </label>
+            </div>
+            <InputError :message="errors.free_shipping" />
+            <InputError :message="errors.refundable" />
+            <InputError :message="errors.featured" />
+            <InputError :message="errors.status" />
+
+            <Separator />
+
+            <Heading
+                variant="small"
+                title="Search visibility"
+                description="Optional. Controls how this product looks in search engine results."
+            />
 
             <div class="grid gap-2">
                 <Label for="meta_title">Meta title</Label>
@@ -300,48 +493,16 @@ defineOptions({
                 <InputError :message="errors.meta_description" />
             </div>
 
-            <div class="flex flex-col gap-3">
-                <div class="flex items-center gap-2">
-                    <Checkbox
-                        id="free_shipping"
-                        name="free_shipping"
-                    />
-                    <Label for="free_shipping">Free shipping</Label>
-                    <InputError :message="errors.free_shipping" />
-                </div>
+            <Separator />
 
-                <div class="flex items-center gap-2">
-                    <Checkbox
-                        id="refundable"
-                        name="refundable"
-                        :default-value="true"
-                    />
-                    <Label for="refundable">Refundable</Label>
-                    <InputError :message="errors.refundable" />
-                </div>
-
-                <div class="flex items-center gap-2">
-                    <Checkbox
-                        id="featured"
-                        name="featured"
-                    />
-                    <Label for="featured">Featured</Label>
-                    <InputError :message="errors.featured" />
-                </div>
-
-                <div class="flex items-center gap-2">
-                    <Checkbox
-                        id="status"
-                        name="status"
-                        :default-value="true"
-                    />
-                    <Label for="status">Active</Label>
-                    <InputError :message="errors.status" />
-                </div>
-            </div>
-
-            <div class="flex items-center gap-4">
-                <Button :disabled="processing">Create product</Button>
+            <div class="flex items-center gap-3">
+                <Button :disabled="processing">
+                    <Spinner v-if="processing" />
+                    Create product
+                </Button>
+                <Button variant="outline" as-child>
+                    <Link :href="index()">Cancel</Link>
+                </Button>
             </div>
         </Form>
     </div>
