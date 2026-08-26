@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { Form, Head } from '@inertiajs/vue3';
+import { Form, Head, Link } from '@inertiajs/vue3';
+import { onBeforeUnmount, ref } from 'vue';
 import BrandController from '@/actions/App/Http/Controllers/Backend/BrandController';
 import Heading from '@/components/Heading.vue';
 import InputError from '@/components/InputError.vue';
@@ -7,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Spinner } from '@/components/ui/spinner';
 import { create, index } from '@/routes/brands';
 
 defineOptions({
@@ -22,6 +24,24 @@ defineOptions({
             },
         ],
     },
+});
+
+const imagePreview = ref<string | null>(null);
+
+function onImageChange(event: Event): void {
+    const file = (event.target as HTMLInputElement).files?.[0];
+
+    if (imagePreview.value) {
+        URL.revokeObjectURL(imagePreview.value);
+    }
+
+    imagePreview.value = file ? URL.createObjectURL(file) : null;
+}
+
+onBeforeUnmount(() => {
+    if (imagePreview.value) {
+        URL.revokeObjectURL(imagePreview.value);
+    }
 });
 </script>
 
@@ -50,7 +70,27 @@ defineOptions({
 
             <div class="grid gap-2">
                 <Label for="image">Image</Label>
-                <Input id="image" name="image" type="file" accept="image/*" />
+                <div class="flex items-center gap-3">
+                    <img
+                        v-if="imagePreview"
+                        :src="imagePreview"
+                        alt="Image preview"
+                        class="size-16 shrink-0 rounded-md border border-input object-cover"
+                    />
+                    <div
+                        v-else
+                        class="flex size-16 shrink-0 items-center justify-center rounded-md border border-dashed border-input text-xs text-muted-foreground"
+                    >
+                        No image
+                    </div>
+                    <Input
+                        id="image"
+                        name="image"
+                        type="file"
+                        accept="image/*"
+                        @change="onImageChange"
+                    />
+                </div>
                 <InputError :message="errors.image" />
             </div>
 
@@ -70,8 +110,14 @@ defineOptions({
                 <InputError :message="errors.status" />
             </div>
 
-            <div class="flex items-center gap-4">
-                <Button :disabled="processing">Create brand</Button>
+            <div class="flex items-center gap-3">
+                <Button :disabled="processing">
+                    <Spinner v-if="processing" />
+                    Create brand
+                </Button>
+                <Button variant="outline" as-child>
+                    <Link :href="index()">Cancel</Link>
+                </Button>
             </div>
         </Form>
     </div>
