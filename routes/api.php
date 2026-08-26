@@ -1,15 +1,18 @@
 <?php
 
 use App\Http\Controllers\Api\V1\Auth\AuthController;
+use App\Http\Controllers\Api\V1\BannerController;
 use App\Http\Controllers\Api\V1\BlogCategoryController;
 use App\Http\Controllers\Api\V1\BlogController;
 use App\Http\Controllers\Api\V1\BrandController;
 use App\Http\Controllers\Api\V1\CategoryController;
 use App\Http\Controllers\Api\V1\ContactController;
 use App\Http\Controllers\Api\V1\CouponController;
+use App\Http\Controllers\Api\V1\CurrencyController;
 use App\Http\Controllers\Api\V1\DeliveryZoneController;
 use App\Http\Controllers\Api\V1\FaqController;
 use App\Http\Controllers\Api\V1\FlashDealController;
+use App\Http\Controllers\Api\V1\GiftCardController;
 use App\Http\Controllers\Api\V1\HelpTopicController;
 use App\Http\Controllers\Api\V1\JobOpeningController;
 use App\Http\Controllers\Api\V1\NewsletterSubscriberController;
@@ -19,6 +22,7 @@ use App\Http\Controllers\Api\V1\ProductController;
 use App\Http\Controllers\Api\V1\ReviewController;
 use App\Http\Controllers\Api\V1\ShippingAddressController;
 use App\Http\Controllers\Api\V1\ShippingMethodController;
+use App\Http\Controllers\Api\V1\SocialMediaController;
 use App\Http\Controllers\Api\V1\StoreLocationController;
 use App\Http\Controllers\Api\V1\SupportTicketController;
 use App\Http\Controllers\Api\V1\TestimonialController;
@@ -40,6 +44,7 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
             ->name('logout');
     });
 
+    Route::apiResource('banners', BannerController::class)->only(['index', 'show']);
     Route::apiResource('brands', BrandController::class)->only(['index', 'show']);
     Route::apiResource('categories', CategoryController::class)->only(['index', 'show']);
     Route::apiResource('products', ProductController::class)->only(['index', 'show']);
@@ -55,11 +60,17 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
     Route::apiResource('shipping-methods', ShippingMethodController::class)->only(['index', 'show']);
     Route::apiResource('delivery-zones', DeliveryZoneController::class)->only(['index', 'show']);
     Route::apiResource('offline-payment-methods', OfflinePaymentMethodController::class)->only(['index', 'show']);
+    Route::apiResource('social-medias', SocialMediaController::class)->only(['index', 'show']);
+    Route::apiResource('currencies', CurrencyController::class)->only(['index', 'show']);
     Route::apiResource('products.reviews', ReviewController::class)->only(['index']);
 
     Route::post('coupons/apply', [CouponController::class, 'apply'])
         ->middleware('throttle:coupon-apply')
         ->name('coupons.apply');
+
+    Route::post('gift-cards/check', [GiftCardController::class, 'check'])
+        ->middleware('throttle:gift-card-check')
+        ->name('gift-cards.check');
 
     Route::post('contacts', [ContactController::class, 'store'])
         ->middleware('throttle:contact-store')

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Form, Head, Link } from '@inertiajs/vue3';
 import { Pencil, Plus, Trash2 } from '@lucide/vue';
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 import ColorController from '@/actions/App/Http/Controllers/Backend/ColorController';
 import Heading from '@/components/Heading.vue';
 import InputError from '@/components/InputError.vue';
@@ -18,6 +18,7 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Spinner } from '@/components/ui/spinner';
 import { index as colorsIndex } from '@/routes/colors';
 
 interface Color {
@@ -53,10 +54,19 @@ defineOptions({
 });
 
 const createOpen = ref(false);
+const createCode = ref('');
 const editingColor = ref<Color | null>(null);
+const editCode = ref('');
+
+watch(createOpen, (open) => {
+    if (open) {
+        createCode.value = '';
+    }
+});
 
 function openEdit(color: Color) {
     editingColor.value = color;
+    editCode.value = color.code;
 }
 </script>
 
@@ -105,12 +115,19 @@ function openEdit(color: Color) {
 
                         <div class="grid gap-2">
                             <Label for="create-code">Code</Label>
-                            <Input
-                                id="create-code"
-                                name="code"
-                                placeholder="#ff0000"
-                                required
-                            />
+                            <div class="flex items-center gap-3">
+                                <span
+                                    class="size-9 shrink-0 rounded-md border border-input bg-muted"
+                                    :style="{ backgroundColor: createCode }"
+                                />
+                                <Input
+                                    id="create-code"
+                                    name="code"
+                                    placeholder="#ff0000"
+                                    required
+                                    v-model="createCode"
+                                />
+                            </div>
                             <InputError :message="errors.code" />
                         </div>
 
@@ -119,6 +136,7 @@ function openEdit(color: Color) {
                                 <Button variant="secondary">Cancel</Button>
                             </DialogClose>
                             <Button type="submit" :disabled="processing">
+                                <Spinner v-if="processing" />
                                 Save
                             </Button>
                         </DialogFooter>
@@ -176,9 +194,7 @@ function openEdit(color: Color) {
                                             size="icon-sm"
                                         >
                                             <Trash2 />
-                                            <span class="sr-only"
-                                                >Delete</span
-                                            >
+                                            <span class="sr-only">Delete</span>
                                         </Button>
                                     </DialogTrigger>
                                     <DialogContent>
@@ -195,8 +211,9 @@ function openEdit(color: Color) {
                                         >
                                             <DialogHeader class="space-y-3">
                                                 <DialogTitle
-                                                    >Delete
-                                                    "{{ color.name }}"?</DialogTitle
+                                                    >Delete "{{
+                                                        color.name
+                                                    }}"?</DialogTitle
                                                 >
                                                 <DialogDescription>
                                                     This cannot be undone.
@@ -205,9 +222,7 @@ function openEdit(color: Color) {
 
                                             <DialogFooter class="gap-2">
                                                 <DialogClose as-child>
-                                                    <Button
-                                                        variant="secondary"
-                                                    >
+                                                    <Button variant="secondary">
                                                         Cancel
                                                     </Button>
                                                 </DialogClose>
@@ -216,6 +231,9 @@ function openEdit(color: Color) {
                                                     variant="destructive"
                                                     :disabled="processing"
                                                 >
+                                                    <Spinner
+                                                        v-if="processing"
+                                                    />
                                                     Delete
                                                 </Button>
                                             </DialogFooter>
@@ -297,12 +315,18 @@ function openEdit(color: Color) {
 
                     <div class="grid gap-2">
                         <Label for="edit-code">Code</Label>
-                        <Input
-                            id="edit-code"
-                            name="code"
-                            :default-value="editingColor.code"
-                            required
-                        />
+                        <div class="flex items-center gap-3">
+                            <span
+                                class="size-9 shrink-0 rounded-md border border-input bg-muted"
+                                :style="{ backgroundColor: editCode }"
+                            />
+                            <Input
+                                id="edit-code"
+                                name="code"
+                                required
+                                v-model="editCode"
+                            />
+                        </div>
                         <InputError :message="errors.code" />
                     </div>
 
@@ -311,6 +335,7 @@ function openEdit(color: Color) {
                             <Button variant="secondary">Cancel</Button>
                         </DialogClose>
                         <Button type="submit" :disabled="processing">
+                            <Spinner v-if="processing" />
                             Save
                         </Button>
                     </DialogFooter>

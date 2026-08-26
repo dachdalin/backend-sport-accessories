@@ -18,6 +18,7 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Spinner } from '@/components/ui/spinner';
 import { index as materialsIndex } from '@/routes/materials';
 
 interface Material {
@@ -119,6 +120,7 @@ function openEdit(material: Material) {
                                 <Button variant="secondary">Cancel</Button>
                             </DialogClose>
                             <Button type="submit" :disabled="processing">
+                                <Spinner v-if="processing" />
                                 Save
                             </Button>
                         </DialogFooter>
@@ -207,6 +209,9 @@ function openEdit(material: Material) {
                                                     variant="destructive"
                                                     :disabled="processing"
                                                 >
+                                                    <Spinner
+                                                        v-if="processing"
+                                                    />
                                                     Delete
                                                 </Button>
                                             </DialogFooter>

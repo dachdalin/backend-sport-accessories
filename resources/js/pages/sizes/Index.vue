@@ -18,6 +18,7 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Spinner } from '@/components/ui/spinner';
 import { index as sizesIndex } from '@/routes/sizes';
 
 interface Size {
@@ -119,6 +120,7 @@ function openEdit(size: Size) {
                                 <Button variant="secondary">Cancel</Button>
                             </DialogClose>
                             <Button type="submit" :disabled="processing">
+                                <Spinner v-if="processing" />
                                 Save
                             </Button>
                         </DialogFooter>
@@ -168,9 +170,7 @@ function openEdit(size: Size) {
                                             size="icon-sm"
                                         >
                                             <Trash2 />
-                                            <span class="sr-only"
-                                                >Delete</span
-                                            >
+                                            <span class="sr-only">Delete</span>
                                         </Button>
                                     </DialogTrigger>
                                     <DialogContent>
@@ -187,8 +187,9 @@ function openEdit(size: Size) {
                                         >
                                             <DialogHeader class="space-y-3">
                                                 <DialogTitle
-                                                    >Delete
-                                                    "{{ size.name }}"?</DialogTitle
+                                                    >Delete "{{
+                                                        size.name
+                                                    }}"?</DialogTitle
                                                 >
                                                 <DialogDescription>
                                                     This cannot be undone.
@@ -197,9 +198,7 @@ function openEdit(size: Size) {
 
                                             <DialogFooter class="gap-2">
                                                 <DialogClose as-child>
-                                                    <Button
-                                                        variant="secondary"
-                                                    >
+                                                    <Button variant="secondary">
                                                         Cancel
                                                     </Button>
                                                 </DialogClose>
@@ -208,6 +207,9 @@ function openEdit(size: Size) {
                                                     variant="destructive"
                                                     :disabled="processing"
                                                 >
+                                                    <Spinner
+                                                        v-if="processing"
+                                                    />
                                                     Delete
                                                 </Button>
                                             </DialogFooter>
