@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { Form, Head } from '@inertiajs/vue3';
+import { Form, Head, Link } from '@inertiajs/vue3';
+import { onBeforeUnmount, ref } from 'vue';
 import CategoryController from '@/actions/App/Http/Controllers/Backend/CategoryController';
 import Heading from '@/components/Heading.vue';
 import InputError from '@/components/InputError.vue';
@@ -14,6 +15,8 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
+import { Separator } from '@/components/ui/separator';
+import { Spinner } from '@/components/ui/spinner';
 import { edit, index } from '@/routes/categories';
 
 type Category = {
@@ -49,6 +52,25 @@ defineOptions({
         ],
     }),
 });
+
+const iconPreview = ref<string>(`/storage/${props.category.icon}`);
+const uploadedIconPreview = ref<string | null>(null);
+
+function onIconChange(event: Event): void {
+    const file = (event.target as HTMLInputElement).files?.[0];
+
+    if (uploadedIconPreview.value) {
+        URL.revokeObjectURL(uploadedIconPreview.value);
+    }
+
+    uploadedIconPreview.value = file ? URL.createObjectURL(file) : null;
+}
+
+onBeforeUnmount(() => {
+    if (uploadedIconPreview.value) {
+        URL.revokeObjectURL(uploadedIconPreview.value);
+    }
+});
 </script>
 
 <template>
@@ -65,6 +87,12 @@ defineOptions({
             class="max-w-xl space-y-6"
             v-slot="{ errors, processing }"
         >
+            <Heading
+                variant="small"
+                title="Basic info"
+                description="The name and icon shown throughout the storefront."
+            />
+
             <div class="grid gap-2">
                 <Label for="name">Name</Label>
                 <Input
@@ -78,15 +106,31 @@ defineOptions({
             </div>
 
             <div class="grid gap-2">
-                <img
-                    :src="`/storage/${category.icon}`"
-                    :alt="category.name"
-                    class="size-16 rounded object-cover"
-                />
-                <Label for="icon">Replace icon</Label>
-                <Input id="icon" name="icon" type="file" accept="image/*" />
+                <Label for="icon">Icon</Label>
+                <div class="flex items-center gap-3">
+                    <img
+                        :src="uploadedIconPreview ?? iconPreview"
+                        :alt="category.name"
+                        class="size-16 shrink-0 rounded-md border border-input object-cover"
+                    />
+                    <Input
+                        id="icon"
+                        name="icon"
+                        type="file"
+                        accept="image/*"
+                        @change="onIconChange"
+                    />
+                </div>
                 <InputError :message="errors.icon" />
             </div>
+
+            <Separator />
+
+            <Heading
+                variant="small"
+                title="Organization"
+                description="Where it sits in the catalog and how it's ordered."
+            />
 
             <div class="grid gap-2">
                 <Label for="parent_id">Parent category</Label>
@@ -123,6 +167,9 @@ defineOptions({
                     min="0"
                     :default-value="category.position"
                 />
+                <p class="text-sm text-muted-foreground">
+                    Lower numbers appear first.
+                </p>
                 <InputError :message="errors.position" />
             </div>
 
@@ -136,8 +183,16 @@ defineOptions({
                 <InputError :message="errors.home_status" />
             </div>
 
-            <div class="flex items-center gap-4">
-                <Button :disabled="processing">Save category</Button>
+            <Separator />
+
+            <div class="flex items-center gap-3">
+                <Button :disabled="processing">
+                    <Spinner v-if="processing" />
+                    Save category
+                </Button>
+                <Button variant="outline" as-child>
+                    <Link :href="index()">Cancel</Link>
+                </Button>
             </div>
         </Form>
     </div>

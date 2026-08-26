@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { Form, Head } from '@inertiajs/vue3';
+import { Form, Head, Link } from '@inertiajs/vue3';
+import { onBeforeUnmount, ref } from 'vue';
 import CategoryController from '@/actions/App/Http/Controllers/Backend/CategoryController';
 import Heading from '@/components/Heading.vue';
 import InputError from '@/components/InputError.vue';
@@ -14,6 +15,8 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
+import { Separator } from '@/components/ui/separator';
+import { Spinner } from '@/components/ui/spinner';
 import { create, index } from '@/routes/categories';
 
 type ParentOption = {
@@ -39,6 +42,24 @@ defineOptions({
         ],
     },
 });
+
+const iconPreview = ref<string | null>(null);
+
+function onIconChange(event: Event): void {
+    const file = (event.target as HTMLInputElement).files?.[0];
+
+    if (iconPreview.value) {
+        URL.revokeObjectURL(iconPreview.value);
+    }
+
+    iconPreview.value = file ? URL.createObjectURL(file) : null;
+}
+
+onBeforeUnmount(() => {
+    if (iconPreview.value) {
+        URL.revokeObjectURL(iconPreview.value);
+    }
+});
 </script>
 
 <template>
@@ -55,6 +76,12 @@ defineOptions({
             class="max-w-xl space-y-6"
             v-slot="{ errors, processing }"
         >
+            <Heading
+                variant="small"
+                title="Basic info"
+                description="The name and icon shown throughout the storefront."
+            />
+
             <div class="grid gap-2">
                 <Label for="name">Name</Label>
                 <Input
@@ -69,9 +96,37 @@ defineOptions({
 
             <div class="grid gap-2">
                 <Label for="icon">Icon</Label>
-                <Input id="icon" name="icon" type="file" accept="image/*" />
+                <div class="flex items-center gap-3">
+                    <img
+                        v-if="iconPreview"
+                        :src="iconPreview"
+                        alt="Icon preview"
+                        class="size-16 shrink-0 rounded-md border border-input object-cover"
+                    />
+                    <div
+                        v-else
+                        class="flex size-16 shrink-0 items-center justify-center rounded-md border border-dashed border-input text-xs text-muted-foreground"
+                    >
+                        No icon
+                    </div>
+                    <Input
+                        id="icon"
+                        name="icon"
+                        type="file"
+                        accept="image/*"
+                        @change="onIconChange"
+                    />
+                </div>
                 <InputError :message="errors.icon" />
             </div>
+
+            <Separator />
+
+            <Heading
+                variant="small"
+                title="Organization"
+                description="Where it sits in the catalog and how it's ordered."
+            />
 
             <div class="grid gap-2">
                 <Label for="parent_id">Parent category</Label>
@@ -101,6 +156,9 @@ defineOptions({
                     min="0"
                     default-value="0"
                 />
+                <p class="text-sm text-muted-foreground">
+                    Lower numbers appear first.
+                </p>
                 <InputError :message="errors.position" />
             </div>
 
@@ -110,8 +168,16 @@ defineOptions({
                 <InputError :message="errors.home_status" />
             </div>
 
-            <div class="flex items-center gap-4">
-                <Button :disabled="processing">Create category</Button>
+            <Separator />
+
+            <div class="flex items-center gap-3">
+                <Button :disabled="processing">
+                    <Spinner v-if="processing" />
+                    Create category
+                </Button>
+                <Button variant="outline" as-child>
+                    <Link :href="index()">Cancel</Link>
+                </Button>
             </div>
         </Form>
     </div>

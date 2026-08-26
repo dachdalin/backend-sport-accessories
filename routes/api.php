@@ -7,11 +7,15 @@ use App\Http\Controllers\Api\V1\BrandController;
 use App\Http\Controllers\Api\V1\CategoryController;
 use App\Http\Controllers\Api\V1\ContactController;
 use App\Http\Controllers\Api\V1\CouponController;
+use App\Http\Controllers\Api\V1\FaqController;
 use App\Http\Controllers\Api\V1\FlashDealController;
+use App\Http\Controllers\Api\V1\HelpTopicController;
+use App\Http\Controllers\Api\V1\JobOpeningController;
 use App\Http\Controllers\Api\V1\NewsletterSubscriberController;
 use App\Http\Controllers\Api\V1\PageController;
 use App\Http\Controllers\Api\V1\ProductController;
 use App\Http\Controllers\Api\V1\ReviewController;
+use App\Http\Controllers\Api\V1\StoreLocationController;
 use App\Http\Controllers\Api\V1\SupportTicketController;
 use App\Http\Controllers\Api\V1\TestimonialController;
 use App\Http\Controllers\Api\V1\WishlistController;
@@ -40,6 +44,10 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
     Route::apiResource('blogs', BlogController::class)->only(['index', 'show']);
     Route::apiResource('testimonials', TestimonialController::class)->only(['index', 'show']);
     Route::apiResource('pages', PageController::class)->only(['index', 'show']);
+    Route::apiResource('faqs', FaqController::class)->only(['index', 'show']);
+    Route::apiResource('help-topics', HelpTopicController::class)->only(['index', 'show']);
+    Route::apiResource('store-locations', StoreLocationController::class)->only(['index', 'show']);
+    Route::apiResource('job-openings', JobOpeningController::class)->only(['index', 'show']);
     Route::apiResource('products.reviews', ReviewController::class)->only(['index']);
 
     Route::post('coupons/apply', [CouponController::class, 'apply'])
