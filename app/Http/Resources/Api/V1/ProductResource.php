@@ -32,6 +32,7 @@ class ProductResource extends JsonResource
             'tax_type' => $this->tax_type,
             'discount' => $this->discount,
             'discount_type' => $this->discount_type,
+            'final_price' => $this->final_price,
             'free_shipping' => $this->free_shipping,
             'refundable' => $this->refundable,
             'featured' => $this->featured,

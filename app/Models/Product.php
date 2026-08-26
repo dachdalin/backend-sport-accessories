@@ -2,7 +2,9 @@
 
 namespace App\Models;
 
+use App\Enums\TaxType;
 use Database\Factories\ProductFactory;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -74,6 +76,31 @@ class Product extends Model
             'featured' => 'boolean',
             'status' => 'boolean',
         ];
+    }
+
+    /**
+     * The unit price after the product's own discount is applied.
+     *
+     * @return Attribute<float, never>
+     */
+    protected function finalPrice(): Attribute
+    {
+        return Attribute::make(
+            get: function (): float {
+                $price = (float) $this->unit_price;
+                $discount = (float) $this->discount;
+
+                if ($discount <= 0) {
+                    return round($price, 2);
+                }
+
+                $reduced = $this->discount_type === TaxType::Percent->value
+                    ? $price - ($price * $discount / 100)
+                    : $price - $discount;
+
+                return round(max(0, $reduced), 2);
+            },
+        );
     }
 
     /**
