@@ -10,6 +10,7 @@ class DeleteCustomerAction
     public function handle(Customer $customer): void
     {
         DB::transaction(function () use ($customer) {
+            $customer->tokens()->delete();
             $customer->delete();
         });
     }

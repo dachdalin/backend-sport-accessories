@@ -2,7 +2,10 @@
 
 namespace Tests\Feature\Api\V1;
 
+use App\Models\CartItem;
 use App\Models\Customer;
+use App\Models\Order;
+use App\Models\ShippingAddress;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -98,5 +101,84 @@ class ProfileControllerTest extends TestCase
         $response = $this->actingAs($customer, 'sanctum')->putJson(route('api.v1.profile.update'), []);
 
         $response->assertUnprocessable()->assertJsonValidationErrors(['name', 'email']);
+    }
+
+    public function test_guest_cannot_delete_account(): void
+    {
+        $response = $this->deleteJson(route('api.v1.profile.destroy'), ['password' => 'password']);
+
+        $response->assertUnauthorized();
+    }
+
+    public function test_authenticated_customer_can_delete_own_account_with_correct_password(): void
+    {
+        $customer = Customer::factory()->create();
+
+        $response = $this->actingAs($customer, 'sanctum')
+            ->deleteJson(route('api.v1.profile.destroy'), ['password' => 'password']);
+
+        $response->assertNoContent();
+        $this->assertDatabaseMissing('customers', ['id' => $customer->id]);
+    }
+
+    public function test_deleting_account_revokes_all_of_the_customers_tokens(): void
+    {
+        $customer = Customer::factory()->create();
+        $customer->createToken('device-1');
+        $customer->createToken('device-2');
+
+        $this->actingAs($customer, 'sanctum')
+            ->deleteJson(route('api.v1.profile.destroy'), ['password' => 'password'])
+            ->assertNoContent();
+
+        $this->assertDatabaseCount('personal_access_tokens', 0);
+    }
+
+    public function test_deleting_account_cascades_owned_data_but_keeps_order_history(): void
+    {
+        $customer = Customer::factory()->create();
+        $cartItem = CartItem::factory()->create(['customer_id' => $customer->id]);
+        $shippingAddress = ShippingAddress::factory()->create(['customer_id' => $customer->id]);
+        $order = Order::factory()->create(['customer_id' => $customer->id]);
+
+        $this->actingAs($customer, 'sanctum')
+            ->deleteJson(route('api.v1.profile.destroy'), ['password' => 'password'])
+            ->assertNoContent();
+
+        $this->assertDatabaseMissing('cart_items', ['id' => $cartItem->id]);
+        $this->assertDatabaseMissing('shipping_addresses', ['id' => $shippingAddress->id]);
+        $this->assertDatabaseHas('orders', ['id' => $order->id, 'customer_id' => null]);
+    }
+
+    public function test_deleting_account_requires_the_correct_password(): void
+    {
+        $customer = Customer::factory()->create();
+
+        $response = $this->actingAs($customer, 'sanctum')
+            ->deleteJson(route('api.v1.profile.destroy'), ['password' => 'wrong-password']);
+
+        $response->assertUnprocessable()->assertJsonValidationErrors('password');
+        $this->assertDatabaseHas('customers', ['id' => $customer->id]);
+    }
+
+    public function test_deleting_account_requires_a_password(): void
+    {
+        $customer = Customer::factory()->create();
+
+        $response = $this->actingAs($customer, 'sanctum')->deleteJson(route('api.v1.profile.destroy'), []);
+
+        $response->assertUnprocessable()->assertJsonValidationErrors('password');
+        $this->assertDatabaseHas('customers', ['id' => $customer->id]);
+    }
+
+    public function test_customer_without_a_password_cannot_delete_their_account(): void
+    {
+        $customer = Customer::factory()->create(['password' => null]);
+
+        $response = $this->actingAs($customer, 'sanctum')
+            ->deleteJson(route('api.v1.profile.destroy'), ['password' => 'anything']);
+
+        $response->assertUnprocessable()->assertJsonValidationErrors('password');
+        $this->assertDatabaseHas('customers', ['id' => $customer->id]);
     }
 }

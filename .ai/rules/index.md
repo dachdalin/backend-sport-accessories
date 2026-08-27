@@ -19,6 +19,7 @@ Before planning or editing, find the row whose globs match the file's path and r
 | app/Http/Controllers/Backend/FeatureDealController.php,resources/js/pages/feature-deals/** | .ai/rules/feature-deals.md |
 | app/Http/Controllers/Backend/FlashDealController.php,app/Services/FlashDealService.php,resources/js/pages/flash-deals/** | .ai/rules/flash-deals.md |
 | app/Http/Controllers/Backend/GiftCardController.php,resources/js/pages/gift-cards/** | .ai/rules/gift-cards.md |
+| app/Http/Controllers/Api/**,app/Actions/Customers/**,app/Http/Requests/Api/**,routes/api.php | .ai/rules/http-requests-api.md |
 | app/Models/*.php,app/Http/**,bootstrap/app.php | .ai/rules/http.md |
 | app/Http/Middleware/HandleInertiaRequests.php,resources/js/components/AppLogo.vue,resources/js/layouts/auth/** | .ai/rules/layouts-auth.md |
 | app/Http/Controllers/Backend/MaterialController.php,resources/js/pages/materials/** | .ai/rules/materials.md |
