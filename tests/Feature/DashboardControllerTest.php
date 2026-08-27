@@ -8,17 +8,43 @@ use App\Models\Product;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Inertia\Testing\AssertableInertia as Assert;
+use Spatie\Permission\Models\Permission;
 use Tests\TestCase;
 
 class DashboardControllerTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_dashboard_page_is_displayed_for_authenticated_user(): void
+    private function actingAsUserWithPermission(string $permission): User
     {
         $user = User::factory()->create();
+        $user->givePermissionTo(Permission::findOrCreate($permission));
 
-        $response = $this->actingAs($user)->get(route('dashboard'));
+        $this->actingAs($user);
+
+        return $user;
+    }
+
+    /**
+     * UserFactory assigns the admin role by default (so existing bare-user tests keep passing),
+     * which bypasses every permission check via the Gate::before admin override. Access-denial
+     * tests need a genuinely role-less user, so strip roles here instead of using the factory directly.
+     */
+    private function actingAsUserWithoutPermissions(): User
+    {
+        $user = User::factory()->create();
+        $user->syncRoles([]);
+
+        $this->actingAs($user);
+
+        return $user;
+    }
+
+    public function test_dashboard_page_is_displayed_for_authenticated_user(): void
+    {
+        $this->actingAsUserWithPermission('view dashboard');
+
+        $response = $this->get(route('dashboard'));
 
         $response
             ->assertOk()
@@ -38,14 +64,23 @@ class DashboardControllerTest extends TestCase
         $response->assertRedirect(route('login'));
     }
 
+    public function test_users_without_the_view_permission_cannot_access_dashboard(): void
+    {
+        $this->actingAsUserWithoutPermissions();
+
+        $response = $this->get(route('dashboard'));
+
+        $response->assertForbidden();
+    }
+
     public function test_dashboard_stats_only_include_orders_from_today(): void
     {
-        $user = User::factory()->create();
+        $this->actingAsUserWithPermission('view dashboard');
 
         $this->makeOrderOn(now(), '100.00');
         $this->makeOrderOn(now()->subDays(2), '500.00');
 
-        $response = $this->actingAs($user)->get(route('dashboard'));
+        $response = $this->get(route('dashboard'));
 
         $response->assertInertia(fn (Assert $page) => $page
             ->loadDeferredProps(fn (Assert $reload) => $reload
@@ -57,12 +92,12 @@ class DashboardControllerTest extends TestCase
 
     public function test_dashboard_can_filter_by_this_month(): void
     {
-        $user = User::factory()->create();
+        $this->actingAsUserWithPermission('view dashboard');
 
         $this->makeOrderOn(now()->startOfMonth(), '75.00');
         $this->makeOrderOn(now()->subMonths(2), '999.00');
 
-        $response = $this->actingAs($user)->get(route('dashboard', ['filter' => 'this_month']));
+        $response = $this->get(route('dashboard', ['filter' => 'this_month']));
 
         $response->assertInertia(fn (Assert $page) => $page
             ->where('filter', 'this_month')
@@ -74,12 +109,12 @@ class DashboardControllerTest extends TestCase
 
     public function test_dashboard_can_filter_by_custom_range(): void
     {
-        $user = User::factory()->create();
+        $this->actingAsUserWithPermission('view dashboard');
 
         $this->makeOrderOn(now()->subDays(10), '40.00');
         $this->makeOrderOn(now()->subDays(2), '20.00');
 
-        $response = $this->actingAs($user)->get(route('dashboard', [
+        $response = $this->get(route('dashboard', [
             'filter' => 'custom',
             'from' => now()->subDays(11)->toDateString(),
             'to' => now()->subDays(9)->toDateString(),
@@ -94,7 +129,7 @@ class DashboardControllerTest extends TestCase
 
     public function test_dashboard_ranks_top_products_by_revenue(): void
     {
-        $user = User::factory()->create();
+        $this->actingAsUserWithPermission('view dashboard');
 
         $topProduct = Product::factory()->create(['name' => 'Bestseller']);
         $otherProduct = Product::factory()->create(['name' => 'Runner Up']);
@@ -118,7 +153,7 @@ class DashboardControllerTest extends TestCase
             'subtotal' => 50,
         ]);
 
-        $response = $this->actingAs($user)->get(route('dashboard'));
+        $response = $this->get(route('dashboard'));
 
         $response->assertInertia(fn (Assert $page) => $page
             ->loadDeferredProps(fn (Assert $reload) => $reload

@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
+use Spatie\Permission\Models\Role;
 
 /**
  * @extends Factory<User>
@@ -34,6 +35,19 @@ class UserFactory extends Factory
             'two_factor_recovery_codes' => null,
             'two_factor_confirmed_at' => null,
         ];
+    }
+
+    /**
+     * Give factory-created users the admin role by default, so existing tests that act as a
+     * bare `User::factory()->create()` keep passing permission-gated routes without every one
+     * of them having to seed roles/permissions explicitly. Tests that need a role-less user for
+     * an access-denial assertion should strip roles afterwards, e.g. `$user->syncRoles([]);`.
+     */
+    public function configure(): static
+    {
+        return $this->afterCreating(function (User $user) {
+            $user->assignRole(Role::findOrCreate('admin'));
+        });
     }
 
     /**

@@ -31,6 +31,7 @@ class RolePermissionTest extends TestCase
         Route::middleware(['web', 'auth', 'role:admin'])->get('/admin-only', fn () => 'ok');
 
         $user = User::factory()->create();
+        $user->syncRoles([]);
         $this->actingAs($user);
 
         $response = $this->get('/admin-only');

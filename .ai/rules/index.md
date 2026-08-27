@@ -18,6 +18,7 @@ Before planning or editing, find the row whose globs match the file's path and r
 | app/Events/**,app/Listeners/**,app/Notifications/**,app/Http/Controllers/Backend/NotificationController.php,app/Services/NotificationService.php,resources/js/components/NotificationBell.vue | .ai/rules/components.md |
 | app/Http/Controllers/Backend/ContactController.php,resources/js/pages/contacts/** | .ai/rules/contacts.md |
 | app/Http/Controllers/Api/**,routes/api.php | .ai/rules/controllers-api.md |
+| app/Http/Controllers/Backend/ColorController.php | .ai/rules/controllers-backend.md |
 | resources/js/pages/**,app/Http/Controllers/** | .ai/rules/controllers.md |
 | app/Http/Controllers/Api/V1/Auth/**,app/Services/GoogleAuthService.php,app/Services/TelegramAuthService.php,app/Actions/Customers/FindOrCreateSocialCustomerAction.php | .ai/rules/customers.md |
 | app/Http/Controllers/Backend/FeatureDealController.php,resources/js/pages/feature-deals/** | .ai/rules/feature-deals.md |

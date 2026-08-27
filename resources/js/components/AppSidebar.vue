@@ -56,6 +56,7 @@ import {
     Warehouse,
     Zap,
 } from '@lucide/vue';
+import { computed } from 'vue';
 import AppLogo from '@/components/AppLogo.vue';
 import NavMain from '@/components/NavMain.vue';
 import NavUser from '@/components/NavUser.vue';
@@ -68,6 +69,7 @@ import {
     SidebarMenuButton,
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
+import { usePermissions } from '@/composables/usePermissions';
 import { dashboard } from '@/routes';
 import { index as analyticScriptsIndex } from '@/routes/analytic-scripts';
 import { index as apiDocumentationIndex } from '@/routes/api-documentation';
@@ -124,6 +126,8 @@ import { index as warehousesIndex } from '@/routes/warehouses';
 import { index as wishlistsIndex } from '@/routes/wishlists';
 import type { NavGroup } from '@/types';
 
+const { can } = usePermissions();
+
 const navGroups: NavGroup[] = [
     {
         label: 'Overview',
@@ -132,11 +136,13 @@ const navGroups: NavGroup[] = [
                 title: 'Dashboard',
                 href: dashboard(),
                 icon: LayoutGrid,
+                permission: 'view dashboard',
             },
             {
                 title: 'Messages',
                 href: messagesIndex(),
                 icon: MessageSquare,
+                permission: 'view messages',
             },
         ],
     },
@@ -147,11 +153,13 @@ const navGroups: NavGroup[] = [
                 title: 'Users',
                 href: usersIndex(),
                 icon: UserCog,
+                permission: 'view users',
             },
             {
                 title: 'Roles',
                 href: rolesIndex(),
                 icon: ShieldCheck,
+                permission: 'view roles',
             },
         ],
     },
@@ -162,41 +170,49 @@ const navGroups: NavGroup[] = [
                 title: 'Products',
                 href: productsIndex(),
                 icon: ShoppingBag,
+                permission: 'view products',
             },
             {
                 title: 'Categories',
                 href: categoriesIndex(),
                 icon: FolderTree,
+                permission: 'view categories',
             },
             {
                 title: 'Attributes',
                 href: attributesIndex(),
                 icon: SlidersHorizontal,
+                permission: 'view attributes',
             },
             {
                 title: 'Colors',
                 href: colorsIndex(),
                 icon: Palette,
+                permission: 'view colors',
             },
             {
                 title: 'Sizes',
                 href: sizesIndex(),
                 icon: Ruler,
+                permission: 'view sizes',
             },
             {
                 title: 'Materials',
                 href: materialsIndex(),
                 icon: Layers,
+                permission: 'view materials',
             },
             {
                 title: 'Brands',
                 href: brandsIndex(),
                 icon: Tag,
+                permission: 'view brands',
             },
             {
                 title: 'Tags',
                 href: tagsIndex(),
                 icon: Tags,
+                permission: 'view tags',
             },
         ],
     },
@@ -207,41 +223,49 @@ const navGroups: NavGroup[] = [
                 title: 'Flash deals',
                 href: flashDealsIndex(),
                 icon: Zap,
+                permission: 'view flash deals',
             },
             {
                 title: 'Feature deals',
                 href: featureDealsIndex(),
                 icon: BadgePercent,
+                permission: 'view feature deals',
             },
             {
                 title: 'Deal of the day',
                 href: dealOfTheDaysIndex(),
                 icon: Flame,
+                permission: 'view deal of the days',
             },
             {
                 title: 'Most demanded',
                 href: mostDemandedsIndex(),
                 icon: TrendingUp,
+                permission: 'view most demandeds',
             },
             {
                 title: 'Stock clearance',
                 href: stockClearanceSetupsIndex(),
                 icon: Sparkles,
+                permission: 'view stock clearance setups',
             },
             {
                 title: 'Coupons',
                 href: couponsIndex(),
                 icon: Ticket,
+                permission: 'view coupons',
             },
             {
                 title: 'Gift cards',
                 href: giftCardsIndex(),
                 icon: Gift,
+                permission: 'view gift cards',
             },
             {
                 title: 'Banners',
                 href: bannersIndex(),
                 icon: GalleryHorizontal,
+                permission: 'view banners',
             },
         ],
     },
@@ -252,16 +276,19 @@ const navGroups: NavGroup[] = [
                 title: 'Orders',
                 href: ordersIndex(),
                 icon: Receipt,
+                permission: 'view orders',
             },
             {
                 title: 'Refund requests',
                 href: refundRequestsIndex(),
                 icon: RefreshCcw,
+                permission: 'view refund requests',
             },
             {
                 title: 'Return policies',
                 href: returnPoliciesIndex(),
                 icon: RotateCcw,
+                permission: 'view return policies',
             },
         ],
     },
@@ -272,36 +299,43 @@ const navGroups: NavGroup[] = [
                 title: 'Customers',
                 href: customersIndex(),
                 icon: UserRound,
+                permission: 'view customers',
             },
             {
                 title: 'Wishlists',
                 href: wishlistsIndex(),
                 icon: Heart,
+                permission: 'view wishlists',
             },
             {
                 title: 'Reviews',
                 href: reviewsIndex(),
                 icon: Star,
+                permission: 'view reviews',
             },
             {
                 title: 'Testimonials',
                 href: testimonialsIndex(),
                 icon: MessageSquareQuote,
+                permission: 'view testimonials',
             },
             {
                 title: 'Contacts',
                 href: contactsIndex(),
                 icon: Inbox,
+                permission: 'view contacts',
             },
             {
                 title: 'Support tickets',
                 href: supportTicketsIndex(),
                 icon: LifeBuoy,
+                permission: 'view support tickets',
             },
             {
                 title: 'Newsletter subscribers',
                 href: newsletterSubscribersIndex(),
                 icon: Mail,
+                permission: 'view newsletter subscribers',
             },
         ],
     },
@@ -312,46 +346,55 @@ const navGroups: NavGroup[] = [
                 title: 'Pages',
                 href: pagesIndex(),
                 icon: ScrollText,
+                permission: 'view pages',
             },
             {
                 title: 'Blogs',
                 href: blogsIndex(),
                 icon: FileText,
+                permission: 'view blogs',
             },
             {
                 title: 'Blog categories',
                 href: blogCategoriesIndex(),
                 icon: Newspaper,
+                permission: 'view blog categories',
             },
             {
                 title: 'FAQs',
                 href: faqsIndex(),
                 icon: MessageCircleQuestion,
+                permission: 'view faqs',
             },
             {
                 title: 'Help topics',
                 href: helpTopicsIndex(),
                 icon: HelpCircle,
+                permission: 'view help topics',
             },
             {
                 title: 'Team members',
                 href: teamMembersIndex(),
                 icon: Users,
+                permission: 'view team members',
             },
             {
                 title: 'Store locations',
                 href: storeLocationsIndex(),
                 icon: Store,
+                permission: 'view store locations',
             },
             {
                 title: 'Job openings',
                 href: jobOpeningsIndex(),
                 icon: Briefcase,
+                permission: 'view job openings',
             },
             {
                 title: 'Loyalty tiers',
                 href: loyaltyTiersIndex(),
                 icon: Award,
+                permission: 'view loyalty tiers',
             },
         ],
     },
@@ -362,41 +405,49 @@ const navGroups: NavGroup[] = [
                 title: 'Currencies',
                 href: currenciesIndex(),
                 icon: Coins,
+                permission: 'view currencies',
             },
             {
                 title: 'Tax rates',
                 href: taxRatesIndex(),
                 icon: Percent,
+                permission: 'view tax rates',
             },
             {
                 title: 'Shipping methods',
                 href: shippingMethodsIndex(),
                 icon: Truck,
+                permission: 'view shipping methods',
             },
             {
                 title: 'Shipping addresses',
                 href: shippingAddressesIndex(),
                 icon: MapPin,
+                permission: 'view shipping addresses',
             },
             {
                 title: 'Delivery zones',
                 href: deliveryZonesIndex(),
                 icon: MapPinned,
+                permission: 'view delivery zones',
             },
             {
                 title: 'Offline payment methods',
                 href: offlinePaymentMethodsIndex(),
                 icon: Wallet,
+                permission: 'view offline payment methods',
             },
             {
                 title: 'Suppliers',
                 href: suppliersIndex(),
                 icon: Factory,
+                permission: 'view suppliers',
             },
             {
                 title: 'Warehouses',
                 href: warehousesIndex(),
                 icon: Warehouse,
+                permission: 'view warehouses',
             },
         ],
     },
@@ -407,40 +458,58 @@ const navGroups: NavGroup[] = [
                 title: 'Social media',
                 href: socialMediasIndex(),
                 icon: Share2,
+                permission: 'view social medias',
             },
             {
                 title: 'Credentials',
                 href: credentialsIndex(),
                 icon: KeyRound,
+                permission: 'view credentials',
             },
             {
                 title: 'Email templates',
                 href: emailTemplatesIndex(),
                 icon: MailOpen,
+                permission: 'view email templates',
             },
             {
                 title: 'Analytic scripts',
                 href: analyticScriptsIndex(),
                 icon: BarChart3,
+                permission: 'view analytic scripts',
             },
             {
                 title: 'Search functions',
                 href: searchFunctionsIndex(),
                 icon: Search,
+                permission: 'view search functions',
             },
             {
                 title: 'Business settings',
                 href: businessSettingsEdit(),
                 icon: Settings,
+                permission: 'view business settings',
             },
             {
                 title: 'API documentation',
                 href: apiDocumentationIndex(),
                 icon: Code2,
+                permission: 'view api documentation',
             },
         ],
     },
 ];
+
+const visibleNavGroups = computed<NavGroup[]>(() =>
+    navGroups
+        .map((group) => ({
+            ...group,
+            items: group.items.filter(
+                (item) => !item.permission || can(item.permission),
+            ),
+        }))
+        .filter((group) => group.items.length > 0),
+);
 </script>
 
 <template>
@@ -458,7 +527,7 @@ const navGroups: NavGroup[] = [
         </SidebarHeader>
 
         <SidebarContent>
-            <NavMain :groups="navGroups" />
+            <NavMain :groups="visibleNavGroups" />
         </SidebarContent>
 
         <SidebarFooter>

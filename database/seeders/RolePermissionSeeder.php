@@ -77,6 +77,7 @@ class RolePermissionSeeder extends Seeder
         Permission::findOrCreate('edit business settings');
         Permission::findOrCreate('view messages');
         Permission::findOrCreate('create messages');
+        Permission::findOrCreate('view api documentation');
 
         $admin = Role::findOrCreate('admin');
         $admin->syncPermissions(Permission::all());

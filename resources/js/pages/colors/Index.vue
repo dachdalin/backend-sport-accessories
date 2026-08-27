@@ -19,6 +19,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Spinner } from '@/components/ui/spinner';
+import { usePermissions } from '@/composables/usePermissions';
 import { index as colorsIndex } from '@/routes/colors';
 
 interface Color {
@@ -53,6 +54,8 @@ defineOptions({
     },
 });
 
+const { can } = usePermissions();
+
 const createOpen = ref(false);
 const createCode = ref('');
 const editingColor = ref<Color | null>(null);
@@ -80,69 +83,71 @@ function openEdit(color: Color) {
                 description="Manage the colors available for products"
             />
 
-            <Dialog v-model:open="createOpen">
-                <DialogTrigger as-child>
-                    <Button>
-                        <Plus />
-                        Add color
-                    </Button>
-                </DialogTrigger>
-                <DialogContent>
-                    <Form
-                        v-bind="ColorController.store.form()"
-                        reset-on-success
-                        @success="createOpen = false"
-                        class="space-y-6"
-                        v-slot="{ errors, processing }"
-                    >
-                        <DialogHeader>
-                            <DialogTitle>Add color</DialogTitle>
-                            <DialogDescription>
-                                Create a new color for products.
-                            </DialogDescription>
-                        </DialogHeader>
+            <template v-if="can('create colors')">
+                <Dialog v-model:open="createOpen">
+                    <DialogTrigger as-child>
+                        <Button>
+                            <Plus />
+                            Add color
+                        </Button>
+                    </DialogTrigger>
+                    <DialogContent>
+                        <Form
+                            v-bind="ColorController.store.form()"
+                            reset-on-success
+                            @success="createOpen = false"
+                            class="space-y-6"
+                            v-slot="{ errors, processing }"
+                        >
+                            <DialogHeader>
+                                <DialogTitle>Add color</DialogTitle>
+                                <DialogDescription>
+                                    Create a new color for products.
+                                </DialogDescription>
+                            </DialogHeader>
 
-                        <div class="grid gap-2">
-                            <Label for="create-name">Name</Label>
-                            <Input
-                                id="create-name"
-                                name="name"
-                                placeholder="Red"
-                                required
-                            />
-                            <InputError :message="errors.name" />
-                        </div>
-
-                        <div class="grid gap-2">
-                            <Label for="create-code">Code</Label>
-                            <div class="flex items-center gap-3">
-                                <span
-                                    class="size-9 shrink-0 rounded-md border border-input bg-muted"
-                                    :style="{ backgroundColor: createCode }"
-                                />
+                            <div class="grid gap-2">
+                                <Label for="create-name">Name</Label>
                                 <Input
-                                    id="create-code"
-                                    name="code"
-                                    placeholder="#ff0000"
+                                    id="create-name"
+                                    name="name"
+                                    placeholder="Red"
                                     required
-                                    v-model="createCode"
                                 />
+                                <InputError :message="errors.name" />
                             </div>
-                            <InputError :message="errors.code" />
-                        </div>
 
-                        <DialogFooter class="gap-2">
-                            <DialogClose as-child>
-                                <Button variant="secondary">Cancel</Button>
-                            </DialogClose>
-                            <Button type="submit" :disabled="processing">
-                                <Spinner v-if="processing" />
-                                Save
-                            </Button>
-                        </DialogFooter>
-                    </Form>
-                </DialogContent>
-            </Dialog>
+                            <div class="grid gap-2">
+                                <Label for="create-code">Code</Label>
+                                <div class="flex items-center gap-3">
+                                    <span
+                                        class="size-9 shrink-0 rounded-md border border-input bg-muted"
+                                        :style="{ backgroundColor: createCode }"
+                                    />
+                                    <Input
+                                        id="create-code"
+                                        name="code"
+                                        placeholder="#ff0000"
+                                        required
+                                        v-model="createCode"
+                                    />
+                                </div>
+                                <InputError :message="errors.code" />
+                            </div>
+
+                            <DialogFooter class="gap-2">
+                                <DialogClose as-child>
+                                    <Button variant="secondary">Cancel</Button>
+                                </DialogClose>
+                                <Button type="submit" :disabled="processing">
+                                    <Spinner v-if="processing" />
+                                    Save
+                                </Button>
+                            </DialogFooter>
+                        </Form>
+                    </DialogContent>
+                </Dialog>
+            </template>
         </div>
 
         <div
@@ -179,6 +184,7 @@ function openEdit(color: Color) {
                         <td class="px-4 py-3">
                             <div class="flex justify-end gap-2">
                                 <Button
+                                    v-if="can('edit colors')"
                                     variant="outline"
                                     size="icon-sm"
                                     @click="openEdit(color)"
@@ -187,7 +193,7 @@ function openEdit(color: Color) {
                                     <span class="sr-only">Edit</span>
                                 </Button>
 
-                                <Dialog>
+                                <Dialog v-if="can('delete colors')">
                                     <DialogTrigger as-child>
                                         <Button
                                             variant="destructive"
