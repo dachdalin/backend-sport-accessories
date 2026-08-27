@@ -239,4 +239,22 @@ class ProductControllerTest extends TestCase
 
         $response->assertNotFound();
     }
+
+    public function test_searching_products_logs_a_search_event_for_each_result(): void
+    {
+        $matching = Product::factory()->create(['status' => true, 'name' => 'Trail Running Shoes']);
+
+        $this->getJson(route('api.v1.products.index', ['search' => 'Trail']))->assertOk();
+
+        $this->assertDatabaseHas('product_searches', ['product_id' => $matching->id]);
+    }
+
+    public function test_browsing_without_a_search_term_logs_nothing(): void
+    {
+        Product::factory()->create(['status' => true]);
+
+        $this->getJson(route('api.v1.products.index'))->assertOk();
+
+        $this->assertDatabaseCount('product_searches', 0);
+    }
 }

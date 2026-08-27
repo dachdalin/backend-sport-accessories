@@ -29,6 +29,7 @@ use App\Http\Controllers\Api\V1\SocialMediaController;
 use App\Http\Controllers\Api\V1\StoreLocationController;
 use App\Http\Controllers\Api\V1\SupportTicketController;
 use App\Http\Controllers\Api\V1\TestimonialController;
+use App\Http\Controllers\Api\V1\TrendingController;
 use App\Http\Controllers\Api\V1\WishlistController;
 use Illuminate\Support\Facades\Route;
 
@@ -42,9 +43,25 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
             ->middleware('throttle:customer-auth')
             ->name('login');
 
+        Route::post('google', [AuthController::class, 'google'])
+            ->middleware('throttle:customer-auth')
+            ->name('google');
+
+        Route::post('telegram', [AuthController::class, 'telegram'])
+            ->middleware('throttle:customer-auth')
+            ->name('telegram');
+
         Route::post('logout', [AuthController::class, 'logout'])
             ->middleware('auth:sanctum')
             ->name('logout');
+
+        Route::post('forgot-password', [AuthController::class, 'forgotPassword'])
+            ->middleware('throttle:password-reset-request')
+            ->name('forgot-password');
+
+        Route::post('reset-password', [AuthController::class, 'resetPassword'])
+            ->middleware('throttle:password-reset')
+            ->name('reset-password');
     });
 
     Route::apiResource('banners', BannerController::class)->only(['index', 'show']);
@@ -66,6 +83,8 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
     Route::apiResource('social-medias', SocialMediaController::class)->only(['index', 'show']);
     Route::apiResource('currencies', CurrencyController::class)->only(['index', 'show']);
     Route::apiResource('products.reviews', ReviewController::class)->only(['index']);
+
+    Route::get('trending', [TrendingController::class, 'index'])->name('trending');
 
     Route::post('coupons/apply', [CouponController::class, 'apply'])
         ->middleware('throttle:coupon-apply')

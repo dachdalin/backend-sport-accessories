@@ -18,6 +18,7 @@ Before planning or editing, find the row whose globs match the file's path and r
 | app/Http/Controllers/Backend/ContactController.php,resources/js/pages/contacts/** | .ai/rules/contacts.md |
 | app/Http/Controllers/Api/**,routes/api.php | .ai/rules/controllers-api.md |
 | resources/js/pages/**,app/Http/Controllers/** | .ai/rules/controllers.md |
+| app/Http/Controllers/Api/V1/Auth/**,app/Services/GoogleAuthService.php,app/Services/TelegramAuthService.php,app/Actions/Customers/FindOrCreateSocialCustomerAction.php | .ai/rules/customers.md |
 | app/Http/Controllers/Backend/FeatureDealController.php,resources/js/pages/feature-deals/** | .ai/rules/feature-deals.md |
 | app/Http/Controllers/Backend/FlashDealController.php,app/Services/FlashDealService.php,resources/js/pages/flash-deals/** | .ai/rules/flash-deals.md |
 | app/Http/Controllers/Backend/GiftCardController.php,resources/js/pages/gift-cards/** | .ai/rules/gift-cards.md |
@@ -28,6 +29,7 @@ Before planning or editing, find the row whose globs match the file's path and r
 | app/Http/Controllers/Backend/MessageController.php,resources/js/pages/messages/**,database/migrations/** | .ai/rules/messages-migrations.md |
 | app/Http/Controllers/Backend/**,database/migrations/** | .ai/rules/migrations.md |
 | app/Models/*.php | .ai/rules/models.md |
+| app/Http/Controllers/Api/**,app/Actions/Customers/**,app/Notifications/**,routes/api.php | .ai/rules/notifications.md |
 | app/Http/Controllers/Api/**,app/Actions/Orders/**,database/migrations/** | .ai/rules/orders-migrations.md |
 | resources/js/pages/** | .ai/rules/pages.md |
 | app/Http/Controllers/Api/**,app/Http/Requests/Api/**,routes/api.php | .ai/rules/requests-api.md |
@@ -35,4 +37,6 @@ Before planning or editing, find the row whose globs match the file's path and r
 | app/Services/** | .ai/rules/services.md |
 | app/Services/StockClearanceSetupService.php,app/Http/Controllers/Backend/StockClearanceSetupController.php,resources/js/pages/stock-clearance-setups/** | .ai/rules/stock-clearance-setups.md |
 | app/Http/Controllers/Backend/UserController.php,resources/js/pages/users/** | .ai/rules/users.md |
+| app/Http/Controllers/Api/V1/TrendingController.php,app/Services/TrendingProductService.php,app/Actions/ProductSearches/**,app/Http/Controllers/Api/V1/ProductController.php,database/migrations/** | .ai/rules/v1-migrations.md |
+| app/Http/Controllers/Api/V1/ProductController.php,app/Http/Requests/Api/V1/ListProductsRequest.php,app/Http/Resources/Api/V1/ProductResource.php | .ai/rules/v1.md |
 | app/Http/Controllers/Backend/WishlistController.php,app/Services/WishlistService.php,resources/js/pages/wishlists/** | .ai/rules/wishlists.md |

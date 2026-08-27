@@ -6,12 +6,13 @@ use Database\Factories\CustomerFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
 class Customer extends Authenticatable
 {
     /** @use HasFactory<CustomerFactory> */
-    use HasApiTokens, HasFactory;
+    use HasApiTokens, HasFactory, Notifiable;
 
     /**
      * @var array<int, string>
@@ -20,6 +21,8 @@ class Customer extends Authenticatable
         'name',
         'email',
         'password',
+        'google_id',
+        'telegram_id',
         'phone',
         'address',
         'status',
@@ -74,5 +77,13 @@ class Customer extends Authenticatable
     public function orders(): HasMany
     {
         return $this->hasMany(Order::class);
+    }
+
+    /**
+     * @return HasMany<PasswordResetCode, $this>
+     */
+    public function passwordResetCodes(): HasMany
+    {
+        return $this->hasMany(PasswordResetCode::class);
     }
 }

@@ -20,6 +20,7 @@ class ApiDocumentationService
         'auth' => 'Authentication',
         'products' => 'Catalog',
         'products.reviews' => 'Catalog',
+        'trending' => 'Catalog',
         'banners' => 'Catalog',
         'brands' => 'Catalog',
         'categories' => 'Catalog',
@@ -190,7 +191,14 @@ class ApiDocumentationService
 
         $name = $route->getName();
         $parts = explode('.', Str::after($name, 'api.v1.'));
-        array_pop($parts);
+
+        // Drop the trailing action segment (index/show/store/apply/...), but only
+        // when there is one to drop — a bare single-segment name like `trending`
+        // IS the resource key, not an action with an empty resource before it.
+        if (count($parts) > 1) {
+            array_pop($parts);
+        }
+
         $resource = implode('.', $parts);
 
         $middleware = $route->gatherMiddleware();

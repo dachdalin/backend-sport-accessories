@@ -39,4 +39,15 @@ class ApiDocumentationServiceTest extends TestCase
         $this->assertSame('none', $login['auth']);
         $this->assertNotEmpty($login['fields']);
     }
+
+    public function test_a_bare_single_segment_route_name_still_resolves_a_group(): void
+    {
+        $groups = app(ApiDocumentationService::class)->groups();
+
+        $endpoints = collect($groups)->flatMap(fn (array $group) => $group['endpoints']);
+        $trending = $endpoints->firstWhere('name', 'api.v1.trending');
+
+        $this->assertNotNull($trending);
+        $this->assertNotSame('', $trending['group']);
+    }
 }

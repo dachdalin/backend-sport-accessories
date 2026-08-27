@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\V1;
 
+use App\Actions\ProductSearches\LogProductSearchAction;
 use App\Enums\ReviewStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\V1\ListProductsRequest;
@@ -17,9 +18,10 @@ class ProductController extends Controller
      *
      * Query params: `search` (matches name/code), `min_price`/`max_price` (unit price range),
      * `rating` (minimum average approved-review rating), `discounted` (true/false),
-     * `in_stock` (true/false).
+     * `in_stock` (true/false). When `search` is given, every product returned on this
+     * page is logged as a search result for the trending-products ranking.
      */
-    public function index(ListProductsRequest $request): AnonymousResourceCollection
+    public function index(ListProductsRequest $request, LogProductSearchAction $logProductSearchAction): AnonymousResourceCollection
     {
         $products = Product::query()
             ->where('status', true)
@@ -65,6 +67,10 @@ class ProductController extends Controller
             ->latest()
             ->paginate(15)
             ->withQueryString();
+
+        if ($request->filled('search')) {
+            $logProductSearchAction->handle($products->pluck('id')->all());
+        }
 
         return ProductResource::collection($products);
     }

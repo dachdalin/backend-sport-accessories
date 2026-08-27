@@ -40,4 +40,15 @@ return [
         'chat_id' => env('TELEGRAM_CHAT_ID'),
     ],
 
+    'google' => [
+        'client_id' => env('GOOGLE_CLIENT_ID'),
+    ],
+
+    'plasgate' => [
+        'base_url' => env('PLASGATE_BASE_URL', 'https://cloud.plasgate.com/rest/send/txn'),
+        'private_key' => env('PLASGATE_PRIVATE_KEY'),
+        'secret_key' => env('PLASGATE_SECRET_KEY'),
+        'sender' => env('PLASGATE_SENDER', 'PlasGate'),
+    ],
+
 ];
