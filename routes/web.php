@@ -25,8 +25,10 @@ use App\Http\Controllers\Backend\HelpTopicController;
 use App\Http\Controllers\Backend\JobOpeningController;
 use App\Http\Controllers\Backend\LoyaltyTierController;
 use App\Http\Controllers\Backend\MaterialController;
+use App\Http\Controllers\Backend\MessageController;
 use App\Http\Controllers\Backend\MostDemandedController;
 use App\Http\Controllers\Backend\NewsletterSubscriberController;
+use App\Http\Controllers\Backend\NotificationController;
 use App\Http\Controllers\Backend\OfflinePaymentMethodController;
 use App\Http\Controllers\Backend\OrderController;
 use App\Http\Controllers\Backend\PageController;
@@ -111,9 +113,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('refund-requests', RefundRequestController::class)->except(['show']);
     Route::resource('roles', RoleController::class)->only(['index', 'store', 'update', 'destroy']);
     Route::resource('users', UserController::class);
+    Route::resource('messages', MessageController::class)->only(['index', 'store']);
 
     Route::get('business-settings', [BusinessSettingController::class, 'edit'])->name('business-settings.edit');
     Route::patch('business-settings', [BusinessSettingController::class, 'update'])->name('business-settings.update');
+
+    Route::post('notifications/read-all', [NotificationController::class, 'readAll'])->name('notifications.read-all');
+    Route::post('notifications/{notification}/read', [NotificationController::class, 'read'])->name('notifications.read');
 });
 
 require __DIR__.'/settings.php';

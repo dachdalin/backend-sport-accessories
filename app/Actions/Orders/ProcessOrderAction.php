@@ -4,6 +4,7 @@ namespace App\Actions\Orders;
 
 use App\Enums\OrderPaymentStatus;
 use App\Enums\OrderStatus;
+use App\Events\OrderPlaced;
 use App\Models\Customer;
 use App\Models\Order;
 use App\Models\Product;
@@ -99,6 +100,8 @@ class ProcessOrderAction
             }
 
             $cartItems->each->delete();
+
+            OrderPlaced::dispatch($order);
 
             return $order->load('items');
         });

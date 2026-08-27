@@ -21,6 +21,7 @@ use App\Http\Controllers\Api\V1\OfflinePaymentMethodController;
 use App\Http\Controllers\Api\V1\OrderController;
 use App\Http\Controllers\Api\V1\PageController;
 use App\Http\Controllers\Api\V1\ProductController;
+use App\Http\Controllers\Api\V1\ProfileController;
 use App\Http\Controllers\Api\V1\ReviewController;
 use App\Http\Controllers\Api\V1\ShippingAddressController;
 use App\Http\Controllers\Api\V1\ShippingMethodController;
@@ -83,6 +84,9 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
         ->name('newsletter-subscribers.store');
 
     Route::middleware('auth:sanctum')->group(function () {
+        Route::get('profile', [ProfileController::class, 'show'])->name('profile.show');
+        Route::put('profile', [ProfileController::class, 'update'])->name('profile.update');
+
         Route::apiResource('wishlists', WishlistController::class)->only(['index', 'store', 'destroy']);
 
         Route::apiResource('cart-items', CartItemController::class)->only(['index', 'store', 'destroy']);

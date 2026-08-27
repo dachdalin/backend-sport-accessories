@@ -13,6 +13,7 @@ export type Locale = 'en' | 'km';
 export type NotificationType = 'order' | 'review' | 'ticket' | 'contact';
 
 export type NotificationItem = {
+    id?: string;
     type: NotificationType;
     title: string;
     subtitle: string;

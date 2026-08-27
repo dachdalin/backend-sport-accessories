@@ -24,6 +24,7 @@ import {
     MapPin,
     MapPinned,
     MessageCircleQuestion,
+    MessageSquare,
     MessageSquareQuote,
     Newspaper,
     Palette,
@@ -92,6 +93,7 @@ import { index as helpTopicsIndex } from '@/routes/help-topics';
 import { index as jobOpeningsIndex } from '@/routes/job-openings';
 import { index as loyaltyTiersIndex } from '@/routes/loyalty-tiers';
 import { index as materialsIndex } from '@/routes/materials';
+import { index as messagesIndex } from '@/routes/messages';
 import { index as mostDemandedsIndex } from '@/routes/most-demandeds';
 import { index as newsletterSubscribersIndex } from '@/routes/newsletter-subscribers';
 import { index as offlinePaymentMethodsIndex } from '@/routes/offline-payment-methods';
@@ -128,6 +130,11 @@ const navGroups: NavGroup[] = [
                 title: 'Dashboard',
                 href: dashboard(),
                 icon: LayoutGrid,
+            },
+            {
+                title: 'Messages',
+                href: messagesIndex(),
+                icon: MessageSquare,
             },
         ],
     },

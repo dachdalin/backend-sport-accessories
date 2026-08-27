@@ -2,6 +2,7 @@
 
 namespace App\Actions\Orders;
 
+use App\Events\OrderPlaced;
 use App\Models\Order;
 use App\Services\OrderService;
 use Illuminate\Support\Facades\DB;
@@ -27,6 +28,8 @@ class CreateOrderAction
             $order = Order::create($data);
 
             $order->items()->createMany($this->orderService->resolveItems($items));
+
+            OrderPlaced::dispatch($order);
 
             return $order;
         });

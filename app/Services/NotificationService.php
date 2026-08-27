@@ -3,22 +3,23 @@
 namespace App\Services;
 
 use App\Models\Contact;
-use App\Models\Order;
 use App\Models\Review;
 use App\Models\SupportTicket;
+use App\Models\User;
+use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Support\Collection;
 
 class NotificationService
 {
     /**
-     * Build a summary of store activity that needs admin attention.
+     * Build a summary of store activity that needs the given admin's attention: their unread
+     * notifications (e.g. new orders) plus other pending items that aren't tracked as notifications.
      *
      * @return array{items: array<int, array<string, mixed>>, total: int}
      */
-    public function summary(): array
+    public function summary(User $user): array
     {
-        $items = collect()
-            ->concat($this->pendingOrders())
+        $items = $this->unreadNotifications($user)
             ->concat($this->pendingReviews())
             ->concat($this->openTickets())
             ->concat($this->unreadContacts())
@@ -28,7 +29,7 @@ class NotificationService
 
         return [
             'items' => $items->all(),
-            'total' => Order::query()->where('order_status', 'pending')->count()
+            'total' => $user->unreadNotifications()->count()
                 + Review::query()->where('status', 'pending')->count()
                 + SupportTicket::query()->where('status', 'open')->count()
                 + Contact::query()->where('status', false)->count(),
@@ -38,19 +39,19 @@ class NotificationService
     /**
      * @return Collection<int, array<string, mixed>>
      */
-    private function pendingOrders(): Collection
+    private function unreadNotifications(User $user): Collection
     {
-        return Order::query()
-            ->where('order_status', 'pending')
+        return $user->unreadNotifications()
             ->latest()
             ->limit(5)
-            ->get(['id', 'order_number', 'customer_name', 'order_amount', 'created_at'])
-            ->map(fn (Order $order) => [
-                'type' => 'order',
-                'title' => "Order #{$order->order_number}",
-                'subtitle' => "{$order->customer_name} · \${$order->order_amount}",
-                'timestamp' => $order->created_at,
-                'href' => route('orders.edit', $order),
+            ->get()
+            ->map(fn (DatabaseNotification $notification) => [
+                'id' => $notification->id,
+                'type' => $notification->data['type'] ?? 'order',
+                'title' => $notification->data['title'] ?? '',
+                'subtitle' => $notification->data['subtitle'] ?? '',
+                'timestamp' => $notification->created_at,
+                'href' => $notification->data['href'] ?? '#',
             ]);
     }
 

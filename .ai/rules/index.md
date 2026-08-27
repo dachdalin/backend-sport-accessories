@@ -13,6 +13,7 @@ Before planning or editing, find the row whose globs match the file's path and r
 | app/Http/Controllers/Backend/BannerController.php,resources/js/pages/banners/** | .ai/rules/banners.md |
 | app/Http/Controllers/Backend/BlogCategoryController.php,resources/js/pages/blog-categories/** | .ai/rules/blog-categories.md |
 | app/Http/Controllers/Api/**,app/Actions/CartItems/**,database/migrations/** | .ai/rules/cart-items-migrations.md |
+| app/Events/**,app/Listeners/**,app/Notifications/**,app/Http/Controllers/Backend/NotificationController.php,app/Services/NotificationService.php,resources/js/components/NotificationBell.vue | .ai/rules/components.md |
 | app/Http/Controllers/Backend/ContactController.php,resources/js/pages/contacts/** | .ai/rules/contacts.md |
 | resources/js/pages/**,app/Http/Controllers/** | .ai/rules/controllers.md |
 | app/Http/Controllers/Backend/FeatureDealController.php,resources/js/pages/feature-deals/** | .ai/rules/feature-deals.md |
@@ -21,10 +22,12 @@ Before planning or editing, find the row whose globs match the file's path and r
 | app/Models/*.php,app/Http/**,bootstrap/app.php | .ai/rules/http.md |
 | app/Http/Middleware/HandleInertiaRequests.php,resources/js/components/AppLogo.vue,resources/js/layouts/auth/** | .ai/rules/layouts-auth.md |
 | app/Http/Controllers/Backend/MaterialController.php,resources/js/pages/materials/** | .ai/rules/materials.md |
+| app/Http/Controllers/Backend/MessageController.php,resources/js/pages/messages/**,database/migrations/** | .ai/rules/messages-migrations.md |
 | app/Http/Controllers/Backend/**,database/migrations/** | .ai/rules/migrations.md |
 | app/Models/*.php | .ai/rules/models.md |
 | app/Http/Controllers/Api/**,app/Actions/Orders/**,database/migrations/** | .ai/rules/orders-migrations.md |
 | resources/js/pages/** | .ai/rules/pages.md |
+| app/Http/Controllers/Api/**,app/Http/Requests/Api/**,routes/api.php | .ai/rules/requests-api.md |
 | app/Services/DashboardService.php,database/migrations/** | .ai/rules/services-migrations.md |
 | app/Services/** | .ai/rules/services.md |
 | app/Services/StockClearanceSetupService.php,app/Http/Controllers/Backend/StockClearanceSetupController.php,resources/js/pages/stock-clearance-setups/** | .ai/rules/stock-clearance-setups.md |
