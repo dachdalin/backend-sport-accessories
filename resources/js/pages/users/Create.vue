@@ -59,7 +59,7 @@ const passwordsMatch = computed(
 
         <Form
             v-bind="UserController.store.form()"
-            class="max-w-xl space-y-6"
+            class="space-y-6"
             v-slot="{ errors, processing }"
         >
             <Heading
@@ -68,28 +68,30 @@ const passwordsMatch = computed(
                 description="Name and email the user will sign in with."
             />
 
-            <div class="grid gap-2">
-                <Label for="name">Name</Label>
-                <Input
-                    id="name"
-                    name="name"
-                    required
-                    autofocus
-                    placeholder="Jane Smith"
-                />
-                <InputError :message="errors.name" />
-            </div>
+            <div class="grid grid-cols-2 gap-4">
+                <div class="grid gap-2">
+                    <Label for="name">Name</Label>
+                    <Input
+                        id="name"
+                        name="name"
+                        required
+                        autofocus
+                        placeholder="Jane Smith"
+                    />
+                    <InputError :message="errors.name" />
+                </div>
 
-            <div class="grid gap-2">
-                <Label for="email">Email</Label>
-                <Input
-                    id="email"
-                    name="email"
-                    type="email"
-                    required
-                    placeholder="jane@example.com"
-                />
-                <InputError :message="errors.email" />
+                <div class="grid gap-2">
+                    <Label for="email">Email</Label>
+                    <Input
+                        id="email"
+                        name="email"
+                        type="email"
+                        required
+                        placeholder="jane@example.com"
+                    />
+                    <InputError :message="errors.email" />
+                </div>
             </div>
 
             <Separator />
@@ -143,7 +145,7 @@ const passwordsMatch = computed(
             />
 
             <div class="grid gap-2">
-                <div class="grid gap-2 sm:grid-cols-2">
+                <div class="grid grid-cols-2 gap-2">
                     <label
                         v-for="role in roles"
                         :key="role.id"

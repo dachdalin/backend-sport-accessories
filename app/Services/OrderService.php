@@ -2,10 +2,17 @@
 
 namespace App\Services;
 
+use App\Enums\CouponType;
+use App\Enums\TaxType;
+use App\Models\CartItem;
+use App\Models\Coupon;
+use App\Models\Customer;
 use App\Models\Order;
 use App\Models\Product;
+use App\Models\ShippingMethod;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
 
 class OrderService
 {
@@ -69,5 +76,85 @@ class OrderService
             'quantity' => $item['quantity'],
             'subtotal' => $item['quantity'] * $item['unit_price'],
         ], $items);
+    }
+
+    /**
+     * Fetch the authenticated customer's cart items with their product loaded.
+     *
+     * @return Collection<int, CartItem>
+     */
+    public function cartItemsFor(Customer $customer): Collection
+    {
+        return CartItem::query()
+            ->where('customer_id', $customer->id)
+            ->with('product')
+            ->get();
+    }
+
+    /**
+     * Resolve the shipping cost for an order, validating the shipping method is active.
+     */
+    public function resolveShippingCost(?int $shippingMethodId): float
+    {
+        if (! $shippingMethodId) {
+            return 0.0;
+        }
+
+        $shippingMethod = ShippingMethod::query()
+            ->where('id', $shippingMethodId)
+            ->where('status', true)
+            ->first();
+
+        if (! $shippingMethod) {
+            throw ValidationException::withMessages([
+                'shipping_method_id' => [__('The selected shipping method is unavailable.')],
+            ]);
+        }
+
+        return (float) $shippingMethod->cost;
+    }
+
+    /**
+     * Validate a coupon code against the items subtotal and return the discount it grants.
+     *
+     * @return array{amount: float, type: ?string}
+     */
+    public function resolveCouponDiscount(?string $code, float $itemsTotal): array
+    {
+        if (! $code) {
+            return ['amount' => 0.0, 'type' => null];
+        }
+
+        $coupon = Coupon::query()
+            ->where('code', $code)
+            ->where('status', true)
+            ->first();
+
+        if (! $coupon) {
+            throw ValidationException::withMessages([
+                'coupon_code' => [__('This coupon code is invalid.')],
+            ]);
+        }
+
+        if ($coupon->expires_at && $coupon->expires_at->isPast()) {
+            throw ValidationException::withMessages([
+                'coupon_code' => [__('This coupon code has expired.')],
+            ]);
+        }
+
+        if ($coupon->min_order_amount && $itemsTotal < $coupon->min_order_amount) {
+            throw ValidationException::withMessages([
+                'coupon_code' => [__('A minimum order amount of :amount is required for this coupon.', ['amount' => $coupon->min_order_amount])],
+            ]);
+        }
+
+        $discountAmount = $coupon->type === CouponType::Percentage
+            ? round($itemsTotal * ($coupon->value / 100), 2)
+            : min((float) $coupon->value, $itemsTotal);
+
+        return [
+            'amount' => $discountAmount,
+            'type' => $coupon->type === CouponType::Percentage ? TaxType::Percent->value : TaxType::Amount->value,
+        ];
     }
 }

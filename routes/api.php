@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\V1\BannerController;
 use App\Http\Controllers\Api\V1\BlogCategoryController;
 use App\Http\Controllers\Api\V1\BlogController;
 use App\Http\Controllers\Api\V1\BrandController;
+use App\Http\Controllers\Api\V1\CartItemController;
 use App\Http\Controllers\Api\V1\CategoryController;
 use App\Http\Controllers\Api\V1\ContactController;
 use App\Http\Controllers\Api\V1\CouponController;
@@ -17,6 +18,7 @@ use App\Http\Controllers\Api\V1\HelpTopicController;
 use App\Http\Controllers\Api\V1\JobOpeningController;
 use App\Http\Controllers\Api\V1\NewsletterSubscriberController;
 use App\Http\Controllers\Api\V1\OfflinePaymentMethodController;
+use App\Http\Controllers\Api\V1\OrderController;
 use App\Http\Controllers\Api\V1\PageController;
 use App\Http\Controllers\Api\V1\ProductController;
 use App\Http\Controllers\Api\V1\ReviewController;
@@ -83,11 +85,18 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
     Route::middleware('auth:sanctum')->group(function () {
         Route::apiResource('wishlists', WishlistController::class)->only(['index', 'store', 'destroy']);
 
+        Route::apiResource('cart-items', CartItemController::class)->only(['index', 'store', 'destroy']);
+
         Route::apiResource('products.reviews', ReviewController::class)->only(['store'])
             ->middleware('throttle:review-store');
 
         Route::apiResource('support-tickets', SupportTicketController::class)->only(['index', 'store', 'show']);
 
         Route::apiResource('shipping-addresses', ShippingAddressController::class)->only(['index', 'store', 'update', 'destroy']);
+
+        Route::apiResource('orders', OrderController::class)->only(['index', 'show']);
+
+        Route::apiResource('orders', OrderController::class)->only(['store'])
+            ->middleware('throttle:order-store');
     });
 });
