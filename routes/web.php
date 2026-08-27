@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Backend\AnalyticScriptController;
+use App\Http\Controllers\Backend\ApiDocumentationController;
 use App\Http\Controllers\Backend\AttributeController;
 use App\Http\Controllers\Backend\BannerController;
 use App\Http\Controllers\Backend\BlogCategoryController;
@@ -120,6 +121,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::post('notifications/read-all', [NotificationController::class, 'readAll'])->name('notifications.read-all');
     Route::post('notifications/{notification}/read', [NotificationController::class, 'read'])->name('notifications.read');
+
+    Route::get('api-documentation', [ApiDocumentationController::class, 'index'])->name('api-documentation.index');
 });
 
 require __DIR__.'/settings.php';

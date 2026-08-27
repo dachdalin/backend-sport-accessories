@@ -5,6 +5,7 @@ import {
     BadgePercent,
     BarChart3,
     Briefcase,
+    Code2,
     Coins,
     Factory,
     FileText,
@@ -69,6 +70,7 @@ import {
 } from '@/components/ui/sidebar';
 import { dashboard } from '@/routes';
 import { index as analyticScriptsIndex } from '@/routes/analytic-scripts';
+import { index as apiDocumentationIndex } from '@/routes/api-documentation';
 import { index as attributesIndex } from '@/routes/attributes';
 import { index as bannersIndex } from '@/routes/banners';
 import { index as blogCategoriesIndex } from '@/routes/blog-categories';
@@ -430,6 +432,11 @@ const navGroups: NavGroup[] = [
                 title: 'Business settings',
                 href: businessSettingsEdit(),
                 icon: Settings,
+            },
+            {
+                title: 'API documentation',
+                href: apiDocumentationIndex(),
+                icon: Code2,
             },
         ],
     },

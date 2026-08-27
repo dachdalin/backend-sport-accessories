@@ -33,6 +33,7 @@ class ProductResource extends JsonResource
             'discount' => $this->discount,
             'discount_type' => $this->discount_type,
             'final_price' => $this->final_price,
+            'average_rating' => $this->average_rating !== null ? round((float) $this->average_rating, 1) : null,
             'free_shipping' => $this->free_shipping,
             'refundable' => $this->refundable,
             'featured' => $this->featured,

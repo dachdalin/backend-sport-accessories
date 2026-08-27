@@ -158,4 +158,50 @@ class OrderControllerTest extends TestCase
 
         $response->assertNotFound();
     }
+
+    public function test_guest_cannot_access_order_summary(): void
+    {
+        $response = $this->getJson(route('api.v1.orders.summary'));
+
+        $response->assertUnauthorized();
+    }
+
+    public function test_authenticated_customer_order_summary_totals_only_their_own_orders(): void
+    {
+        $customer = Customer::factory()->create();
+        Order::factory()->create(['customer_id' => $customer->id, 'order_status' => 'delivered', 'payment_status' => 'paid', 'order_amount' => 100]);
+        Order::factory()->create(['customer_id' => $customer->id, 'order_status' => 'delivered', 'payment_status' => 'paid', 'order_amount' => 50]);
+        Order::factory()->create(['customer_id' => $customer->id, 'order_status' => 'pending', 'payment_status' => 'unpaid', 'order_amount' => 75]);
+        Order::factory()->create(['customer_id' => $customer->id, 'order_status' => 'processing', 'payment_status' => 'unpaid', 'order_amount' => 40]);
+        Order::factory()->create(['order_status' => 'delivered', 'payment_status' => 'paid', 'order_amount' => 999]);
+
+        $response = $this->actingAs($customer, 'sanctum')->getJson(route('api.v1.orders.summary'));
+
+        $response
+            ->assertOk()
+            ->assertJson([
+                'data' => [
+                    'total_orders' => 4,
+                    'total_received' => 2,
+                    'total_pending' => 1,
+                    'total_spend' => 150.0,
+                ],
+            ]);
+    }
+
+    public function test_order_summary_is_all_zero_when_customer_has_no_orders(): void
+    {
+        $customer = Customer::factory()->create();
+
+        $response = $this->actingAs($customer, 'sanctum')->getJson(route('api.v1.orders.summary'));
+
+        $response->assertOk()->assertJson([
+            'data' => [
+                'total_orders' => 0,
+                'total_received' => 0,
+                'total_pending' => 0,
+                'total_spend' => 0.0,
+            ],
+        ]);
+    }
 }

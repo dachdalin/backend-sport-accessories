@@ -99,6 +99,8 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
 
         Route::apiResource('shipping-addresses', ShippingAddressController::class)->only(['index', 'store', 'update', 'destroy']);
 
+        Route::get('orders/summary', [OrderController::class, 'summary'])->name('orders.summary');
+
         Route::apiResource('orders', OrderController::class)->only(['index', 'show']);
 
         Route::apiResource('orders', OrderController::class)->only(['store'])
