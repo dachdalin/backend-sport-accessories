@@ -29,6 +29,37 @@ class RolePermissionSeeder extends Seeder
     ];
 
     /**
+     * Catalog, merchandising, and sales resources a hands-on operations role
+     * needs full control over — distinct from the read-only `manager` role
+     * above, which sees everything but can't change anything. No access to
+     * Users/Roles, Customers, content pages, or customer-service resources.
+     *
+     * @var array<int, string>
+     */
+    private array $catalogManagerCrudResources = [
+        'products', 'categories', 'attributes', 'colors', 'sizes', 'materials', 'brands', 'tags',
+        'coupons', 'flash deals', 'feature deals', 'deal of the days', 'most demandeds',
+        'stock clearance setups', 'gift cards', 'orders', 'refund requests', 'reviews',
+        'shipping methods', 'delivery zones',
+    ];
+
+    /**
+     * Resources a customer-support agent needs full control over, to run
+     * their ticket/contact workflow end to end.
+     *
+     * @var array<int, string>
+     */
+    private array $supportCrudResources = ['support tickets', 'contacts'];
+
+    /**
+     * Resources a support agent only needs read access to, for context on who
+     * they're helping — not to edit customer records or orders directly.
+     *
+     * @var array<int, string>
+     */
+    private array $supportViewOnlyResources = ['customers', 'orders'];
+
+    /**
      * Run the database seeds.
      */
     public function run(): void
@@ -44,8 +75,52 @@ class RolePermissionSeeder extends Seeder
         Permission::findOrCreate('view dashboard');
         Permission::findOrCreate('view business settings');
         Permission::findOrCreate('edit business settings');
+        Permission::findOrCreate('view messages');
+        Permission::findOrCreate('create messages');
 
         $admin = Role::findOrCreate('admin');
         $admin->syncPermissions(Permission::all());
+
+        // Read-only role: sees every resource but cannot create, edit, or delete anything,
+        // and has no access to business settings or user/role management.
+        $manager = Role::findOrCreate('manager');
+        $manager->syncPermissions(
+            Permission::query()
+                ->where('name', 'like', 'view %')
+                ->whereNotIn('name', ['view users', 'view roles', 'view business settings'])
+                ->get()
+        );
+
+        $catalogManager = Role::findOrCreate('catalog manager');
+        $catalogManager->syncPermissions([
+            ...$this->crudPermissionNames($this->catalogManagerCrudResources),
+            'view dashboard',
+        ]);
+
+        $support = Role::findOrCreate('support');
+        $support->syncPermissions([
+            ...$this->crudPermissionNames($this->supportCrudResources),
+            ...array_map(fn (string $resource) => "view {$resource}", $this->supportViewOnlyResources),
+            'view dashboard',
+        ]);
+    }
+
+    /**
+     * Expand resource names into their full view/create/edit/delete permission names.
+     *
+     * @param  array<int, string>  $resources
+     * @return array<int, string>
+     */
+    private function crudPermissionNames(array $resources): array
+    {
+        $names = [];
+
+        foreach ($resources as $resource) {
+            foreach (['view', 'create', 'edit', 'delete'] as $action) {
+                $names[] = "{$action} {$resource}";
+            }
+        }
+
+        return $names;
     }
 }
