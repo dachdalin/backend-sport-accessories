@@ -1,9 +1,17 @@
 <script setup lang="ts">
 import { Form, Head, Link } from '@inertiajs/vue3';
+import { Clock, KeyRound, ShieldCheck, UserRound } from '@lucide/vue';
 import UserController from '@/actions/App/Http/Controllers/Backend/UserController';
 import Heading from '@/components/Heading.vue';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from '@/components/ui/card';
 import {
     Dialog,
     DialogClose,
@@ -103,41 +111,86 @@ defineOptions({
             </div>
         </div>
 
-        <div
-            class="max-w-xl divide-y divide-sidebar-border/70 rounded-xl border border-sidebar-border/70 dark:divide-sidebar-border dark:border-sidebar-border"
-        >
-            <div class="grid grid-cols-3 gap-4 p-4">
-                <dt class="text-sm font-medium text-muted-foreground">Name</dt>
-                <dd class="col-span-2 text-sm">{{ user.name }}</dd>
-            </div>
+        <div class="flex max-w-xl flex-col gap-6">
+            <Card>
+                <CardHeader>
+                    <div class="flex items-center gap-2.5">
+                        <UserRound
+                            class="size-4.5 text-muted-foreground"
+                            aria-hidden="true"
+                        />
+                        <CardTitle>Identity</CardTitle>
+                    </div>
+                    <CardDescription>
+                        Name and email the user signs in with.
+                    </CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <dl class="grid grid-cols-3 gap-y-4">
+                        <dt class="text-sm font-medium text-muted-foreground">
+                            Name
+                        </dt>
+                        <dd class="col-span-2 text-sm">{{ user.name }}</dd>
 
-            <div class="grid grid-cols-3 gap-4 p-4">
-                <dt class="text-sm font-medium text-muted-foreground">Email</dt>
-                <dd class="col-span-2 text-sm">{{ user.email }}</dd>
-            </div>
+                        <dt class="text-sm font-medium text-muted-foreground">
+                            Email
+                        </dt>
+                        <dd class="col-span-2 text-sm">{{ user.email }}</dd>
+                    </dl>
+                </CardContent>
+            </Card>
 
-            <div class="grid grid-cols-3 gap-4 p-4">
-                <dt class="text-sm font-medium text-muted-foreground">
-                    Email verified
-                </dt>
-                <dd class="col-span-2 text-sm">
-                    <Badge
-                        :variant="
-                            user.email_verified_at ? 'default' : 'secondary'
-                        "
-                    >
-                        {{
-                            user.email_verified_at
-                                ? `Verified ${formatDate(user.email_verified_at)}`
-                                : 'Not verified'
-                        }}
-                    </Badge>
-                </dd>
-            </div>
+            <Card>
+                <CardHeader>
+                    <div class="flex items-center gap-2.5">
+                        <KeyRound
+                            class="size-4.5 text-muted-foreground"
+                            aria-hidden="true"
+                        />
+                        <CardTitle>Credentials</CardTitle>
+                    </div>
+                    <CardDescription>
+                        Sign-in verification status.
+                    </CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <dl class="grid grid-cols-3 gap-y-4">
+                        <dt class="text-sm font-medium text-muted-foreground">
+                            Email verified
+                        </dt>
+                        <dd class="col-span-2 text-sm">
+                            <Badge
+                                :variant="
+                                    user.email_verified_at
+                                        ? 'default'
+                                        : 'secondary'
+                                "
+                            >
+                                {{
+                                    user.email_verified_at
+                                        ? `Verified ${formatDate(user.email_verified_at)}`
+                                        : 'Not verified'
+                                }}
+                            </Badge>
+                        </dd>
+                    </dl>
+                </CardContent>
+            </Card>
 
-            <div class="grid grid-cols-3 gap-4 p-4">
-                <dt class="text-sm font-medium text-muted-foreground">Roles</dt>
-                <dd class="col-span-2">
+            <Card>
+                <CardHeader>
+                    <div class="flex items-center gap-2.5">
+                        <ShieldCheck
+                            class="size-4.5 text-muted-foreground"
+                            aria-hidden="true"
+                        />
+                        <CardTitle>Access</CardTitle>
+                    </div>
+                    <CardDescription>
+                        Roles assigned to this user.
+                    </CardDescription>
+                </CardHeader>
+                <CardContent>
                     <div v-if="user.roles.length" class="flex flex-wrap gap-1">
                         <Badge
                             v-for="role in user.roles"
@@ -148,26 +201,40 @@ defineOptions({
                         </Badge>
                     </div>
                     <span v-else class="text-sm text-muted-foreground">—</span>
-                </dd>
-            </div>
+                </CardContent>
+            </Card>
 
-            <div class="grid grid-cols-3 gap-4 p-4">
-                <dt class="text-sm font-medium text-muted-foreground">
-                    Created
-                </dt>
-                <dd class="col-span-2 text-sm">
-                    {{ formatDate(user.created_at) }}
-                </dd>
-            </div>
+            <Card>
+                <CardHeader>
+                    <div class="flex items-center gap-2.5">
+                        <Clock
+                            class="size-4.5 text-muted-foreground"
+                            aria-hidden="true"
+                        />
+                        <CardTitle>Activity</CardTitle>
+                    </div>
+                    <CardDescription>
+                        When this account was created and last changed.
+                    </CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <dl class="grid grid-cols-3 gap-y-4">
+                        <dt class="text-sm font-medium text-muted-foreground">
+                            Created
+                        </dt>
+                        <dd class="col-span-2 text-sm">
+                            {{ formatDate(user.created_at) }}
+                        </dd>
 
-            <div class="grid grid-cols-3 gap-4 p-4">
-                <dt class="text-sm font-medium text-muted-foreground">
-                    Last updated
-                </dt>
-                <dd class="col-span-2 text-sm">
-                    {{ formatDate(user.updated_at) }}
-                </dd>
-            </div>
+                        <dt class="text-sm font-medium text-muted-foreground">
+                            Last updated
+                        </dt>
+                        <dd class="col-span-2 text-sm">
+                            {{ formatDate(user.updated_at) }}
+                        </dd>
+                    </dl>
+                </CardContent>
+            </Card>
         </div>
     </div>
 </template>

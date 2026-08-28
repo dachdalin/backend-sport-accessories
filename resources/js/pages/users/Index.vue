@@ -25,6 +25,7 @@ type User = {
     name: string;
     email: string;
     roles: Role[];
+    created_at: string;
 };
 
 type PaginationLink = {
@@ -41,6 +42,14 @@ type Paginated<T> = {
 defineProps<{
     users: Paginated<User>;
 }>();
+
+function formatDate(value: string): string {
+    return new Date(value).toLocaleDateString(undefined, {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+    });
+}
 
 defineOptions({
     layout: {
@@ -79,6 +88,7 @@ defineOptions({
                         <th class="p-3 font-medium">Name</th>
                         <th class="p-3 font-medium">Email</th>
                         <th class="p-3 font-medium">Roles</th>
+                        <th class="p-3 font-medium">Created</th>
                         <th class="p-3 text-right font-medium">Actions</th>
                     </tr>
                 </thead>
@@ -110,6 +120,9 @@ defineOptions({
                                 </Badge>
                             </div>
                             <span v-else class="text-muted-foreground">—</span>
+                        </td>
+                        <td class="p-3 text-muted-foreground">
+                            {{ formatDate(user.created_at) }}
                         </td>
                         <td class="p-3">
                             <div class="flex justify-end gap-2">
@@ -168,7 +181,7 @@ defineOptions({
                     <tr v-if="users.data.length === 0">
                         <td
                             class="p-6 text-center text-muted-foreground"
-                            colspan="4"
+                            colspan="5"
                         >
                             No users yet.
                         </td>

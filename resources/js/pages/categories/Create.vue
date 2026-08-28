@@ -1,10 +1,19 @@
 <script setup lang="ts">
 import { Form, Head, Link } from '@inertiajs/vue3';
+import { FolderTree, Tag } from '@lucide/vue';
 import { onBeforeUnmount, ref } from 'vue';
 import CategoryController from '@/actions/App/Http/Controllers/Backend/CategoryController';
 import Heading from '@/components/Heading.vue';
 import InputError from '@/components/InputError.vue';
 import { Button } from '@/components/ui/button';
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardFooter,
+    CardHeader,
+    CardTitle,
+} from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -15,7 +24,6 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
-import { Separator } from '@/components/ui/separator';
 import { Spinner } from '@/components/ui/spinner';
 import { create, index } from '@/routes/categories';
 
@@ -73,112 +81,136 @@ onBeforeUnmount(() => {
 
         <Form
             v-bind="CategoryController.store.form()"
-            class="max-w-xl space-y-6"
+            class="flex flex-col gap-6"
             v-slot="{ errors, processing }"
         >
-            <Heading
-                variant="small"
-                title="Basic info"
-                description="The name and icon shown throughout the storefront."
-            />
-
-            <div class="grid gap-2">
-                <Label for="name">Name</Label>
-                <Input
-                    id="name"
-                    name="name"
-                    required
-                    autofocus
-                    placeholder="Category name"
-                />
-                <InputError :message="errors.name" />
-            </div>
-
-            <div class="grid gap-2">
-                <Label for="icon">Icon</Label>
-                <div class="flex items-center gap-3">
-                    <img
-                        v-if="iconPreview"
-                        :src="iconPreview"
-                        alt="Icon preview"
-                        class="size-16 shrink-0 rounded-md border border-input object-cover"
-                    />
-                    <div
-                        v-else
-                        class="flex size-16 shrink-0 items-center justify-center rounded-md border border-dashed border-input text-xs text-muted-foreground"
-                    >
-                        No icon
+            <Card>
+                <CardHeader>
+                    <div class="flex items-center gap-2.5">
+                        <Tag
+                            class="size-4.5 text-muted-foreground"
+                            aria-hidden="true"
+                        />
+                        <CardTitle>Identity</CardTitle>
                     </div>
-                    <Input
-                        id="icon"
-                        name="icon"
-                        type="file"
-                        accept="image/*"
-                        @change="onIconChange"
-                    />
-                </div>
-                <InputError :message="errors.icon" />
-            </div>
+                    <CardDescription>
+                        The name and icon shown throughout the storefront.
+                    </CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <div class="grid gap-2">
+                        <Label for="name">Name</Label>
+                        <Input
+                            id="name"
+                            name="name"
+                            required
+                            autofocus
+                            placeholder="Category name"
+                        />
+                        <InputError :message="errors.name" />
+                    </div>
 
-            <Separator />
+                    <div class="mt-4 grid gap-2">
+                        <Label for="icon">Icon</Label>
+                        <div class="flex items-center gap-3">
+                            <img
+                                v-if="iconPreview"
+                                :src="iconPreview"
+                                alt="Icon preview"
+                                class="size-16 shrink-0 rounded-md border border-input object-cover"
+                            />
+                            <div
+                                v-else
+                                class="flex size-16 shrink-0 items-center justify-center rounded-md border border-dashed border-input text-xs text-muted-foreground"
+                            >
+                                No icon
+                            </div>
+                            <Input
+                                id="icon"
+                                name="icon"
+                                type="file"
+                                accept="image/*"
+                                @change="onIconChange"
+                            />
+                        </div>
+                        <InputError :message="errors.icon" />
+                    </div>
+                </CardContent>
+            </Card>
 
-            <Heading
-                variant="small"
-                title="Organization"
-                description="Where it sits in the catalog and how it's ordered."
-            />
+            <Card>
+                <CardHeader>
+                    <div class="flex items-center gap-2.5">
+                        <FolderTree
+                            class="size-4.5 text-muted-foreground"
+                            aria-hidden="true"
+                        />
+                        <CardTitle>Organization</CardTitle>
+                    </div>
+                    <CardDescription>
+                        Where it sits in the catalog and how it's ordered.
+                    </CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="grid gap-2">
+                            <Label for="parent_id">Parent category</Label>
+                            <Select name="parent_id">
+                                <SelectTrigger id="parent_id" class="w-full">
+                                    <SelectValue
+                                        placeholder="None (top-level category)"
+                                    />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem
+                                        v-for="parent in parents"
+                                        :key="parent.id"
+                                        :value="String(parent.id)"
+                                    >
+                                        {{ parent.name }}
+                                    </SelectItem>
+                                </SelectContent>
+                            </Select>
+                            <InputError :message="errors.parent_id" />
+                        </div>
 
-            <div class="grid gap-2">
-                <Label for="parent_id">Parent category</Label>
-                <Select name="parent_id">
-                    <SelectTrigger id="parent_id" class="w-full">
-                        <SelectValue placeholder="None (top-level category)" />
-                    </SelectTrigger>
-                    <SelectContent>
-                        <SelectItem
-                            v-for="parent in parents"
-                            :key="parent.id"
-                            :value="String(parent.id)"
+                        <div class="grid gap-2">
+                            <Label for="position">Position</Label>
+                            <Input
+                                id="position"
+                                name="position"
+                                type="number"
+                                min="0"
+                                default-value="0"
+                            />
+                            <p class="text-sm text-muted-foreground">
+                                Lower numbers appear first.
+                            </p>
+                            <InputError :message="errors.position" />
+                        </div>
+                    </div>
+
+                    <label
+                        for="home_status"
+                        class="mt-4 flex cursor-pointer items-center gap-3 rounded-lg border border-input px-3 py-2.5 transition-colors has-[[data-state=checked]]:border-primary has-[[data-state=checked]]:bg-primary/5"
+                    >
+                        <Checkbox id="home_status" name="home_status" />
+                        <span class="text-sm font-medium"
+                            >Show on home page</span
                         >
-                            {{ parent.name }}
-                        </SelectItem>
-                    </SelectContent>
-                </Select>
-                <InputError :message="errors.parent_id" />
-            </div>
-
-            <div class="grid gap-2">
-                <Label for="position">Position</Label>
-                <Input
-                    id="position"
-                    name="position"
-                    type="number"
-                    min="0"
-                    default-value="0"
-                />
-                <p class="text-sm text-muted-foreground">
-                    Lower numbers appear first.
-                </p>
-                <InputError :message="errors.position" />
-            </div>
-
-            <div class="flex items-center gap-2">
-                <Checkbox id="home_status" name="home_status" />
-                <Label for="home_status">Show on home page</Label>
-                <InputError :message="errors.home_status" />
-            </div>
-
-            <Separator />
-
-            <div class="flex items-center gap-3">
-                <Button :disabled="processing">
-                    <Spinner v-if="processing" />
-                    Create category
-                </Button>
-                <Button variant="outline" as-child>
-                    <Link :href="index()">Cancel</Link>
-                </Button>
-            </div>
+                    </label>
+                    <InputError :message="errors.home_status" class="mt-2" />
+                </CardContent>
+                <CardFooter class="gap-3 border-t pt-6">
+                    <Button :disabled="processing">
+                        <Spinner v-if="processing" />
+                        Create category
+                    </Button>
+                    <Button variant="outline" as-child>
+                        <Link :href="index()">Cancel</Link>
+                    </Button>
+                </CardFooter>
+            </Card>
         </Form>
     </div>
 </template>

@@ -29,11 +29,19 @@ class RoleController extends Controller
     {
         return Inertia::render('roles/Index', [
             'roles' => Role::query()
-                ->with('permissions:id,name')
                 ->withCount('permissions')
                 ->latest()
                 ->paginate(15)
                 ->withQueryString(),
+        ]);
+    }
+
+    /**
+     * Show the form for creating a new role.
+     */
+    public function create(): Response
+    {
+        return Inertia::render('roles/Create', [
             'permissions' => Permission::query()->orderBy('name')->get(['id', 'name']),
         ]);
     }
@@ -56,6 +64,17 @@ class RoleController extends Controller
         Inertia::flash('toast', ['type' => 'success', 'message' => __('Role created.')]);
 
         return to_route('roles.index');
+    }
+
+    /**
+     * Show the form for editing the specified role.
+     */
+    public function edit(Role $role): Response
+    {
+        return Inertia::render('roles/Edit', [
+            'role' => $role->load('permissions:id,name'),
+            'permissions' => Permission::query()->orderBy('name')->get(['id', 'name']),
+        ]);
     }
 
     /**

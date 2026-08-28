@@ -15,6 +15,7 @@ Before planning or editing, find the row whose globs match the file's path and r
 | app/Http/Controllers/Backend/BannerController.php,resources/js/pages/banners/** | .ai/rules/banners.md |
 | app/Http/Controllers/Backend/BlogCategoryController.php,resources/js/pages/blog-categories/** | .ai/rules/blog-categories.md |
 | app/Http/Controllers/Api/**,app/Actions/CartItems/**,database/migrations/** | .ai/rules/cart-items-migrations.md |
+| resources/js/pages/categories/** | .ai/rules/categories.md |
 | app/Events/**,app/Listeners/**,app/Notifications/**,app/Http/Controllers/Backend/NotificationController.php,app/Services/NotificationService.php,resources/js/components/NotificationBell.vue | .ai/rules/components.md |
 | app/Http/Controllers/Backend/ContactController.php,resources/js/pages/contacts/** | .ai/rules/contacts.md |
 | app/Http/Controllers/Api/**,routes/api.php | .ai/rules/controllers-api.md |
@@ -35,6 +36,7 @@ Before planning or editing, find the row whose globs match the file's path and r
 | app/Http/Controllers/Api/**,app/Actions/Orders/**,database/migrations/** | .ai/rules/orders-migrations.md |
 | resources/js/pages/** | .ai/rules/pages.md |
 | app/Http/Controllers/Api/**,app/Http/Requests/Api/**,routes/api.php | .ai/rules/requests-api.md |
+| app/Http/Controllers/Backend/RoleController.php,resources/js/pages/roles/** | .ai/rules/roles.md |
 | database/seeders/RolePermissionSeeder.php,database/seeders/AdminSeeder.php | .ai/rules/seeders.md |
 | app/Services/DashboardService.php,database/migrations/** | .ai/rules/services-migrations.md |
 | app/Services/** | .ai/rules/services.md |

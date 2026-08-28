@@ -144,7 +144,7 @@ Route::middleware(['auth', 'verified'])->group(function () use ($gateCrud, $gate
     $gateCrudWithForms(Route::resource('deal-of-the-days', DealOfTheDayController::class)->except(['show']), 'deal of the days');
     $gateCrudWithForms(Route::resource('most-demandeds', MostDemandedController::class)->except(['show']), 'most demandeds');
     $gateCrudWithForms(Route::resource('refund-requests', RefundRequestController::class)->except(['show']), 'refund requests');
-    $gateCrud(Route::resource('roles', RoleController::class)->only(['index', 'store', 'update', 'destroy']), 'roles');
+    $gateCrudWithForms(Route::resource('roles', RoleController::class)->except(['show']), 'roles');
 
     Route::resource('users', UserController::class)
         ->middlewareFor(['index', 'show'], 'permission:view users')

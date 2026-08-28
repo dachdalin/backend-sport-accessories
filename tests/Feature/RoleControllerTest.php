@@ -71,6 +71,27 @@ class RoleControllerTest extends TestCase
         $this->assertTrue($role->hasPermissionTo($permission));
     }
 
+    public function test_role_can_be_created_with_permission_ids_sent_as_strings(): void
+    {
+        // A real browser form submits permission checkbox values as strings
+        // (e.g. "134"), not PHP ints. Spatie's syncPermissions() treats a
+        // numeric string as a permission *name* lookup, not an ID lookup, so
+        // this must be handled before reaching syncPermissions().
+        $user = User::factory()->create();
+        $permission = Permission::create(['name' => 'products.view']);
+
+        $response = $this->actingAs($user)->post(route('roles.store'), [
+            'name' => 'Editor',
+            'permissions' => [(string) $permission->id],
+        ]);
+
+        $response->assertSessionHasNoErrors();
+
+        $role = Role::where('name', 'Editor')->firstOrFail();
+
+        $this->assertTrue($role->hasPermissionTo($permission));
+    }
+
     public function test_duplicate_role_name_is_rejected(): void
     {
         $user = User::factory()->create();
@@ -135,6 +156,22 @@ class RoleControllerTest extends TestCase
 
         $this->assertTrue($role->hasPermissionTo($keep));
         $this->assertFalse($role->hasPermissionTo($drop));
+    }
+
+    public function test_role_can_be_updated_with_permission_ids_sent_as_strings(): void
+    {
+        $user = User::factory()->create();
+        $role = Role::create(['name' => 'Editor']);
+        $permission = Permission::create(['name' => 'products.view']);
+
+        $response = $this->actingAs($user)->put(route('roles.update', $role), [
+            'name' => 'Editor',
+            'permissions' => [(string) $permission->id],
+        ]);
+
+        $response->assertSessionHasNoErrors();
+
+        $this->assertTrue($role->fresh()->hasPermissionTo($permission));
     }
 
     public function test_duplicate_role_name_is_rejected_when_updated(): void
