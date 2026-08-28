@@ -13,6 +13,7 @@ import {
     DialogTitle,
     DialogTrigger,
 } from '@/components/ui/dialog';
+import { usePermissions } from '@/composables/usePermissions';
 import { create, edit, index } from '@/routes/orders';
 
 type Order = {
@@ -55,6 +56,8 @@ const paymentStatusVariant: Record<string, 'default' | 'secondary' | 'destructiv
     paid: 'default',
     refunded: 'destructive',
 };
+
+const { can } = usePermissions();
 </script>
 
 <template>
@@ -66,7 +69,7 @@ const paymentStatusVariant: Record<string, 'default' | 'secondary' | 'destructiv
                 title="Orders"
                 description="Manage customer orders"
             />
-            <Button as-child>
+            <Button v-if="can('create orders')" as-child>
                 <Link :href="create()">Add order</Link>
             </Button>
         </div>
@@ -110,11 +113,16 @@ const paymentStatusVariant: Record<string, 'default' | 'secondary' | 'destructiv
                         </td>
                         <td class="p-3">
                             <div class="flex justify-end gap-2">
-                                <Button variant="outline" size="sm" as-child>
+                                <Button
+                                    v-if="can('edit orders')"
+                                    variant="outline"
+                                    size="sm"
+                                    as-child
+                                >
                                     <Link :href="edit(order)">Edit</Link>
                                 </Button>
 
-                                <Dialog>
+                                <Dialog v-if="can('delete orders')">
                                     <DialogTrigger as-child>
                                         <Button variant="destructive" size="sm"
                                             >Delete</Button

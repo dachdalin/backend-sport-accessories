@@ -13,6 +13,7 @@ import {
     DialogTitle,
     DialogTrigger,
 } from '@/components/ui/dialog';
+import { usePermissions } from '@/composables/usePermissions';
 import { create, edit, index } from '@/routes/categories';
 
 type Category = {
@@ -52,6 +53,8 @@ defineOptions({
         ],
     },
 });
+
+const { can } = usePermissions();
 </script>
 
 <template>
@@ -63,7 +66,7 @@ defineOptions({
                 title="Categories"
                 description="Organize the categories your products are listed under"
             />
-            <Button as-child>
+            <Button v-if="can('create categories')" as-child>
                 <Link :href="create()">Add category</Link>
             </Button>
         </div>
@@ -113,11 +116,16 @@ defineOptions({
                         </td>
                         <td class="p-3">
                             <div class="flex justify-end gap-2">
-                                <Button variant="outline" size="sm" as-child>
+                                <Button
+                                    v-if="can('edit categories')"
+                                    variant="outline"
+                                    size="sm"
+                                    as-child
+                                >
                                     <Link :href="edit(category)">Edit</Link>
                                 </Button>
 
-                                <Dialog>
+                                <Dialog v-if="can('delete categories')">
                                     <DialogTrigger as-child>
                                         <Button variant="destructive" size="sm"
                                             >Delete</Button
