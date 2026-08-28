@@ -13,6 +13,7 @@ import {
     DialogTitle,
     DialogTrigger,
 } from '@/components/ui/dialog';
+import { usePermissions } from '@/composables/usePermissions';
 import { create, edit, index } from '@/routes/return-policies';
 
 type ReturnPolicy = {
@@ -37,6 +38,8 @@ defineOptions({
         ],
     },
 });
+
+const { can } = usePermissions();
 </script>
 
 <template>
@@ -48,7 +51,7 @@ defineOptions({
                 title="Return policies"
                 description="Manage the return policies shown to customers"
             />
-            <Button as-child>
+            <Button v-if="can('create return policies')" as-child>
                 <Link :href="create()">Add return policy</Link>
             </Button>
         </div>
@@ -98,11 +101,16 @@ defineOptions({
                         </td>
                         <td class="p-3">
                             <div class="flex justify-end gap-2">
-                                <Button variant="outline" size="sm" as-child>
+                                <Button
+                                    v-if="can('edit return policies')"
+                                    variant="outline"
+                                    size="sm"
+                                    as-child
+                                >
                                     <Link :href="edit(returnPolicy)">Edit</Link>
                                 </Button>
 
-                                <Dialog>
+                                <Dialog v-if="can('delete return policies')">
                                     <DialogTrigger as-child>
                                         <Button variant="destructive" size="sm"
                                             >Delete</Button

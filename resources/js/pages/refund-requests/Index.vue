@@ -13,6 +13,7 @@ import {
     DialogTitle,
     DialogTrigger,
 } from '@/components/ui/dialog';
+import { usePermissions } from '@/composables/usePermissions';
 import { create, edit, index } from '@/routes/refund-requests';
 
 type RefundRequest = {
@@ -55,6 +56,8 @@ const statusVariant: Record<string, 'default' | 'secondary' | 'destructive'> = {
     approved: 'default',
     rejected: 'destructive',
 };
+
+const { can } = usePermissions();
 </script>
 
 <template>
@@ -66,7 +69,7 @@ const statusVariant: Record<string, 'default' | 'secondary' | 'destructive'> = {
                 title="Refund requests"
                 description="Review and manage customer refund requests"
             />
-            <Button as-child>
+            <Button v-if="can('create refund requests')" as-child>
                 <Link :href="create()">Add refund request</Link>
             </Button>
         </div>
@@ -113,11 +116,16 @@ const statusVariant: Record<string, 'default' | 'secondary' | 'destructive'> = {
                         </td>
                         <td class="p-3">
                             <div class="flex justify-end gap-2">
-                                <Button variant="outline" size="sm" as-child>
+                                <Button
+                                    v-if="can('edit refund requests')"
+                                    variant="outline"
+                                    size="sm"
+                                    as-child
+                                >
                                     <Link :href="edit(refundRequest)">Edit</Link>
                                 </Button>
 
-                                <Dialog>
+                                <Dialog v-if="can('delete refund requests')">
                                     <DialogTrigger as-child>
                                         <Button variant="destructive" size="sm"
                                             >Delete</Button

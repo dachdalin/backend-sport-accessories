@@ -46,6 +46,28 @@ class AdminSeeder extends Seeder
 
         $catalogManager->syncRoles('catalog manager');
 
+        $customerManager = User::firstOrCreate(
+            ['email' => 'customer-manager@example.com'],
+            [
+                'name' => 'Customer Manager',
+                'password' => Hash::make('password'),
+                'email_verified_at' => now(),
+            ]
+        );
+
+        $customerManager->syncRoles('customer manager');
+
+        $contentManager = User::firstOrCreate(
+            ['email' => 'content-manager@example.com'],
+            [
+                'name' => 'Content Manager',
+                'password' => Hash::make('password'),
+                'email_verified_at' => now(),
+            ]
+        );
+
+        $contentManager->syncRoles('content manager');
+
         $support = User::firstOrCreate(
             ['email' => 'support@example.com'],
             [

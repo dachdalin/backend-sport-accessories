@@ -86,11 +86,15 @@ class RolePermissionTest extends TestCase
         $admin = User::where('email', 'admin@example.com')->firstOrFail();
         $manager = User::where('email', 'manager@example.com')->firstOrFail();
         $catalogManager = User::where('email', 'catalog-manager@example.com')->firstOrFail();
+        $customerManager = User::where('email', 'customer-manager@example.com')->firstOrFail();
+        $contentManager = User::where('email', 'content-manager@example.com')->firstOrFail();
         $support = User::where('email', 'support@example.com')->firstOrFail();
 
         $this->assertTrue($admin->hasRole('admin'));
         $this->assertTrue($manager->hasRole('manager'));
         $this->assertTrue($catalogManager->hasRole('catalog manager'));
+        $this->assertTrue($customerManager->hasRole('customer manager'));
+        $this->assertTrue($contentManager->hasRole('content manager'));
         $this->assertTrue($support->hasRole('support'));
         $this->assertFalse($manager->hasRole('admin'));
     }
@@ -106,10 +110,61 @@ class RolePermissionTest extends TestCase
         $this->assertTrue($permissionNames->contains('create products'));
         $this->assertTrue($permissionNames->contains('edit products'));
         $this->assertTrue($permissionNames->contains('delete products'));
+
+        foreach (['attributes', 'colors', 'sizes', 'materials', 'brands', 'tags'] as $resource) {
+            $this->assertTrue($permissionNames->contains("view {$resource}"));
+            $this->assertTrue($permissionNames->contains("create {$resource}"));
+            $this->assertTrue($permissionNames->contains("edit {$resource}"));
+            $this->assertTrue($permissionNames->contains("delete {$resource}"));
+        }
+
         $this->assertTrue($permissionNames->contains('view dashboard'));
         $this->assertFalse($permissionNames->contains('view users'));
         $this->assertFalse($permissionNames->contains('view roles'));
         $this->assertFalse($permissionNames->contains('view customers'));
+    }
+
+    public function test_role_permission_seeder_grants_customer_manager_full_control_over_customer_relationship_resources(): void
+    {
+        $this->seed(RolePermissionSeeder::class);
+
+        $customerManager = Role::findByName('customer manager');
+        $permissionNames = $customerManager->permissions()->pluck('name');
+
+        foreach (['customers', 'orders', 'wishlists', 'refund requests', 'reviews'] as $resource) {
+            $this->assertTrue($permissionNames->contains("view {$resource}"));
+            $this->assertTrue($permissionNames->contains("create {$resource}"));
+            $this->assertTrue($permissionNames->contains("edit {$resource}"));
+            $this->assertTrue($permissionNames->contains("delete {$resource}"));
+        }
+
+        $this->assertTrue($permissionNames->contains('view dashboard'));
+        $this->assertFalse($permissionNames->contains('view users'));
+        $this->assertFalse($permissionNames->contains('view roles'));
+        $this->assertFalse($permissionNames->contains('view products'));
+        $this->assertFalse($permissionNames->contains('view support tickets'));
+    }
+
+    public function test_role_permission_seeder_grants_content_manager_full_control_over_content_resources(): void
+    {
+        $this->seed(RolePermissionSeeder::class);
+
+        $contentManager = Role::findByName('content manager');
+        $permissionNames = $contentManager->permissions()->pluck('name');
+
+        foreach (['pages', 'blogs', 'blog categories'] as $resource) {
+            $this->assertTrue($permissionNames->contains("view {$resource}"));
+            $this->assertTrue($permissionNames->contains("create {$resource}"));
+            $this->assertTrue($permissionNames->contains("edit {$resource}"));
+            $this->assertTrue($permissionNames->contains("delete {$resource}"));
+        }
+
+        $this->assertTrue($permissionNames->contains('view dashboard'));
+        $this->assertFalse($permissionNames->contains('view users'));
+        $this->assertFalse($permissionNames->contains('view roles'));
+        $this->assertFalse($permissionNames->contains('view customers'));
+        $this->assertFalse($permissionNames->contains('view products'));
+        $this->assertFalse($permissionNames->contains('view orders'));
     }
 
     public function test_role_permission_seeder_grants_support_ticket_and_contact_control_with_read_only_customer_context(): void

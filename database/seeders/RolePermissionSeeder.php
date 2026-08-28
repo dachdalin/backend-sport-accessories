@@ -44,12 +44,31 @@ class RolePermissionSeeder extends Seeder
     ];
 
     /**
+     * Customer-relationship resources a customer manager needs full control
+     * over — distinct from `support`, which only owns the ticket/contact
+     * workflow. No access to catalog, business settings, or Users/Roles.
+     *
+     * @var array<int, string>
+     */
+    private array $customerManagerCrudResources = ['customers', 'orders', 'wishlists', 'refund requests', 'reviews'];
+
+    /**
      * Resources a customer-support agent needs full control over, to run
      * their ticket/contact workflow end to end.
      *
      * @var array<int, string>
      */
     private array $supportCrudResources = ['support tickets', 'contacts'];
+
+    /**
+     * Content resources a content-focused role needs full control over —
+     * distinct from `catalog manager` (catalog/sales) and `manager`
+     * (read-only everything). No access to Users/Roles, Customers, orders,
+     * or catalog/merchandising resources.
+     *
+     * @var array<int, string>
+     */
+    private array $contentManagerCrudResources = ['pages', 'blogs', 'blog categories'];
 
     /**
      * Resources a support agent only needs read access to, for context on who
@@ -95,6 +114,18 @@ class RolePermissionSeeder extends Seeder
         $catalogManager = Role::findOrCreate('catalog manager');
         $catalogManager->syncPermissions([
             ...$this->crudPermissionNames($this->catalogManagerCrudResources),
+            'view dashboard',
+        ]);
+
+        $customerManager = Role::findOrCreate('customer manager');
+        $customerManager->syncPermissions([
+            ...$this->crudPermissionNames($this->customerManagerCrudResources),
+            'view dashboard',
+        ]);
+
+        $contentManager = Role::findOrCreate('content manager');
+        $contentManager->syncPermissions([
+            ...$this->crudPermissionNames($this->contentManagerCrudResources),
             'view dashboard',
         ]);
 
