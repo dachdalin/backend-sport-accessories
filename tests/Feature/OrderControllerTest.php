@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\Order;
+use App\Models\OrderItem;
 use App\Models\Product;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -103,6 +104,25 @@ class OrderControllerTest extends TestCase
                 ->component('orders/Index')
                 ->has('orders.data', 2)
                 ->where('filters.search', 'findme'),
+            );
+    }
+
+    public function test_order_show_page_is_displayed(): void
+    {
+        $user = User::factory()->create();
+        $order = Order::factory()->create();
+        OrderItem::factory()->count(2)->create(['order_id' => $order->id]);
+
+        $response = $this
+            ->actingAs($user)
+            ->get(route('orders.show', $order));
+
+        $response
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('orders/Show')
+                ->where('order.id', $order->id)
+                ->has('order.items', 2),
             );
     }
 

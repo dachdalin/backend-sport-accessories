@@ -76,6 +76,16 @@ class OrderController extends Controller
     }
 
     /**
+     * Display the specified order.
+     */
+    public function show(Order $order): Response
+    {
+        return Inertia::render('orders/Show', [
+            'order' => $order->load('items'),
+        ]);
+    }
+
+    /**
      * Show the form for editing the specified order.
      */
     public function edit(Order $order): Response

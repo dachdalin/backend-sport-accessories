@@ -3,6 +3,7 @@ import { Form, Head } from '@inertiajs/vue3';
 import PageController from '@/actions/App/Http/Controllers/Backend/PageController';
 import Heading from '@/components/Heading.vue';
 import InputError from '@/components/InputError.vue';
+import RichTextEditor from '@/components/RichTextEditor.vue';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
@@ -66,17 +67,13 @@ defineOptions({
                 <InputError :message="errors.title" />
             </div>
 
-            <div class="grid gap-2">
-                <Label for="content">Content</Label>
-                <Textarea
-                    id="content"
-                    name="content"
-                    required
-                    rows="8"
-                    :default-value="props.page.content"
-                />
-                <InputError :message="errors.content" />
-            </div>
+            <RichTextEditor
+                name="content"
+                label="Content"
+                required
+                :default-value="props.page.content"
+                :error="errors.content"
+            />
 
             <div class="grid gap-2">
                 <Label for="meta_title">Meta title</Label>

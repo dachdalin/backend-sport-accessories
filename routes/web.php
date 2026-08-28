@@ -132,7 +132,8 @@ Route::middleware(['auth', 'verified'])->group(function () use ($gateCrud, $gate
         ->only(['store', 'destroy'])
         ->middlewareFor(['store', 'destroy'], 'permission:edit products');
 
-    $gateCrudWithForms(Route::resource('orders', OrderController::class)->except(['show']), 'orders');
+    $gateCrudWithForms(Route::resource('orders', OrderController::class), 'orders')
+        ->middlewareFor('show', 'permission:view orders');
     $gateCrudWithForms(Route::resource('reviews', ReviewController::class)->except(['show']), 'reviews');
     $gateCrud(Route::resource('wishlists', WishlistController::class)->only(['index', 'store', 'update', 'destroy']), 'wishlists');
     $gateCrudWithForms(Route::resource('contacts', ContactController::class)->except(['show']), 'contacts');

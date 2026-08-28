@@ -25,7 +25,7 @@ import {
     SelectValue,
 } from '@/components/ui/select';
 import { usePermissions } from '@/composables/usePermissions';
-import { create, edit, index } from '@/routes/orders';
+import { create, edit, index, show } from '@/routes/orders';
 
 type Order = {
     id: number;
@@ -244,7 +244,11 @@ function clearFilters(): void {
                         :key="order.id"
                         class="border-b border-sidebar-border/70 last:border-b-0 dark:border-sidebar-border"
                     >
-                        <td class="p-3 font-medium">{{ order.order_number }}</td>
+                        <td class="p-3 font-medium">
+                            <Link :href="show(order)" class="hover:underline">{{
+                                order.order_number
+                            }}</Link>
+                        </td>
                         <td class="p-3">{{ order.customer_name }}</td>
                         <td class="p-3">{{ order.items_count }}</td>
                         <td class="p-3">${{ order.order_amount }}</td>
@@ -260,6 +264,10 @@ function clearFilters(): void {
                         </td>
                         <td class="p-3">
                             <div class="flex justify-end gap-2">
+                                <Button variant="outline" size="sm" as-child>
+                                    <Link :href="show(order)">View</Link>
+                                </Button>
+
                                 <Button
                                     v-if="can('edit orders')"
                                     variant="outline"
