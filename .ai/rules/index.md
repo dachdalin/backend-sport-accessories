@@ -27,6 +27,7 @@ Before planning or editing, find the row whose globs match the file's path and r
 | app/Http/Controllers/Backend/GiftCardController.php,resources/js/pages/gift-cards/** | .ai/rules/gift-cards.md |
 | app/Http/Controllers/Api/**,app/Actions/Customers/**,app/Http/Requests/Api/**,routes/api.php | .ai/rules/http-requests-api.md |
 | app/Models/*.php,app/Http/**,bootstrap/app.php | .ai/rules/http.md |
+| resources/js/pages/**/Index.vue,resources/js/components/Pagination.vue | .ai/rules/js-components.md |
 | app/Http/Middleware/HandleInertiaRequests.php,resources/js/components/AppLogo.vue,resources/js/layouts/auth/** | .ai/rules/layouts-auth.md |
 | app/Http/Controllers/Backend/MaterialController.php,resources/js/pages/materials/** | .ai/rules/materials.md |
 | app/Http/Controllers/Backend/MessageController.php,resources/js/pages/messages/**,database/migrations/** | .ai/rules/messages-migrations.md |
@@ -34,6 +35,7 @@ Before planning or editing, find the row whose globs match the file's path and r
 | app/Models/*.php | .ai/rules/models.md |
 | app/Http/Controllers/Api/**,app/Actions/Customers/**,app/Notifications/**,routes/api.php | .ai/rules/notifications.md |
 | app/Http/Controllers/Api/**,app/Actions/Orders/**,database/migrations/** | .ai/rules/orders-migrations.md |
+| app/Services/OrderService.php,app/Http/Controllers/Backend/OrderController.php,resources/js/pages/orders/** | .ai/rules/orders.md |
 | resources/js/pages/** | .ai/rules/pages.md |
 | app/Http/Controllers/Api/**,app/Http/Requests/Api/**,routes/api.php | .ai/rules/requests-api.md |
 | app/Http/Controllers/Backend/RoleController.php,resources/js/pages/roles/** | .ai/rules/roles.md |

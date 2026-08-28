@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import { Form, Head, Link } from '@inertiajs/vue3';
+import { Form, Head } from '@inertiajs/vue3';
 import { Pencil, Plus, Trash2 } from '@lucide/vue';
 import { ref, watch } from 'vue';
 import ColorController from '@/actions/App/Http/Controllers/Backend/ColorController';
 import Heading from '@/components/Heading.vue';
 import InputError from '@/components/InputError.vue';
+import Pagination from '@/components/Pagination.vue';
 import { Button } from '@/components/ui/button';
 import {
     Dialog,
@@ -37,6 +38,11 @@ type PaginationLink = {
 type Paginated<T> = {
     data: T[];
     links: PaginationLink[];
+    from: number | null;
+    to: number | null;
+    total: number;
+    current_page: number;
+    last_page: number;
 };
 
 defineProps<{
@@ -261,30 +267,7 @@ function openEdit(color: Color) {
             </table>
         </div>
 
-        <div
-            v-if="colors.links.length > 3"
-            class="flex flex-wrap items-center justify-center gap-1"
-        >
-            <template v-for="(link, index) in colors.links" :key="index">
-                <span
-                    v-if="!link.url"
-                    class="rounded-md px-3 py-1.5 text-sm text-muted-foreground"
-                    v-html="link.label"
-                />
-                <Link
-                    v-else
-                    :href="link.url"
-                    preserve-scroll
-                    class="rounded-md px-3 py-1.5 text-sm"
-                    :class="
-                        link.active
-                            ? 'bg-primary text-primary-foreground'
-                            : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
-                    "
-                    v-html="link.label"
-                />
-            </template>
-        </div>
+        <Pagination :meta="colors" label="colors" />
 
         <Dialog
             :open="editingColor !== null"

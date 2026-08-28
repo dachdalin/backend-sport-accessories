@@ -1,7 +1,10 @@
 <script setup lang="ts">
-import { Form, Head, Link } from '@inertiajs/vue3';
+import { Form, Head, Link, router } from '@inertiajs/vue3';
+import { X } from '@lucide/vue';
+import { ref } from 'vue';
 import ProductController from '@/actions/App/Http/Controllers/Backend/ProductController';
 import Heading from '@/components/Heading.vue';
+import Pagination from '@/components/Pagination.vue';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
@@ -13,6 +16,13 @@ import {
     DialogTitle,
     DialogTrigger,
 } from '@/components/ui/dialog';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select';
 import { usePermissions } from '@/composables/usePermissions';
 import { create, edit, index } from '@/routes/products';
 
@@ -38,10 +48,26 @@ type PaginationLink = {
 type Paginated<T> = {
     data: T[];
     links: PaginationLink[];
+    from: number | null;
+    to: number | null;
+    total: number;
+    current_page: number;
+    last_page: number;
 };
 
-defineProps<{
+type SelectOption = {
+    value: number | string;
+    label: string;
+};
+
+const props = defineProps<{
     products: Paginated<Product>;
+    categories: SelectOption[];
+    brands: SelectOption[];
+    filters: {
+        category_id?: string;
+        brand_id?: string;
+    };
 }>();
 
 defineOptions({
@@ -56,6 +82,36 @@ defineOptions({
 });
 
 const { can } = usePermissions();
+
+const categoryFilter = ref(props.filters.category_id ?? 'all');
+const brandFilter = ref(props.filters.brand_id ?? 'all');
+const hasFilters = ref(
+    Boolean(props.filters.category_id || props.filters.brand_id),
+);
+
+function applyFilters(): void {
+    hasFilters.value =
+        categoryFilter.value !== 'all' || brandFilter.value !== 'all';
+
+    router.get(
+        index().url,
+        {
+            category_id:
+                categoryFilter.value === 'all'
+                    ? undefined
+                    : categoryFilter.value,
+            brand_id:
+                brandFilter.value === 'all' ? undefined : brandFilter.value,
+        },
+        { preserveState: true, preserveScroll: true, replace: true },
+    );
+}
+
+function clearFilters(): void {
+    categoryFilter.value = 'all';
+    brandFilter.value = 'all';
+    applyFilters();
+}
 </script>
 
 <template>
@@ -69,6 +125,50 @@ const { can } = usePermissions();
             />
             <Button v-if="can('create products')" as-child>
                 <Link :href="create()">Add product</Link>
+            </Button>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-3">
+            <Select v-model="categoryFilter" @update:model-value="applyFilters">
+                <SelectTrigger class="w-full sm:w-48">
+                    <SelectValue placeholder="All categories" />
+                </SelectTrigger>
+                <SelectContent>
+                    <SelectItem value="all">All categories</SelectItem>
+                    <SelectItem
+                        v-for="option in categories"
+                        :key="option.value"
+                        :value="String(option.value)"
+                    >
+                        {{ option.label }}
+                    </SelectItem>
+                </SelectContent>
+            </Select>
+
+            <Select v-model="brandFilter" @update:model-value="applyFilters">
+                <SelectTrigger class="w-full sm:w-48">
+                    <SelectValue placeholder="All brands" />
+                </SelectTrigger>
+                <SelectContent>
+                    <SelectItem value="all">All brands</SelectItem>
+                    <SelectItem
+                        v-for="option in brands"
+                        :key="option.value"
+                        :value="String(option.value)"
+                    >
+                        {{ option.label }}
+                    </SelectItem>
+                </SelectContent>
+            </Select>
+
+            <Button
+                v-if="hasFilters"
+                variant="ghost"
+                size="sm"
+                @click="clearFilters"
+            >
+                <X class="size-4" aria-hidden="true" />
+                Clear filters
             </Button>
         </div>
 
@@ -111,9 +211,7 @@ const { can } = usePermissions();
                         <td class="p-3">
                             {{ product.brand?.name ?? '—' }}
                         </td>
-                        <td class="p-3">
-                            ${{ product.unit_price }}
-                        </td>
+                        <td class="p-3">${{ product.unit_price }}</td>
                         <td class="p-3">{{ product.current_stock }}</td>
                         <td class="p-3">
                             <Badge
@@ -194,36 +292,17 @@ const { can } = usePermissions();
                             class="p-6 text-center text-muted-foreground"
                             colspan="9"
                         >
-                            No products yet.
+                            {{
+                                hasFilters
+                                    ? 'No products match these filters.'
+                                    : 'No products yet.'
+                            }}
                         </td>
                     </tr>
                 </tbody>
             </table>
         </div>
 
-        <div
-            v-if="products.links.length > 3"
-            class="flex flex-wrap items-center justify-center gap-1"
-        >
-            <template v-for="(link, index) in products.links" :key="index">
-                <span
-                    v-if="!link.url"
-                    class="rounded-md px-3 py-1.5 text-sm text-muted-foreground"
-                    v-html="link.label"
-                />
-                <Link
-                    v-else
-                    :href="link.url"
-                    preserve-scroll
-                    class="rounded-md px-3 py-1.5 text-sm"
-                    :class="
-                        link.active
-                            ? 'bg-primary text-primary-foreground'
-                            : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
-                    "
-                    v-html="link.label"
-                />
-            </template>
-        </div>
+        <Pagination :meta="products" label="products" />
     </div>
 </template>

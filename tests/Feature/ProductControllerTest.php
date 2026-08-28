@@ -2,6 +2,8 @@
 
 namespace Tests\Feature;
 
+use App\Models\Brand;
+use App\Models\Category;
 use App\Models\Product;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -28,6 +30,46 @@ class ProductControllerTest extends TestCase
             ->assertInertia(fn (Assert $page) => $page
                 ->component('products/Index')
                 ->has('products.data', 3),
+            );
+    }
+
+    public function test_products_index_can_be_filtered_by_category(): void
+    {
+        $user = User::factory()->create();
+        $category = Category::factory()->create();
+        Product::factory()->count(2)->create(['category_id' => $category->id]);
+        Product::factory()->count(3)->create();
+
+        $response = $this
+            ->actingAs($user)
+            ->get(route('products.index', ['category_id' => $category->id]));
+
+        $response
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('products/Index')
+                ->has('products.data', 2)
+                ->where('filters.category_id', (string) $category->id),
+            );
+    }
+
+    public function test_products_index_can_be_filtered_by_brand(): void
+    {
+        $user = User::factory()->create();
+        $brand = Brand::factory()->create();
+        Product::factory()->count(2)->create(['brand_id' => $brand->id]);
+        Product::factory()->count(3)->create();
+
+        $response = $this
+            ->actingAs($user)
+            ->get(route('products.index', ['brand_id' => $brand->id]));
+
+        $response
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('products/Index')
+                ->has('products.data', 2)
+                ->where('filters.brand_id', (string) $brand->id),
             );
     }
 

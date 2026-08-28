@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ImageUpIcon, TriangleAlertIcon, XIcon } from '@lucide/vue';
+import { ImageUpIcon, Trash2Icon, TriangleAlertIcon } from '@lucide/vue';
 import { computed, onBeforeUnmount, ref, useId, watch } from 'vue';
 import { Label } from '@/components/ui/label';
 import { Spinner } from '@/components/ui/spinner';
@@ -276,6 +276,31 @@ onBeforeUnmount(() => {
                 </p>
             </template>
 
+            <div
+                v-else-if="!multiple"
+                class="group/thumb relative aspect-video w-full max-w-sm overflow-hidden rounded-md border border-input"
+            >
+                <img
+                    :src="entries[0]?.previewUrl ?? initialPreviews[0]"
+                    :alt="entries[0]?.file.name ?? 'Current image'"
+                    class="size-full object-cover"
+                />
+                <button
+                    v-if="entries[0]"
+                    type="button"
+                    class="absolute top-2 right-2 flex size-7 items-center justify-center rounded-full bg-background/90 text-destructive shadow-sm transition-colors hover:bg-destructive hover:text-destructive-foreground"
+                    :aria-label="`Remove ${entries[0].file.name}`"
+                    @click.stop="removeAt(0)"
+                >
+                    <Trash2Icon class="size-3.5" />
+                </button>
+                <div
+                    class="absolute inset-x-0 bottom-0 bg-background/80 py-1 text-xs text-muted-foreground opacity-0 transition-opacity group-hover/thumb:opacity-100"
+                >
+                    Drop or browse to replace
+                </div>
+            </div>
+
             <div v-else class="grid w-full grid-cols-3 gap-2 sm:grid-cols-4">
                 <img
                     v-for="url in showInitialPreviews ? initialPreviews : []"
@@ -288,7 +313,7 @@ onBeforeUnmount(() => {
                 <div
                     v-for="(entry, index) in entries"
                     :key="entry.previewUrl"
-                    class="group/thumb relative aspect-square w-full overflow-hidden rounded-md border border-input"
+                    class="relative aspect-square w-full overflow-hidden rounded-md border border-input"
                 >
                     <img
                         :src="entry.previewUrl"
@@ -297,16 +322,16 @@ onBeforeUnmount(() => {
                     />
                     <button
                         type="button"
-                        class="absolute top-1 right-1 flex size-5 items-center justify-center rounded-full bg-background/90 text-foreground opacity-0 shadow-sm transition-opacity group-hover/thumb:opacity-100 focus-visible:opacity-100"
+                        class="absolute top-1 right-1 flex size-6 items-center justify-center rounded-full bg-background/90 text-destructive shadow-sm transition-colors hover:bg-destructive hover:text-destructive-foreground"
                         :aria-label="`Remove ${entry.file.name}`"
                         @click.stop="removeAt(index)"
                     >
-                        <XIcon class="size-3" />
+                        <Trash2Icon class="size-3.5" />
                     </button>
                 </div>
 
                 <div
-                    v-if="multiple && entries.length < effectiveMaxFiles"
+                    v-if="entries.length < effectiveMaxFiles"
                     class="flex aspect-square w-full items-center justify-center rounded-md border border-dashed border-input text-muted-foreground"
                 >
                     <ImageUpIcon class="size-5" />

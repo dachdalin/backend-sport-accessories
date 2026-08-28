@@ -6,6 +6,7 @@ use App\Models\Order;
 use App\Models\Product;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Inertia\Testing\AssertableInertia as Assert;
 use Tests\TestCase;
 
 class OrderControllerTest extends TestCase
@@ -21,7 +22,88 @@ class OrderControllerTest extends TestCase
             ->actingAs($user)
             ->get(route('orders.index'));
 
-        $response->assertOk();
+        $response
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('orders/Index')
+                ->has('orders.data', 3),
+            );
+    }
+
+    public function test_orders_index_is_paginated(): void
+    {
+        $user = User::factory()->create();
+        Order::factory()->count(20)->create();
+
+        $response = $this
+            ->actingAs($user)
+            ->get(route('orders.index'));
+
+        $response
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('orders/Index')
+                ->has('orders.data', 15)
+                ->has('orders.links'),
+            );
+    }
+
+    public function test_orders_index_can_be_filtered_by_order_status(): void
+    {
+        $user = User::factory()->create();
+        Order::factory()->count(2)->create(['order_status' => 'delivered']);
+        Order::factory()->count(3)->create(['order_status' => 'pending']);
+
+        $response = $this
+            ->actingAs($user)
+            ->get(route('orders.index', ['order_status' => 'delivered']));
+
+        $response
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('orders/Index')
+                ->has('orders.data', 2)
+                ->where('filters.order_status', 'delivered'),
+            );
+    }
+
+    public function test_orders_index_can_be_filtered_by_payment_status(): void
+    {
+        $user = User::factory()->create();
+        Order::factory()->count(2)->create(['payment_status' => 'paid']);
+        Order::factory()->count(3)->create(['payment_status' => 'unpaid']);
+
+        $response = $this
+            ->actingAs($user)
+            ->get(route('orders.index', ['payment_status' => 'paid']));
+
+        $response
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('orders/Index')
+                ->has('orders.data', 2)
+                ->where('filters.payment_status', 'paid'),
+            );
+    }
+
+    public function test_orders_index_can_be_searched_by_order_number_customer_name_or_email(): void
+    {
+        $user = User::factory()->create();
+        Order::factory()->create(['order_number' => 'ORD-FINDME1', 'customer_name' => 'Alice Example']);
+        Order::factory()->create(['order_number' => 'ORD-OTHER001', 'customer_name' => 'Bob Example', 'customer_email' => 'findme@example.com']);
+        Order::factory()->count(3)->sequence(fn ($sequence) => ['order_number' => "ORD-NOMATCH{$sequence->index}"])->create(['customer_name' => 'Nobody', 'customer_email' => 'nobody@example.com']);
+
+        $response = $this
+            ->actingAs($user)
+            ->get(route('orders.index', ['search' => 'findme']));
+
+        $response
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('orders/Index')
+                ->has('orders.data', 2)
+                ->where('filters.search', 'findme'),
+            );
     }
 
     public function test_order_create_page_is_displayed(): void

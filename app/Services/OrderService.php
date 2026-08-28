@@ -10,6 +10,7 @@ use App\Models\Customer;
 use App\Models\Order;
 use App\Models\Product;
 use App\Models\ShippingMethod;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
@@ -17,16 +18,26 @@ use Illuminate\Validation\ValidationException;
 class OrderService
 {
     /**
-     * List all orders with their items, most recently placed first.
+     * List orders with their item count, filtered and paginated, most recently placed first.
      *
-     * @return Collection<int, Order>
+     * @param  array{order_status?: ?string, payment_status?: ?string, search?: ?string}  $filters
      */
-    public function list(): Collection
+    public function list(array $filters = []): LengthAwarePaginator
     {
         return Order::query()
             ->withCount('items')
+            ->when($filters['order_status'] ?? null, fn ($query, $status) => $query->where('order_status', $status))
+            ->when($filters['payment_status'] ?? null, fn ($query, $status) => $query->where('payment_status', $status))
+            ->when($filters['search'] ?? null, function ($query, $search) {
+                $query->where(function ($query) use ($search) {
+                    $query->where('order_number', 'like', "%{$search}%")
+                        ->orWhere('customer_name', 'like', "%{$search}%")
+                        ->orWhere('customer_email', 'like', "%{$search}%");
+                });
+            })
             ->latest()
-            ->get();
+            ->paginate(15)
+            ->withQueryString();
     }
 
     /**

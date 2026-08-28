@@ -15,6 +15,7 @@ use App\Models\Order;
 use App\Models\Product;
 use App\Services\OrderService;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 use Throwable;
@@ -26,10 +27,15 @@ class OrderController extends Controller
     /**
      * Display a listing of the orders.
      */
-    public function index(): Response
+    public function index(Request $request): Response
     {
+        $filters = $request->only(['order_status', 'payment_status', 'search']);
+
         return Inertia::render('orders/Index', [
-            'orders' => $this->orderService->list(),
+            'orders' => $this->orderService->list($filters),
+            'orderStatuses' => $this->orderStatusOptions(),
+            'paymentStatuses' => $this->paymentStatusOptions(),
+            'filters' => $filters,
         ]);
     }
 

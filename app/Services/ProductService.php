@@ -11,12 +11,15 @@ class ProductService
     /**
      * List products with relationships, most recently added first.
      *
+     * @param  array{category_id?: int|string|null, brand_id?: int|string|null}  $filters
      * @return LengthAwarePaginator<int, Product>
      */
-    public function list(): LengthAwarePaginator
+    public function list(array $filters = []): LengthAwarePaginator
     {
         return Product::query()
             ->with(['category:id,name', 'brand:id,name'])
+            ->when($filters['category_id'] ?? null, fn ($query, $categoryId) => $query->where('category_id', $categoryId))
+            ->when($filters['brand_id'] ?? null, fn ($query, $brandId) => $query->where('brand_id', $brandId))
             ->latest()
             ->paginate(15)
             ->withQueryString();
