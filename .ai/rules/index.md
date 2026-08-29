@@ -38,6 +38,7 @@ Before planning or editing, find the row whose globs match the file's path and r
 | app/Services/OrderService.php,app/Http/Controllers/Backend/OrderController.php,resources/js/pages/orders/** | .ai/rules/orders.md |
 | resources/js/pages/** | .ai/rules/pages.md |
 | app/Http/Controllers/Api/**,app/Http/Requests/Api/**,routes/api.php | .ai/rules/requests-api.md |
+| resources/js/pages/roles/**,resources/js/components/PermissionMatrix.vue | .ai/rules/roles-js-components.md |
 | app/Http/Controllers/Backend/RoleController.php,resources/js/pages/roles/** | .ai/rules/roles.md |
 | database/seeders/RolePermissionSeeder.php,database/seeders/AdminSeeder.php | .ai/rules/seeders.md |
 | app/Services/DashboardService.php,database/migrations/** | .ai/rules/services-migrations.md |

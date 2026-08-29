@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import { Form, Head, Link } from '@inertiajs/vue3';
 import { ShieldCheck, Tag } from '@lucide/vue';
+import { ref } from 'vue';
 import RoleController from '@/actions/App/Http/Controllers/Backend/RoleController';
 import Heading from '@/components/Heading.vue';
 import InputError from '@/components/InputError.vue';
+import PermissionMatrix from '@/components/PermissionMatrix.vue';
 import { Button } from '@/components/ui/button';
 import {
     Card,
@@ -13,7 +15,6 @@ import {
     CardHeader,
     CardTitle,
 } from '@/components/ui/card';
-import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Spinner } from '@/components/ui/spinner';
@@ -35,11 +36,9 @@ const props = defineProps<{
     permissions: Permission[];
 }>();
 
-function hasPermission(permissionId: number): boolean {
-    return props.role.permissions.some(
-        (permission) => permission.id === permissionId,
-    );
-}
+const selectedPermissionIds = ref<number[]>(
+    props.role.permissions.map((permission) => permission.id),
+);
 
 defineOptions({
     layout: (pageProps: { role: Role }) => ({
@@ -113,34 +112,10 @@ defineOptions({
                     </CardDescription>
                 </CardHeader>
                 <CardContent>
-                    <div
-                        v-if="permissions.length > 0"
-                        class="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3"
-                    >
-                        <label
-                            v-for="permission in permissions"
-                            :key="permission.id"
-                            :for="`permission-${permission.id}`"
-                            class="flex cursor-pointer items-center gap-3 rounded-lg border border-input px-3 py-2.5 transition-colors has-[[data-state=checked]]:border-primary has-[[data-state=checked]]:bg-primary/5"
-                        >
-                            <Checkbox
-                                :id="`permission-${permission.id}`"
-                                name="permissions[]"
-                                :value="permission.id"
-                                :default-value="hasPermission(permission.id)"
-                            />
-                            <span class="text-sm font-medium">{{
-                                permission.name
-                            }}</span>
-                        </label>
-                    </div>
-                    <p
-                        v-else
-                        class="rounded-lg border border-dashed p-3 text-sm text-muted-foreground"
-                    >
-                        No permissions defined yet. This role can still be
-                        created and assigned to admins.
-                    </p>
+                    <PermissionMatrix
+                        v-model:selected="selectedPermissionIds"
+                        :permissions="permissions"
+                    />
                     <InputError :message="errors.permissions" class="mt-2" />
                 </CardContent>
                 <CardFooter class="gap-3 border-t pt-6">
