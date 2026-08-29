@@ -63,7 +63,7 @@ class CustomerController extends Controller
     public function edit(Customer $customer): Response
     {
         return Inertia::render('customers/Edit', [
-            'customer' => $customer,
+            'customer' => $customer->append(['provider', 'provider_id']),
         ]);
     }
 

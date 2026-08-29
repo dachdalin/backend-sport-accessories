@@ -15,6 +15,8 @@ class RoleControllerTest extends TestCase
 
     public function test_roles_index_page_is_displayed(): void
     {
+        // User::factory() assigns/creates the "admin" role as a side effect (see UserFactory::configure()),
+        // so the list contains that role plus the one explicitly created below.
         $user = User::factory()->create();
         $role = Role::create(['name' => 'Editor']);
 
@@ -24,8 +26,8 @@ class RoleControllerTest extends TestCase
             ->assertOk()
             ->assertInertia(fn (Assert $page) => $page
                 ->component('roles/Index')
-                ->has('roles.data', 1)
-                ->where('roles.data.0.id', $role->id),
+                ->has('roles.data', 2)
+                ->where('roles.data', fn ($roles) => collect($roles)->pluck('id')->contains($role->id)),
             );
     }
 
@@ -203,8 +205,10 @@ class RoleControllerTest extends TestCase
 
     public function test_admin_role_cannot_be_deleted(): void
     {
+        // User::factory() already creates/assigns the "admin" role as a side effect
+        // (see UserFactory::configure()), so find it rather than creating it again.
         $user = User::factory()->create();
-        $role = Role::create(['name' => 'admin']);
+        $role = Role::findOrCreate('admin');
 
         $response = $this->actingAs($user)->delete(route('roles.destroy', $role));
 

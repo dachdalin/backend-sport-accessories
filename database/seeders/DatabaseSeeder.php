@@ -19,6 +19,7 @@ class DatabaseSeeder extends Seeder
             RolePermissionSeeder::class,
             AdminSeeder::class,
             OrderSeeder::class,
+            EmailTemplateSeeder::class,
         ]);
 
         // User::factory(10)->create();

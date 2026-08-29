@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { Form, Head, Link } from '@inertiajs/vue3';
+import { MapPinIcon, PhoneIcon } from '@lucide/vue';
 import WarehouseController from '@/actions/App/Http/Controllers/Backend/WarehouseController';
 import Heading from '@/components/Heading.vue';
 import { Badge } from '@/components/ui/badge';
@@ -40,18 +41,24 @@ defineOptions({
         ],
     },
 });
+
+function location(warehouse: Warehouse): string | null {
+    return [warehouse.city, warehouse.country].filter(Boolean).join(', ') || null;
+}
 </script>
 
 <template>
     <Head title="Warehouses" />
 
     <div class="flex flex-col gap-6">
-        <div class="flex items-center justify-between">
+        <div
+            class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"
+        >
             <Heading
                 title="Warehouses"
                 description="Manage the warehouses that store your inventory"
             />
-            <Button as-child>
+            <Button as-child class="w-full sm:w-auto">
                 <Link :href="create()">Add warehouse</Link>
             </Button>
         </div>
@@ -64,10 +71,9 @@ defineOptions({
                     class="border-b border-sidebar-border/70 text-muted-foreground dark:border-sidebar-border"
                 >
                     <tr>
-                        <th class="p-3 font-medium">Name</th>
-                        <th class="p-3 font-medium">Code</th>
-                        <th class="p-3 font-medium">City</th>
-                        <th class="p-3 font-medium">Country</th>
+                        <th class="p-3 font-medium">Warehouse</th>
+                        <th class="p-3 font-medium">Location</th>
+                        <th class="p-3 font-medium">Phone</th>
                         <th class="p-3 font-medium">Status</th>
                         <th class="p-3 text-right font-medium">Actions</th>
                     </tr>
@@ -78,15 +84,39 @@ defineOptions({
                         :key="warehouse.id"
                         class="border-b border-sidebar-border/70 last:border-b-0 dark:border-sidebar-border"
                     >
-                        <td class="p-3 font-medium">{{ warehouse.name }}</td>
-                        <td class="p-3 text-muted-foreground">
-                            {{ warehouse.code }}
+                        <td class="p-3">
+                            <div class="font-medium">{{ warehouse.name }}</div>
+                            <div
+                                class="font-mono text-xs text-muted-foreground"
+                            >
+                                {{ warehouse.code }}
+                            </div>
                         </td>
                         <td class="p-3 text-muted-foreground">
-                            {{ warehouse.city ?? '—' }}
+                            <div
+                                v-if="location(warehouse)"
+                                class="flex items-center gap-1.5"
+                            >
+                                <MapPinIcon
+                                    class="size-3.5 shrink-0"
+                                    aria-hidden="true"
+                                />
+                                <span>{{ location(warehouse) }}</span>
+                            </div>
+                            <span v-else>—</span>
                         </td>
                         <td class="p-3 text-muted-foreground">
-                            {{ warehouse.country ?? '—' }}
+                            <div
+                                v-if="warehouse.phone"
+                                class="flex items-center gap-1.5"
+                            >
+                                <PhoneIcon
+                                    class="size-3.5 shrink-0"
+                                    aria-hidden="true"
+                                />
+                                <span>{{ warehouse.phone }}</span>
+                            </div>
+                            <span v-else>—</span>
                         </td>
                         <td class="p-3">
                             <Badge
@@ -151,7 +181,7 @@ defineOptions({
                     <tr v-if="warehouses.length === 0">
                         <td
                             class="p-6 text-center text-muted-foreground"
-                            colspan="6"
+                            colspan="5"
                         >
                             No warehouses yet.
                         </td>

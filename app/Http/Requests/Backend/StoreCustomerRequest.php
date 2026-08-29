@@ -19,6 +19,7 @@ class StoreCustomerRequest extends FormRequest
             'email' => ['bail', 'required', 'email', 'max:255', 'unique:customers,email'],
             'phone' => ['bail', 'nullable', 'string', 'max:25'],
             'address' => ['bail', 'nullable', 'string', 'max:255'],
+            'balance' => ['bail', 'nullable', 'numeric', 'min:0', 'max:99999999.99'],
             'status' => ['bail', 'sometimes', 'boolean'],
         ];
     }

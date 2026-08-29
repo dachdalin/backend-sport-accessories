@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { Form, Head, Link } from '@inertiajs/vue3';
+import { Eye } from '@lucide/vue';
 import EmailTemplateController from '@/actions/App/Http/Controllers/Backend/EmailTemplateController';
 import Heading from '@/components/Heading.vue';
 import { Badge } from '@/components/ui/badge';
@@ -8,6 +9,7 @@ import {
     Dialog,
     DialogClose,
     DialogContent,
+    DialogDescription,
     DialogFooter,
     DialogHeader,
     DialogTitle,
@@ -19,6 +21,7 @@ type EmailTemplate = {
     id: number;
     name: string;
     subject: string;
+    body: string;
     status: boolean;
 };
 
@@ -77,6 +80,7 @@ defineOptions({
                         </td>
                         <td
                             class="max-w-md truncate p-3 text-muted-foreground"
+                            :title="emailTemplate.subject"
                         >
                             {{ emailTemplate.subject }}
                         </td>
@@ -97,6 +101,41 @@ defineOptions({
                         </td>
                         <td class="p-3">
                             <div class="flex justify-end gap-2">
+                                <Dialog>
+                                    <DialogTrigger as-child>
+                                        <Button
+                                            variant="outline"
+                                            size="sm"
+                                            aria-label="Preview"
+                                        >
+                                            <Eye />
+                                        </Button>
+                                    </DialogTrigger>
+                                    <DialogContent class="sm:max-w-lg">
+                                        <DialogHeader>
+                                            <DialogTitle>{{
+                                                emailTemplate.subject
+                                            }}</DialogTitle>
+                                            <DialogDescription>{{
+                                                emailTemplate.name
+                                            }}</DialogDescription>
+                                        </DialogHeader>
+
+                                        <div
+                                            class="max-h-96 overflow-y-auto rounded-lg border border-input bg-muted/30 p-4 text-sm [&_a]:text-primary [&_a]:underline [&_a]:underline-offset-2 [&_h2]:mt-3 [&_h2]:text-base [&_h2]:font-semibold [&_h2]:first:mt-0 [&_h3]:mt-3 [&_h3]:font-semibold [&_h3]:first:mt-0 [&_li]:ml-1 [&_ol]:my-2 [&_ol]:list-decimal [&_ol]:pl-5 [&_p]:my-2 [&_p]:first:mt-0 [&_p]:last:mb-0 [&_ul]:my-2 [&_ul]:list-disc [&_ul]:pl-5"
+                                            v-html="emailTemplate.body"
+                                        />
+
+                                        <DialogFooter>
+                                            <DialogClose as-child>
+                                                <Button variant="secondary"
+                                                    >Close</Button
+                                                >
+                                            </DialogClose>
+                                        </DialogFooter>
+                                    </DialogContent>
+                                </Dialog>
+
                                 <Button variant="outline" size="sm" as-child>
                                     <Link :href="edit(emailTemplate)"
                                         >Edit</Link

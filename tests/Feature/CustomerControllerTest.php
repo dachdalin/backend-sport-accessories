@@ -82,6 +82,57 @@ class CustomerControllerTest extends TestCase
         $this->assertTrue($customer->status);
     }
 
+    public function test_customer_can_be_created_with_a_balance(): void
+    {
+        $user = User::factory()->create();
+
+        $response = $this
+            ->actingAs($user)
+            ->post(route('customers.store'), [
+                'name' => 'Jane Doe',
+                'email' => 'jane@example.com',
+                'balance' => '150.25',
+            ]);
+
+        $response->assertSessionHasNoErrors();
+
+        $customer = Customer::sole();
+
+        $this->assertSame('150.25', $customer->balance);
+    }
+
+    public function test_customer_edit_page_exposes_manual_provider_by_default(): void
+    {
+        $user = User::factory()->create();
+        $customer = Customer::factory()->create();
+
+        $response = $this
+            ->actingAs($user)
+            ->get(route('customers.edit', $customer));
+
+        $response->assertInertia(fn (Assert $page) => $page
+            ->component('customers/Edit')
+            ->where('customer.provider', 'manual')
+            ->where('customer.provider_id', null),
+        );
+    }
+
+    public function test_customer_edit_page_exposes_google_provider_when_linked(): void
+    {
+        $user = User::factory()->create();
+        $customer = Customer::factory()->create(['google_id' => '109283746512837465']);
+
+        $response = $this
+            ->actingAs($user)
+            ->get(route('customers.edit', $customer));
+
+        $response->assertInertia(fn (Assert $page) => $page
+            ->component('customers/Edit')
+            ->where('customer.provider', 'google')
+            ->where('customer.provider_id', '109283746512837465'),
+        );
+    }
+
     public function test_customer_name_is_required(): void
     {
         $user = User::factory()->create();
@@ -158,6 +209,26 @@ class CustomerControllerTest extends TestCase
 
         $this->assertSame('Updated Customer Name', $customer->name);
         $this->assertFalse($customer->status);
+    }
+
+    public function test_customer_balance_can_be_updated(): void
+    {
+        $user = User::factory()->create();
+        $customer = Customer::factory()->create(['balance' => 0]);
+
+        $response = $this
+            ->actingAs($user)
+            ->put(route('customers.update', $customer), [
+                'name' => $customer->name,
+                'email' => $customer->email,
+                'balance' => '75.00',
+            ]);
+
+        $response->assertSessionHasNoErrors();
+
+        $customer->refresh();
+
+        $this->assertSame('75.00', $customer->balance);
     }
 
     public function test_customer_can_be_deleted(): void

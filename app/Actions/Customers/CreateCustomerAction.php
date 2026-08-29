@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\DB;
 class CreateCustomerAction
 {
     /**
-     * @param  array{name: string, email: string, phone: ?string, address: ?string, status: bool}  $data
+     * @param  array{name: string, email: string, phone: ?string, address: ?string, balance: ?string, status: bool}  $data
      */
     public function handle(array $data): Customer
     {

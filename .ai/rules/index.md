@@ -23,7 +23,9 @@ Before planning or editing, find the row whose globs match the file's path and r
 | app/Http/Controllers/Backend/ColorController.php | .ai/rules/controllers-backend.md |
 | resources/js/pages/**,app/Http/Controllers/** | .ai/rules/controllers.md |
 | app/Http/Controllers/Api/V1/Auth/**,app/Services/GoogleAuthService.php,app/Services/TelegramAuthService.php,app/Actions/Customers/FindOrCreateSocialCustomerAction.php | .ai/rules/customers.md |
+| app/Http/Controllers/Backend/EmailTemplateController.php,resources/js/pages/email-templates/**,database/seeders/EmailTemplateSeeder.php | .ai/rules/email-templates-seeders.md |
 | app/Http/Controllers/Backend/FeatureDealController.php,resources/js/pages/feature-deals/** | .ai/rules/feature-deals.md |
+| tests/Feature/** | .ai/rules/feature.md |
 | app/Http/Controllers/Backend/FlashDealController.php,app/Services/FlashDealService.php,resources/js/pages/flash-deals/** | .ai/rules/flash-deals.md |
 | app/Http/Controllers/Backend/GiftCardController.php,resources/js/pages/gift-cards/** | .ai/rules/gift-cards.md |
 | app/Http/Controllers/Api/**,app/Actions/Customers/**,app/Http/Requests/Api/**,routes/api.php | .ai/rules/http-requests-api.md |
@@ -37,6 +39,7 @@ Before planning or editing, find the row whose globs match the file's path and r
 | app/Http/Controllers/Api/**,app/Actions/Customers/**,app/Notifications/**,routes/api.php | .ai/rules/notifications.md |
 | app/Http/Controllers/Api/**,app/Actions/Orders/**,database/migrations/** | .ai/rules/orders-migrations.md |
 | app/Services/OrderService.php,app/Http/Controllers/Backend/OrderController.php,resources/js/pages/orders/** | .ai/rules/orders.md |
+| app/Models/Customer.php,app/Http/Controllers/Backend/CustomerController.php,app/Http/Requests/Backend/*CustomerRequest.php,resources/js/pages/customers/** | .ai/rules/pages-customers.md |
 | resources/js/pages/** | .ai/rules/pages.md |
 | app/Http/Controllers/Backend/ProductController.php,app/Http/Requests/Backend/*Product*.php,app/Actions/Products/**,app/Models/Product.php,app/Models/ProductVariant.php,resources/js/pages/products/** | .ai/rules/products.md |
 | app/Http/Controllers/Api/**,app/Http/Requests/Api/**,routes/api.php | .ai/rules/requests-api.md |
