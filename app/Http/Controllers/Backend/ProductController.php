@@ -9,9 +9,13 @@ use App\Enums\TaxType;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Backend\StoreProductRequest;
 use App\Http\Requests\Backend\UpdateProductRequest;
+use App\Models\Attribute;
 use App\Models\Brand;
 use App\Models\Category;
+use App\Models\Color;
+use App\Models\Material;
 use App\Models\Product;
+use App\Models\Size;
 use App\Services\ProductService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -47,6 +51,10 @@ class ProductController extends Controller
             'categories' => $this->categoryOptions(),
             'brands' => $this->brandOptions(),
             'taxTypes' => $this->taxTypeOptions(),
+            'colors' => $this->colorOptions(),
+            'sizes' => $this->sizeOptions(),
+            'materials' => $this->materialOptions(),
+            'attributeOptions' => $this->attributeOptions(),
         ]);
     }
 
@@ -55,14 +63,17 @@ class ProductController extends Controller
      */
     public function store(StoreProductRequest $request, CreateProductAction $action): RedirectResponse
     {
-        $data = $request->safe()->except('thumbnail', 'images');
+        $data = $request->safe()->except('thumbnail', 'images', 'variants', 'attributes');
         $data['status'] = $request->boolean('status');
         $data['free_shipping'] = $request->boolean('free_shipping');
         $data['refundable'] = $request->boolean('refundable');
         $data['featured'] = $request->boolean('featured');
 
+        $variants = $request->validated('variants') ?? [];
+        $attributes = $request->validated('attributes') ?? [];
+
         try {
-            $action->handle($data, $request->file('thumbnail'), $request->file('images'));
+            $action->handle($data, $request->file('thumbnail'), $request->file('images'), $variants, $attributes);
         } catch (Throwable $e) {
             report($e);
 
@@ -84,9 +95,15 @@ class ProductController extends Controller
         return Inertia::render('products/Edit', [
             'product' => $product,
             'images' => $product->images,
+            'variants' => $product->variants,
+            'productAttributeIds' => $product->attributes()->pluck('attributes.id'),
             'categories' => $this->categoryOptions(),
             'brands' => $this->brandOptions(),
             'taxTypes' => $this->taxTypeOptions(),
+            'colors' => $this->colorOptions(),
+            'sizes' => $this->sizeOptions(),
+            'materials' => $this->materialOptions(),
+            'attributeOptions' => $this->attributeOptions(),
         ]);
     }
 
@@ -95,14 +112,17 @@ class ProductController extends Controller
      */
     public function update(UpdateProductRequest $request, Product $product, UpdateProductAction $action): RedirectResponse
     {
-        $data = $request->safe()->except('thumbnail');
+        $data = $request->safe()->except('thumbnail', 'variants', 'attributes');
         $data['status'] = $request->boolean('status');
         $data['free_shipping'] = $request->boolean('free_shipping');
         $data['refundable'] = $request->boolean('refundable');
         $data['featured'] = $request->boolean('featured');
 
+        $variants = $request->validated('variants') ?? [];
+        $attributes = $request->validated('attributes') ?? [];
+
         try {
-            $action->handle($product, $data, $request->file('thumbnail'));
+            $action->handle($product, $data, $request->file('thumbnail'), $variants, $attributes);
         } catch (Throwable $e) {
             report($e);
 
@@ -169,5 +189,53 @@ class ProductController extends Controller
             fn (TaxType $case) => ['value' => $case->value, 'label' => $case->label()],
             TaxType::cases(),
         );
+    }
+
+    /**
+     * @return array<int, array{value: int, label: string}>
+     */
+    private function colorOptions(): array
+    {
+        return Color::query()
+            ->orderBy('name')
+            ->get(['id', 'name', 'code'])
+            ->map(fn (Color $color) => ['value' => $color->id, 'label' => $color->name, 'code' => $color->code])
+            ->all();
+    }
+
+    /**
+     * @return array<int, array{value: int, label: string}>
+     */
+    private function sizeOptions(): array
+    {
+        return Size::query()
+            ->orderBy('name')
+            ->get(['id', 'name'])
+            ->map(fn (Size $size) => ['value' => $size->id, 'label' => $size->name])
+            ->all();
+    }
+
+    /**
+     * @return array<int, array{value: int, label: string}>
+     */
+    private function materialOptions(): array
+    {
+        return Material::query()
+            ->orderBy('name')
+            ->get(['id', 'name'])
+            ->map(fn (Material $material) => ['value' => $material->id, 'label' => $material->name])
+            ->all();
+    }
+
+    /**
+     * @return array<int, array{value: int, label: string}>
+     */
+    private function attributeOptions(): array
+    {
+        return Attribute::query()
+            ->orderBy('name')
+            ->get(['id', 'name'])
+            ->map(fn (Attribute $attribute) => ['value' => $attribute->id, 'label' => $attribute->name])
+            ->all();
     }
 }

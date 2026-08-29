@@ -2,9 +2,13 @@
 
 namespace Tests\Feature;
 
+use App\Models\Attribute;
 use App\Models\Brand;
 use App\Models\Category;
+use App\Models\Color;
+use App\Models\Material;
 use App\Models\Product;
+use App\Models\Size;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
@@ -142,6 +146,82 @@ class ProductControllerTest extends TestCase
         );
     }
 
+    public function test_product_can_be_created_with_variants_and_attributes(): void
+    {
+        $user = User::factory()->create();
+        $red = Color::factory()->create(['name' => 'Red']);
+        $blue = Color::factory()->create(['name' => 'Blue']);
+        $sizeM = Size::factory()->create(['name' => 'M']);
+        $cotton = Material::factory()->create();
+        $waterproof = Attribute::factory()->create();
+
+        $response = $this
+            ->actingAs($user)
+            ->post(route('products.store'), [
+                'name' => 'Running Shoes Pro',
+                'unit_price' => '99.99',
+                'current_stock' => 50,
+                'minimum_order_qty' => 1,
+                'status' => '1',
+                'variants' => [
+                    ['color_id' => $red->id, 'size_id' => $sizeM->id, 'material_id' => $cotton->id, 'stock' => 10],
+                    ['color_id' => $blue->id, 'size_id' => $sizeM->id, 'material_id' => $cotton->id, 'stock' => 5],
+                ],
+                'attributes' => [$waterproof->id],
+            ]);
+
+        $response
+            ->assertSessionHasNoErrors()
+            ->assertRedirect(route('products.index'));
+
+        $product = Product::sole();
+
+        $this->assertCount(2, $product->variants);
+        $this->assertSame(10, $product->variants()->where('color_id', $red->id)->sole()->stock);
+        $this->assertTrue($product->attributes()->where('attributes.id', $waterproof->id)->exists());
+    }
+
+    public function test_product_variant_combination_must_be_unique(): void
+    {
+        $user = User::factory()->create();
+        $red = Color::factory()->create();
+        $sizeM = Size::factory()->create();
+
+        $response = $this
+            ->actingAs($user)
+            ->post(route('products.store'), [
+                'name' => 'Running Shoes Pro',
+                'unit_price' => '99.99',
+                'current_stock' => 50,
+                'minimum_order_qty' => 1,
+                'variants' => [
+                    ['color_id' => $red->id, 'size_id' => $sizeM->id, 'stock' => 10],
+                    ['color_id' => $red->id, 'size_id' => $sizeM->id, 'stock' => 5],
+                ],
+            ]);
+
+        $response->assertSessionHasErrors('variants.1');
+    }
+
+    public function test_product_variant_requires_at_least_one_attribute_selected(): void
+    {
+        $user = User::factory()->create();
+
+        $response = $this
+            ->actingAs($user)
+            ->post(route('products.store'), [
+                'name' => 'Running Shoes Pro',
+                'unit_price' => '99.99',
+                'current_stock' => 50,
+                'minimum_order_qty' => 1,
+                'variants' => [
+                    ['color_id' => null, 'size_id' => null, 'material_id' => null, 'stock' => 10],
+                ],
+            ]);
+
+        $response->assertSessionHasErrors('variants.0');
+    }
+
     public function test_product_name_is_required(): void
     {
         $user = User::factory()->create();
@@ -229,6 +309,35 @@ class ProductControllerTest extends TestCase
         $this->assertSame('149.99', $product->unit_price);
         $this->assertSame(25, $product->current_stock);
         $this->assertFalse($product->status);
+    }
+
+    public function test_product_variants_are_replaced_on_update(): void
+    {
+        $user = User::factory()->create();
+        $product = Product::factory()->create();
+        $product->variants()->create(['color_id' => Color::factory()->create()->id, 'stock' => 3]);
+        $newColor = Color::factory()->create();
+        $newSize = Size::factory()->create();
+
+        $response = $this
+            ->actingAs($user)
+            ->put(route('products.update', $product), [
+                'name' => $product->name,
+                'unit_price' => $product->unit_price,
+                'current_stock' => $product->current_stock,
+                'minimum_order_qty' => $product->minimum_order_qty,
+                'variants' => [
+                    ['color_id' => $newColor->id, 'size_id' => $newSize->id, 'stock' => 20],
+                ],
+            ]);
+
+        $response->assertSessionHasNoErrors();
+
+        $product->refresh();
+
+        $this->assertCount(1, $product->variants);
+        $this->assertSame($newColor->id, $product->variants->sole()->color_id);
+        $this->assertSame(20, $product->variants->sole()->stock);
     }
 
     public function test_product_can_be_deleted(): void

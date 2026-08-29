@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import { Form, Head } from '@inertiajs/vue3';
 import {
+    Clock,
     CircleDollarSign,
     Landmark,
+    LayoutGrid,
     MapPin,
     Rocket,
     SearchCheck,
@@ -26,6 +28,13 @@ import {
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select';
 import { Spinner } from '@/components/ui/spinner';
 import { Textarea } from '@/components/ui/textarea';
 import { edit } from '@/routes/business-settings';
@@ -36,19 +45,45 @@ type BusinessSettings = {
     contact_email: string;
     contact_phone: string;
     address: string;
+    detail_location: string;
     currency_symbol: string;
     minimum_order_amount: string;
     free_delivery_over_amount: string;
     tax_included_in_price: string;
+    guest_checkout: string;
+    invoice_prefix: string;
     maintenance_mode: string;
     copyright_text: string;
     meta_title: string;
     meta_description: string;
+    working_hours_open: string;
+    working_hours_close: string;
+    working_days: string;
+    time_zone: string;
+    pagination_limit: string;
+    max_login_attempts: string;
 };
 
 const props = defineProps<{
     settings: BusinessSettings;
+    timezones: string[];
 }>();
+
+const workingDayOptions = [
+    { value: 'mon', label: 'Monday' },
+    { value: 'tue', label: 'Tuesday' },
+    { value: 'wed', label: 'Wednesday' },
+    { value: 'thu', label: 'Thursday' },
+    { value: 'fri', label: 'Friday' },
+    { value: 'sat', label: 'Saturday' },
+    { value: 'sun', label: 'Sunday' },
+];
+
+const selectedWorkingDays = computed(() =>
+    props.settings.working_days
+        ? props.settings.working_days.split(',').filter(Boolean)
+        : [],
+);
 
 defineOptions({
     layout: {
@@ -182,6 +217,126 @@ const logoPreviews = computed(() =>
                             />
                             <InputError :message="errors.address" />
                         </div>
+
+                        <div class="grid gap-2">
+                            <Label for="detail_location"
+                                >Location details</Label
+                            >
+                            <Textarea
+                                id="detail_location"
+                                name="detail_location"
+                                :default-value="settings.detail_location"
+                                placeholder="Landmark, floor, or directions to help customers find you"
+                                rows="2"
+                            />
+                            <InputError :message="errors.detail_location" />
+                        </div>
+                    </CardContent>
+                </Card>
+
+                <Card>
+                    <CardHeader>
+                        <div class="flex items-center gap-2.5">
+                            <Clock
+                                class="size-4.5 text-muted-foreground"
+                                aria-hidden="true"
+                            />
+                            <CardTitle>Hours &amp; availability</CardTitle>
+                        </div>
+                        <CardDescription>
+                            When the store operates, and which time zone that
+                            schedule is in.
+                        </CardDescription>
+                    </CardHeader>
+                    <CardContent class="flex flex-col gap-4">
+                        <div class="grid gap-4 sm:grid-cols-2">
+                            <div class="grid gap-2">
+                                <Label for="working_hours_open"
+                                    >Opens at</Label
+                                >
+                                <Input
+                                    id="working_hours_open"
+                                    name="working_hours_open"
+                                    type="time"
+                                    :default-value="
+                                        settings.working_hours_open
+                                    "
+                                />
+                                <InputError
+                                    :message="errors.working_hours_open"
+                                />
+                            </div>
+
+                            <div class="grid gap-2">
+                                <Label for="working_hours_close"
+                                    >Closes at</Label
+                                >
+                                <Input
+                                    id="working_hours_close"
+                                    name="working_hours_close"
+                                    type="time"
+                                    :default-value="
+                                        settings.working_hours_close
+                                    "
+                                />
+                                <InputError
+                                    :message="errors.working_hours_close"
+                                />
+                            </div>
+                        </div>
+
+                        <div class="grid gap-2">
+                            <Label>Working days</Label>
+                            <div
+                                class="grid grid-cols-2 gap-2 sm:grid-cols-4"
+                            >
+                                <label
+                                    v-for="day in workingDayOptions"
+                                    :key="day.value"
+                                    :for="`working-day-${day.value}`"
+                                    class="flex cursor-pointer items-center gap-2 rounded-lg border border-input px-3 py-2 text-sm transition-colors has-[[data-state=checked]]:border-primary has-[[data-state=checked]]:bg-primary/5"
+                                >
+                                    <Checkbox
+                                        :id="`working-day-${day.value}`"
+                                        name="working_days[]"
+                                        :value="day.value"
+                                        :default-value="
+                                            selectedWorkingDays.includes(
+                                                day.value,
+                                            )
+                                        "
+                                    />
+                                    <span class="font-medium">{{
+                                        day.label
+                                    }}</span>
+                                </label>
+                            </div>
+                            <InputError :message="errors.working_days" />
+                        </div>
+
+                        <div class="grid gap-2">
+                            <Label for="time_zone">Time zone</Label>
+                            <Select
+                                name="time_zone"
+                                :default-value="settings.time_zone"
+                            >
+                                <SelectTrigger id="time_zone" class="w-full">
+                                    <SelectValue
+                                        placeholder="Select time zone"
+                                    />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem
+                                        v-for="tz in timezones"
+                                        :key="tz"
+                                        :value="tz"
+                                    >
+                                        {{ tz }}
+                                    </SelectItem>
+                                </SelectContent>
+                            </Select>
+                            <InputError :message="errors.time_zone" />
+                        </div>
                     </CardContent>
                 </Card>
 
@@ -255,6 +410,19 @@ const logoPreviews = computed(() =>
                             </div>
                         </div>
 
+                        <div class="grid max-w-40 gap-2">
+                            <Label for="invoice_prefix"
+                                >Invoice prefix</Label
+                            >
+                            <Input
+                                id="invoice_prefix"
+                                name="invoice_prefix"
+                                :default-value="settings.invoice_prefix"
+                                placeholder="INV-"
+                            />
+                            <InputError :message="errors.invoice_prefix" />
+                        </div>
+
                         <label
                             for="tax_included_in_price"
                             class="flex cursor-pointer items-center gap-3 rounded-lg border border-input px-3 py-2.5 transition-colors has-[[data-state=checked]]:border-primary has-[[data-state=checked]]:bg-primary/5"
@@ -271,6 +439,56 @@ const logoPreviews = computed(() =>
                             >
                         </label>
                         <InputError :message="errors.tax_included_in_price" />
+
+                        <label
+                            for="guest_checkout"
+                            class="flex cursor-pointer items-center gap-3 rounded-lg border border-input px-3 py-2.5 transition-colors has-[[data-state=checked]]:border-primary has-[[data-state=checked]]:bg-primary/5"
+                        >
+                            <Checkbox
+                                id="guest_checkout"
+                                name="guest_checkout"
+                                :default-value="
+                                    settings.guest_checkout === '1'
+                                "
+                            />
+                            <span class="text-sm font-medium"
+                                >Allow guest checkout</span
+                            >
+                        </label>
+                        <InputError :message="errors.guest_checkout" />
+                    </CardContent>
+                </Card>
+
+                <Card>
+                    <CardHeader>
+                        <div class="flex items-center gap-2.5">
+                            <LayoutGrid
+                                class="size-4.5 text-muted-foreground"
+                                aria-hidden="true"
+                            />
+                            <CardTitle>Catalog display</CardTitle>
+                        </div>
+                        <CardDescription>
+                            How many items show per page across storefront
+                            and admin listings.
+                        </CardDescription>
+                    </CardHeader>
+                    <CardContent class="flex flex-col gap-4">
+                        <div class="grid max-w-40 gap-2">
+                            <Label for="pagination_limit"
+                                >Items per page</Label
+                            >
+                            <Input
+                                id="pagination_limit"
+                                name="pagination_limit"
+                                type="number"
+                                min="5"
+                                max="100"
+                                required
+                                :default-value="settings.pagination_limit"
+                            />
+                            <InputError :message="errors.pagination_limit" />
+                        </div>
                     </CardContent>
                 </Card>
 
@@ -328,10 +546,28 @@ const logoPreviews = computed(() =>
                             <CardTitle>System</CardTitle>
                         </div>
                         <CardDescription>
-                            Site-wide switches that affect every visitor.
+                            Site-wide switches and security limits.
                         </CardDescription>
                     </CardHeader>
-                    <CardContent class="flex flex-col gap-2">
+                    <CardContent class="flex flex-col gap-4">
+                        <div class="grid gap-2">
+                            <Label for="max_login_attempts"
+                                >Max login attempts</Label
+                            >
+                            <Input
+                                id="max_login_attempts"
+                                name="max_login_attempts"
+                                type="number"
+                                min="1"
+                                max="20"
+                                required
+                                :default-value="settings.max_login_attempts"
+                            />
+                            <InputError
+                                :message="errors.max_login_attempts"
+                            />
+                        </div>
+
                         <label
                             for="maintenance_mode"
                             class="flex cursor-pointer items-start gap-3 rounded-lg border border-input px-3 py-2.5 transition-colors has-[[data-state=checked]]:border-destructive has-[[data-state=checked]]:bg-destructive/5"

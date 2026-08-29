@@ -16,15 +16,17 @@ class CreateProductAction
     /**
      * @param  array{name: string, slug?: string, code: ?string, description: ?string, unit_price: string, purchase_price: ?string, current_stock: int, minimum_order_qty: int, category_id: ?int, brand_id: ?int, tax: string, tax_type: ?string, discount: string, discount_type: ?string, free_shipping: bool, refundable: bool, featured: bool, meta_title: ?string, meta_description: ?string, status: bool}  $data
      * @param  array<int, UploadedFile>|null  $images
+     * @param  array<int, array{color_id: ?int, size_id: ?int, material_id: ?int, sku: ?string, extra_price: ?string, stock: int}>  $variants
+     * @param  array<int, int>  $attributes
      */
-    public function handle(array $data, ?UploadedFile $thumbnail, ?array $images = null): Product
+    public function handle(array $data, ?UploadedFile $thumbnail, ?array $images = null, array $variants = [], array $attributes = []): Product
     {
         $data['slug'] = $this->productService->generateSlug($data['name']);
         $storedPath = null;
         $storedGalleryPaths = [];
 
         try {
-            return DB::transaction(function () use ($data, $thumbnail, $images, &$storedPath, &$storedGalleryPaths) {
+            return DB::transaction(function () use ($data, $thumbnail, $images, $variants, $attributes, &$storedPath, &$storedGalleryPaths) {
                 if ($thumbnail) {
                     $storedPath = $thumbnail->store('products', 'public');
                     $data['thumbnail'] = $storedPath;
@@ -41,6 +43,14 @@ class CreateProductAction
                         'image_storage_type' => 'public',
                         'sort_order' => $sortOrder,
                     ]);
+                }
+
+                if ($variants !== []) {
+                    $product->variants()->createMany($variants);
+                }
+
+                if ($attributes !== []) {
+                    $product->attributes()->sync($attributes);
                 }
 
                 return $product;

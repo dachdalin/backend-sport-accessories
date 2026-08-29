@@ -24,6 +24,15 @@ class BusinessSettingService
         'copyright_text' => '',
         'meta_title' => '',
         'meta_description' => '',
+        'working_hours_open' => '09:00',
+        'working_hours_close' => '18:00',
+        'working_days' => 'mon,tue,wed,thu,fri',
+        'time_zone' => 'UTC',
+        'detail_location' => '',
+        'pagination_limit' => '15',
+        'invoice_prefix' => 'INV-',
+        'max_login_attempts' => '5',
+        'guest_checkout' => '1',
     ];
 
     /**

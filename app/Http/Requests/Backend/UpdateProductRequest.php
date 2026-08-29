@@ -6,6 +6,7 @@ use App\Enums\TaxType;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\Validator;
 
 class UpdateProductRequest extends FormRequest
 {
@@ -37,6 +38,58 @@ class UpdateProductRequest extends FormRequest
             'meta_title' => ['bail', 'nullable', 'string', 'max:191'],
             'meta_description' => ['bail', 'nullable', 'string', 'max:191'],
             'status' => ['bail', 'sometimes', 'boolean'],
+            'variants' => ['bail', 'nullable', 'array'],
+            'variants.*.color_id' => ['bail', 'nullable', 'integer', Rule::exists('colors', 'id')],
+            'variants.*.size_id' => ['bail', 'nullable', 'integer', Rule::exists('sizes', 'id')],
+            'variants.*.material_id' => ['bail', 'nullable', 'integer', Rule::exists('materials', 'id')],
+            'variants.*.sku' => [
+                'bail',
+                'nullable',
+                'string',
+                'max:100',
+                'distinct',
+                Rule::unique('product_variants', 'sku')->where(fn ($query) => $query->where('product_id', '!=', $this->route('product')->id)),
+            ],
+            'variants.*.extra_price' => ['bail', 'nullable', 'numeric', 'min:0', 'max:99999999.99'],
+            'variants.*.stock' => ['bail', 'required_with:variants', 'integer', 'min:0'],
+            'attributes' => ['bail', 'nullable', 'array'],
+            'attributes.*' => ['bail', 'integer', Rule::exists('attributes', 'id')],
+        ];
+    }
+
+    /**
+     * @return array<int, \Closure(Validator): void>
+     */
+    public function after(): array
+    {
+        return [
+            function (Validator $validator) {
+                $seen = [];
+
+                foreach ($this->array('variants') as $index => $variant) {
+                    if (! is_array($variant)) {
+                        continue;
+                    }
+
+                    $key = implode('-', [
+                        $variant['color_id'] ?? 'null',
+                        $variant['size_id'] ?? 'null',
+                        $variant['material_id'] ?? 'null',
+                    ]);
+
+                    if ($key === 'null-null-null') {
+                        $validator->errors()->add("variants.{$index}", __('Each variant needs at least one of color, size, or material.'));
+
+                        continue;
+                    }
+
+                    if (isset($seen[$key])) {
+                        $validator->errors()->add("variants.{$index}", __('This color/size/material combination is already used by another variant.'));
+                    }
+
+                    $seen[$key] = true;
+                }
+            },
         ];
     }
 }

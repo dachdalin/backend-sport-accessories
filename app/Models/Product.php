@@ -3,11 +3,13 @@
 namespace App\Models;
 
 use App\Enums\TaxType;
+use App\Models\Attribute as ProductAttribute;
 use Database\Factories\ProductFactory;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Product extends Model
@@ -125,6 +127,22 @@ class Product extends Model
     public function images(): HasMany
     {
         return $this->hasMany(ProductImage::class)->orderBy('sort_order');
+    }
+
+    /**
+     * @return HasMany<ProductVariant, $this>
+     */
+    public function variants(): HasMany
+    {
+        return $this->hasMany(ProductVariant::class);
+    }
+
+    /**
+     * @return BelongsToMany<ProductAttribute, $this>
+     */
+    public function attributes(): BelongsToMany
+    {
+        return $this->belongsToMany(ProductAttribute::class);
     }
 
     /**

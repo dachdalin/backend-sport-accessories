@@ -64,14 +64,23 @@ class BusinessSettingControllerTest extends TestCase
             'contact_email' => 'support@acme.test',
             'contact_phone' => '+1 555 000 0000',
             'address' => '123 Main Street',
+            'detail_location' => 'Behind the blue gate, 2nd floor',
             'currency_symbol' => '$',
             'minimum_order_amount' => '10.00',
             'free_delivery_over_amount' => '50.00',
             'tax_included_in_price' => true,
+            'guest_checkout' => false,
+            'invoice_prefix' => 'ACME-',
             'maintenance_mode' => false,
             'copyright_text' => '© 2026 Acme Sports',
             'meta_title' => 'Acme Sports',
             'meta_description' => 'Gear up with Acme Sports.',
+            'working_hours_open' => '08:00',
+            'working_hours_close' => '20:00',
+            'working_days' => ['mon', 'tue', 'wed', 'thu', 'fri'],
+            'time_zone' => 'Asia/Phnom_Penh',
+            'pagination_limit' => '20',
+            'max_login_attempts' => '3',
         ]);
 
         $response
@@ -81,6 +90,12 @@ class BusinessSettingControllerTest extends TestCase
         $this->assertSame('Acme Sports', BusinessSetting::query()->where('key', 'site_name')->value('value'));
         $this->assertSame('1', BusinessSetting::query()->where('key', 'tax_included_in_price')->value('value'));
         $this->assertSame('0', BusinessSetting::query()->where('key', 'maintenance_mode')->value('value'));
+        $this->assertSame('0', BusinessSetting::query()->where('key', 'guest_checkout')->value('value'));
+        $this->assertSame('ACME-', BusinessSetting::query()->where('key', 'invoice_prefix')->value('value'));
+        $this->assertSame('mon,tue,wed,thu,fri', BusinessSetting::query()->where('key', 'working_days')->value('value'));
+        $this->assertSame('Asia/Phnom_Penh', BusinessSetting::query()->where('key', 'time_zone')->value('value'));
+        $this->assertSame('20', BusinessSetting::query()->where('key', 'pagination_limit')->value('value'));
+        $this->assertSame('3', BusinessSetting::query()->where('key', 'max_login_attempts')->value('value'));
     }
 
     public function test_users_without_the_edit_permission_cannot_update_business_settings(): void

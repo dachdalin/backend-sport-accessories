@@ -7,6 +7,7 @@ import {
     Image as ImageIcon,
     Images,
     Info,
+    Layers,
     Rocket,
     SearchCheck,
 } from '@lucide/vue';
@@ -74,12 +75,28 @@ type ProductImage = {
     image: string;
 };
 
+type ProductVariant = {
+    id: number;
+    color_id: number | null;
+    size_id: number | null;
+    material_id: number | null;
+    sku: string | null;
+    extra_price: string;
+    stock: number;
+};
+
 const props = defineProps<{
     product: Product;
     images: ProductImage[];
+    variants: ProductVariant[];
+    productAttributeIds: number[];
     categories: SelectOption[];
     brands: SelectOption[];
     taxTypes: SelectOption[];
+    colors: SelectOption[];
+    sizes: SelectOption[];
+    materials: SelectOption[];
+    attributeOptions: SelectOption[];
 }>();
 
 defineOptions({
@@ -119,6 +136,58 @@ const finalPrice = computed(() => {
 
     return Math.max(0, reduced);
 });
+
+let nextVariantKey = 0;
+
+function variantFromProduct(variant: ProductVariant) {
+    return {
+        key: nextVariantKey++,
+        color_id: variant.color_id ? String(variant.color_id) : '',
+        size_id: variant.size_id ? String(variant.size_id) : '',
+        material_id: variant.material_id ? String(variant.material_id) : '',
+        sku: variant.sku ?? '',
+        extra_price: variant.extra_price,
+        stock: String(variant.stock),
+    };
+}
+
+function newVariant() {
+    return {
+        key: nextVariantKey++,
+        color_id: '',
+        size_id: '',
+        material_id: '',
+        sku: '',
+        extra_price: '',
+        stock: '0',
+    };
+}
+
+const variantRows = ref(props.variants.map(variantFromProduct));
+
+function addVariant() {
+    variantRows.value.push(newVariant());
+}
+
+function removeVariant(index: number) {
+    variantRows.value.splice(index, 1);
+}
+
+const selectedAttributeIds = ref<number[]>([...props.productAttributeIds]);
+
+function isAttributeSelected(id: number): boolean {
+    return selectedAttributeIds.value.includes(id);
+}
+
+function toggleAttribute(id: number, checked: boolean) {
+    if (checked) {
+        selectedAttributeIds.value.push(id);
+    } else {
+        selectedAttributeIds.value = selectedAttributeIds.value.filter(
+            (existing) => existing !== id,
+        );
+    }
+}
 </script>
 
 <template>
@@ -212,6 +281,202 @@ const finalPrice = computed(() => {
                                 `/storage/${product.thumbnail}`,
                             ]"
                         />
+                    </CardContent>
+                </Card>
+
+                <Card>
+                    <CardHeader>
+                        <div class="flex items-center gap-2.5">
+                            <Layers
+                                class="size-4.5 text-muted-foreground"
+                                aria-hidden="true"
+                            />
+                            <CardTitle>Variants</CardTitle>
+                        </div>
+                        <CardDescription>
+                            Optional. Add a variant per color/size/material
+                            combination you stock separately, e.g. size M in
+                            red, blue, and white.
+                        </CardDescription>
+                    </CardHeader>
+                    <CardContent class="flex flex-col gap-3">
+                        <InputError :message="errors.variants" />
+
+                        <div
+                            v-for="(variant, variantIndex) in variantRows"
+                            :key="variant.key"
+                            class="grid grid-cols-[1fr_1fr_1fr_1fr_1fr_auto] items-start gap-2 rounded-lg border border-input p-3"
+                        >
+                            <div class="grid gap-2">
+                                <Label :for="`variant-color-${variant.key}`"
+                                    >Color</Label
+                                >
+                                <Select
+                                    :model-value="String(variant.color_id)"
+                                    :name="`variants[${variantIndex}][color_id]`"
+                                    @update:model-value="
+                                        (value) =>
+                                            (variant.color_id = String(value))
+                                    "
+                                >
+                                    <SelectTrigger
+                                        :id="`variant-color-${variant.key}`"
+                                        class="w-full"
+                                    >
+                                        <SelectValue placeholder="Any" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem
+                                            v-for="option in colors"
+                                            :key="option.value"
+                                            :value="String(option.value)"
+                                        >
+                                            {{ option.label }}
+                                        </SelectItem>
+                                    </SelectContent>
+                                </Select>
+                                <InputError
+                                    :message="
+                                        errors[
+                                            `variants.${variantIndex}.color_id`
+                                        ]
+                                    "
+                                />
+                            </div>
+
+                            <div class="grid gap-2">
+                                <Label :for="`variant-size-${variant.key}`"
+                                    >Size</Label
+                                >
+                                <Select
+                                    :model-value="String(variant.size_id)"
+                                    :name="`variants[${variantIndex}][size_id]`"
+                                    @update:model-value="
+                                        (value) =>
+                                            (variant.size_id = String(value))
+                                    "
+                                >
+                                    <SelectTrigger
+                                        :id="`variant-size-${variant.key}`"
+                                        class="w-full"
+                                    >
+                                        <SelectValue placeholder="Any" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem
+                                            v-for="option in sizes"
+                                            :key="option.value"
+                                            :value="String(option.value)"
+                                        >
+                                            {{ option.label }}
+                                        </SelectItem>
+                                    </SelectContent>
+                                </Select>
+                                <InputError
+                                    :message="
+                                        errors[
+                                            `variants.${variantIndex}.size_id`
+                                        ]
+                                    "
+                                />
+                            </div>
+
+                            <div class="grid gap-2">
+                                <Label :for="`variant-material-${variant.key}`"
+                                    >Material</Label
+                                >
+                                <Select
+                                    :model-value="String(variant.material_id)"
+                                    :name="`variants[${variantIndex}][material_id]`"
+                                    @update:model-value="
+                                        (value) =>
+                                            (variant.material_id = String(
+                                                value,
+                                            ))
+                                    "
+                                >
+                                    <SelectTrigger
+                                        :id="`variant-material-${variant.key}`"
+                                        class="w-full"
+                                    >
+                                        <SelectValue placeholder="Any" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem
+                                            v-for="option in materials"
+                                            :key="option.value"
+                                            :value="String(option.value)"
+                                        >
+                                            {{ option.label }}
+                                        </SelectItem>
+                                    </SelectContent>
+                                </Select>
+                                <InputError
+                                    :message="
+                                        errors[
+                                            `variants.${variantIndex}.material_id`
+                                        ]
+                                    "
+                                />
+                            </div>
+
+                            <div class="grid gap-2">
+                                <Label :for="`variant-sku-${variant.key}`"
+                                    >SKU</Label
+                                >
+                                <Input
+                                    :id="`variant-sku-${variant.key}`"
+                                    v-model="variant.sku"
+                                    :name="`variants[${variantIndex}][sku]`"
+                                    placeholder="Optional"
+                                />
+                                <InputError
+                                    :message="
+                                        errors[`variants.${variantIndex}.sku`]
+                                    "
+                                />
+                            </div>
+
+                            <div class="grid gap-2">
+                                <Label :for="`variant-stock-${variant.key}`"
+                                    >Stock</Label
+                                >
+                                <Input
+                                    :id="`variant-stock-${variant.key}`"
+                                    v-model="variant.stock"
+                                    :name="`variants[${variantIndex}][stock]`"
+                                    type="number"
+                                    min="0"
+                                />
+                                <InputError
+                                    :message="
+                                        errors[
+                                            `variants.${variantIndex}.stock`
+                                        ]
+                                    "
+                                />
+                            </div>
+
+                            <Button
+                                type="button"
+                                variant="destructive"
+                                size="sm"
+                                class="mt-7"
+                                @click="removeVariant(variantIndex)"
+                            >
+                                Remove
+                            </Button>
+                        </div>
+
+                        <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            class="self-start"
+                            @click="addVariant"
+                        >
+                            Add variant
+                        </Button>
                     </CardContent>
                 </Card>
 
@@ -518,6 +783,38 @@ const finalPrice = computed(() => {
                                 </SelectContent>
                             </Select>
                             <InputError :message="errors.brand_id" />
+                        </div>
+
+                        <div class="grid gap-2">
+                            <Label>Attributes</Label>
+                            <div class="flex flex-col gap-2">
+                                <label
+                                    v-for="option in attributeOptions"
+                                    :key="option.value"
+                                    :for="`attribute-${option.value}`"
+                                    class="flex cursor-pointer items-center gap-2 text-sm"
+                                >
+                                    <Checkbox
+                                        :id="`attribute-${option.value}`"
+                                        name="attributes[]"
+                                        :value="option.value"
+                                        :model-value="
+                                            isAttributeSelected(
+                                                Number(option.value),
+                                            )
+                                        "
+                                        @update:model-value="
+                                            (v) =>
+                                                toggleAttribute(
+                                                    Number(option.value),
+                                                    v === true,
+                                                )
+                                        "
+                                    />
+                                    {{ option.label }}
+                                </label>
+                            </div>
+                            <InputError :message="errors.attributes" />
                         </div>
                     </CardContent>
                 </Card>
