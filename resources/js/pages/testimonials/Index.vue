@@ -23,8 +23,7 @@ type Testimonial = {
     customer_role: string | null;
     content: string;
     rating: number;
-    avatar: string;
-    avatar_storage_type: string;
+    avatar_url: string;
     status: boolean;
 };
 
@@ -87,7 +86,7 @@ defineOptions({
                 <div class="flex items-start justify-between gap-3">
                     <div class="flex items-center gap-3">
                         <img
-                            :src="`/storage/${testimonial.avatar}`"
+                            :src="testimonial.avatar_url"
                             :alt="testimonial.customer_name"
                             class="h-11 w-11 shrink-0 rounded-full object-cover ring-2 ring-border"
                         />
@@ -213,7 +212,7 @@ defineOptions({
                         <td class="p-3">
                             <div class="flex items-center gap-3">
                                 <img
-                                    :src="`/storage/${testimonial.avatar}`"
+                                    :src="testimonial.avatar_url"
                                     :alt="testimonial.customer_name"
                                     class="h-10 w-10 shrink-0 rounded-full object-cover ring-2 ring-border"
                                 />

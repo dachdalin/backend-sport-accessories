@@ -57,6 +57,7 @@ Before planning or editing, find the row whose globs match the file's path and r
 | app/Services/** | .ai/rules/services.md |
 | app/Services/StockClearanceSetupService.php,app/Http/Controllers/Backend/StockClearanceSetupController.php,resources/js/pages/stock-clearance-setups/** | .ai/rules/stock-clearance-setups.md |
 | app/Http/Controllers/Backend/StoreLocationController.php,resources/js/pages/store-locations/** | .ai/rules/store-locations.md |
+| app/Http/Controllers/Backend/TestimonialController.php,app/Models/Testimonial.php,resources/js/pages/testimonials/** | .ai/rules/testimonials.md |
 | app/Http/Controllers/Backend/UserController.php,resources/js/pages/users/** | .ai/rules/users.md |
 | app/Http/Controllers/Api/V1/TrendingController.php,app/Services/TrendingProductService.php,app/Actions/ProductSearches/**,app/Http/Controllers/Api/V1/ProductController.php,database/migrations/** | .ai/rules/v1-migrations.md |
 | app/Http/Controllers/Api/V1/ProductController.php,app/Http/Requests/Api/V1/ListProductsRequest.php,app/Http/Resources/Api/V1/ProductResource.php | .ai/rules/v1.md |

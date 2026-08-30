@@ -14,6 +14,7 @@ use App\Models\Customer;
 use App\Models\SupportTicket;
 use App\Services\SupportTicketService;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use Inertia\Response;
 use Throwable;
@@ -70,7 +71,12 @@ class SupportTicketController extends Controller
     public function edit(SupportTicket $supportTicket): Response
     {
         return Inertia::render('support-tickets/Edit', [
-            'supportTicket' => $supportTicket,
+            'supportTicket' => [
+                ...$supportTicket->toArray(),
+                'attachment_url' => $supportTicket->attachment
+                    ? Storage::disk($supportTicket->attachment_storage_type)->url($supportTicket->attachment)
+                    : null,
+            ],
             'customers' => $this->customerOptions(),
             'priorities' => $this->priorityOptions(),
             'statuses' => $this->statusOptions(),

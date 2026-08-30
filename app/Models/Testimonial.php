@@ -3,8 +3,10 @@
 namespace App\Models;
 
 use Database\Factories\TestimonialFactory;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 
 class Testimonial extends Model
 {
@@ -22,6 +24,13 @@ class Testimonial extends Model
         'avatar',
         'avatar_storage_type',
         'status',
+    ];
+
+    /**
+     * @var array<int, string>
+     */
+    protected $appends = [
+        'avatar_url',
     ];
 
     /**
@@ -45,5 +54,16 @@ class Testimonial extends Model
             'rating' => 'integer',
             'status' => 'boolean',
         ];
+    }
+
+    /**
+     * The publicly reachable URL for the avatar, resolved against
+     * whichever disk it was stored on (local `public` or `cloudinary`).
+     */
+    protected function avatarUrl(): Attribute
+    {
+        return Attribute::make(
+            get: fn (): string => Storage::disk($this->avatar_storage_type)->url($this->avatar),
+        );
     }
 }
