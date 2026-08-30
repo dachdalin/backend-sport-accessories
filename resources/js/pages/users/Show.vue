@@ -33,6 +33,7 @@ type User = {
     name: string;
     email: string;
     email_verified_at: string | null;
+    status: boolean;
     roles: Role[];
     created_at: string;
     updated_at: string;
@@ -187,10 +188,21 @@ defineOptions({
                         <CardTitle>Access</CardTitle>
                     </div>
                     <CardDescription>
-                        Roles assigned to this user.
+                        Sign-in access and roles assigned to this user.
                     </CardDescription>
                 </CardHeader>
-                <CardContent>
+                <CardContent class="flex flex-col gap-4">
+                    <dl class="grid grid-cols-3 gap-y-4">
+                        <dt class="text-sm font-medium text-muted-foreground">
+                            Status
+                        </dt>
+                        <dd class="col-span-2 text-sm">
+                            <Badge :variant="user.status ? 'default' : 'destructive'">
+                                {{ user.status ? 'Active' : 'Banned' }}
+                            </Badge>
+                        </dd>
+                    </dl>
+
                     <div v-if="user.roles.length" class="flex flex-wrap gap-1">
                         <Badge
                             v-for="role in user.roles"

@@ -43,8 +43,11 @@ class UserController extends Controller
      */
     public function store(StoreUserRequest $request, CreateUserAction $action): RedirectResponse
     {
+        $data = $request->validated();
+        $data['status'] = $request->boolean('status', true);
+
         try {
-            $action->handle($request->validated());
+            $action->handle($data);
         } catch (Throwable $e) {
             report($e);
 
@@ -84,8 +87,17 @@ class UserController extends Controller
      */
     public function update(UpdateUserRequest $request, User $user, UpdateUserAction $action): RedirectResponse
     {
+        $data = $request->validated();
+        $data['status'] = $request->boolean('status');
+
+        if ($user->is($request->user()) && ! $data['status']) {
+            Inertia::flash('toast', ['type' => 'error', 'message' => __('You cannot ban your own account.')]);
+
+            return back();
+        }
+
         try {
-            $action->handle($user, $request->validated());
+            $action->handle($user, $data);
         } catch (Throwable $e) {
             report($e);
 

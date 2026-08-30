@@ -14,7 +14,7 @@ defineProps<{
     groups: NavGroup[];
 }>();
 
-const { isCurrentUrl } = useCurrentUrl();
+const { isCurrentOrParentUrl } = useCurrentUrl();
 </script>
 
 <template>
@@ -33,7 +33,7 @@ const { isCurrentUrl } = useCurrentUrl();
             <SidebarMenuItem v-for="item in group.items" :key="item.title">
                 <SidebarMenuButton
                     as-child
-                    :is-active="isCurrentUrl(item.href)"
+                    :is-active="isCurrentOrParentUrl(item.href)"
                     :tooltip="item.title"
                     class="hover:bg-sidebar-accent hover:text-sidebar-accent-foreground data-[active=true]:bg-[#FF8904] data-[active=true]:font-semibold data-[active=true]:text-[#2D1E06] data-[active=true]:shadow-[0_1px_2px_rgba(0,0,0,0.25)] data-[active=true]:hover:bg-[#FF8904] data-[active=true]:hover:text-[#2D1E06] [&>svg]:text-sidebar-foreground/50 data-[active=true]:[&>svg]:text-[#2D1E06]"
                 >

@@ -71,6 +71,28 @@ class UserControllerTest extends TestCase
         $this->assertSame('Jane Smith', $created->name);
         $this->assertNotNull($created->email_verified_at);
         $this->assertTrue($created->hasRole('admin'));
+        $this->assertTrue($created->status);
+    }
+
+    public function test_user_roles_are_synced_when_submitted_as_strings(): void
+    {
+        // Real browser form submissions send roles[] as strings, not ints.
+        $user = User::factory()->create();
+        $target = User::factory()->create();
+        $role = Role::findOrCreate('admin');
+
+        $response = $this
+            ->actingAs($user)
+            ->put(route('users.update', $target), [
+                'name' => $target->name,
+                'email' => $target->email,
+                'status' => '1',
+                'roles' => [(string) $role->id],
+            ]);
+
+        $response->assertSessionHasNoErrors();
+
+        $this->assertTrue($target->fresh()->hasRole('admin'));
     }
 
     public function test_user_name_email_and_password_are_required(): void
@@ -128,6 +150,7 @@ class UserControllerTest extends TestCase
             ->put(route('users.update', $target), [
                 'name' => 'Updated Name',
                 'email' => $target->email,
+                'status' => '1',
             ]);
 
         $response
@@ -152,6 +175,7 @@ class UserControllerTest extends TestCase
                 'email' => $target->email,
                 'password' => 'new-password',
                 'password_confirmation' => 'new-password',
+                'status' => '1',
             ]);
 
         $response->assertSessionHasNoErrors();
@@ -159,6 +183,45 @@ class UserControllerTest extends TestCase
         $target->refresh();
 
         $this->assertTrue(Hash::check('new-password', $target->password));
+    }
+
+    public function test_user_can_be_banned(): void
+    {
+        $user = User::factory()->create();
+        $target = User::factory()->create(['status' => true]);
+
+        $response = $this
+            ->actingAs($user)
+            ->put(route('users.update', $target), [
+                'name' => $target->name,
+                'email' => $target->email,
+            ]);
+
+        $response
+            ->assertSessionHasNoErrors()
+            ->assertRedirect(route('users.index'));
+
+        $target->refresh();
+
+        $this->assertFalse($target->status);
+    }
+
+    public function test_user_cannot_ban_their_own_account(): void
+    {
+        $user = User::factory()->create(['status' => true]);
+
+        $response = $this
+            ->actingAs($user)
+            ->put(route('users.update', $user), [
+                'name' => $user->name,
+                'email' => $user->email,
+            ]);
+
+        $response->assertRedirect();
+
+        $user->refresh();
+
+        $this->assertTrue($user->status);
     }
 
     public function test_user_can_be_deleted(): void

@@ -32,6 +32,7 @@ Before planning or editing, find the row whose globs match the file's path and r
 | app/Models/*.php,app/Http/**,bootstrap/app.php | .ai/rules/http.md |
 | resources/js/pages/**/Index.vue,resources/js/components/Pagination.vue | .ai/rules/js-components.md |
 | app/Http/Middleware/HandleInertiaRequests.php,resources/js/components/AppLogo.vue,resources/js/layouts/auth/** | .ai/rules/layouts-auth.md |
+| resources/js/pages/flash-deals/**,resources/js/components/ColorSwatchInput.vue,resources/js/components/FlashDealPreview.vue,resources/js/lib/colors.ts | .ai/rules/lib.md |
 | app/Http/Controllers/Backend/MaterialController.php,resources/js/pages/materials/** | .ai/rules/materials.md |
 | app/Http/Controllers/Backend/MessageController.php,resources/js/pages/messages/**,database/migrations/** | .ai/rules/messages-migrations.md |
 | app/Http/Controllers/Backend/**,database/migrations/** | .ai/rules/migrations.md |
@@ -42,6 +43,7 @@ Before planning or editing, find the row whose globs match the file's path and r
 | app/Models/Customer.php,app/Http/Controllers/Backend/CustomerController.php,app/Http/Requests/Backend/*CustomerRequest.php,resources/js/pages/customers/** | .ai/rules/pages-customers.md |
 | resources/js/pages/** | .ai/rules/pages.md |
 | app/Http/Controllers/Backend/ProductController.php,app/Http/Requests/Backend/*Product*.php,app/Actions/Products/**,app/Models/Product.php,app/Models/ProductVariant.php,resources/js/pages/products/** | .ai/rules/products.md |
+| app/Http/Controllers/Backend/UserController.php,resources/js/pages/users/**,app/Providers/FortifyServiceProvider.php | .ai/rules/providers.md |
 | app/Http/Controllers/Api/**,app/Http/Requests/Api/**,routes/api.php | .ai/rules/requests-api.md |
 | resources/js/pages/roles/**,resources/js/components/PermissionMatrix.vue | .ai/rules/roles-js-components.md |
 | app/Http/Controllers/Backend/RoleController.php,resources/js/pages/roles/** | .ai/rules/roles.md |

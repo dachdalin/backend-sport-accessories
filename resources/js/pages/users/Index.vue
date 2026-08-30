@@ -25,6 +25,7 @@ type User = {
     id: number;
     name: string;
     email: string;
+    status: boolean;
     roles: Role[];
     created_at: string;
 };
@@ -94,6 +95,7 @@ defineOptions({
                         <th class="p-3 font-medium">Name</th>
                         <th class="p-3 font-medium">Email</th>
                         <th class="p-3 font-medium">Roles</th>
+                        <th class="p-3 font-medium">Status</th>
                         <th class="p-3 font-medium">Created</th>
                         <th class="p-3 text-right font-medium">Actions</th>
                     </tr>
@@ -126,6 +128,11 @@ defineOptions({
                                 </Badge>
                             </div>
                             <span v-else class="text-muted-foreground">—</span>
+                        </td>
+                        <td class="p-3">
+                            <Badge :variant="user.status ? 'default' : 'destructive'">
+                                {{ user.status ? 'Active' : 'Banned' }}
+                            </Badge>
                         </td>
                         <td class="p-3 text-muted-foreground">
                             {{ formatDate(user.created_at) }}
@@ -187,7 +194,7 @@ defineOptions({
                     <tr v-if="users.data.length === 0">
                         <td
                             class="p-6 text-center text-muted-foreground"
-                            colspan="5"
+                            colspan="6"
                         >
                             No users yet.
                         </td>

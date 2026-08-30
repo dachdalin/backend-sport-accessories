@@ -20,6 +20,7 @@ class UpdateUserRequest extends FormRequest
             'name' => ['bail', 'required', 'string', 'max:100'],
             'email' => ['bail', 'required', 'email', 'max:255', Rule::unique('users', 'email')->ignore($this->route('user'))],
             'password' => ['bail', 'nullable', 'string', Password::default(), 'confirmed'],
+            'status' => ['bail', 'sometimes', 'boolean'],
             'roles' => ['bail', 'sometimes', 'array'],
             'roles.*' => ['bail', 'integer', Rule::exists('roles', 'id')],
         ];

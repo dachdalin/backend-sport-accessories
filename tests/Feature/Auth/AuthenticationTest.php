@@ -65,6 +65,19 @@ class AuthenticationTest extends TestCase
         $this->assertGuest();
     }
 
+    public function test_banned_users_can_not_authenticate()
+    {
+        $user = User::factory()->create(['status' => false]);
+
+        $response = $this->post(route('login.store'), [
+            'email' => $user->email,
+            'password' => 'password',
+        ]);
+
+        $response->assertSessionHasErrors('email');
+        $this->assertGuest();
+    }
+
     public function test_users_can_logout()
     {
         $user = User::factory()->create();

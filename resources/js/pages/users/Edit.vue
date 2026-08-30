@@ -30,6 +30,7 @@ type User = {
     id: number;
     name: string;
     email: string;
+    status: boolean;
     roles: Role[];
 };
 
@@ -181,11 +182,26 @@ const passwordsMatch = computed(
                         <CardTitle>Access</CardTitle>
                     </div>
                     <CardDescription>
-                        Choose what this user can access.
+                        Choose what this user can access, and whether they
+                        can sign in.
                     </CardDescription>
                 </CardHeader>
                 <CardContent>
-                    <div class="grid gap-2">
+                    <div class="grid gap-4">
+                        <label
+                            for="status"
+                            class="flex cursor-pointer items-center gap-3 rounded-lg border border-input px-3 py-2.5 transition-colors has-[[data-state=checked]]:border-primary has-[[data-state=checked]]:bg-primary/5"
+                        >
+                            <Checkbox
+                                id="status"
+                                name="status"
+                                value="1"
+                                :default-value="user.status"
+                            />
+                            <span class="text-sm font-medium">Active</span>
+                        </label>
+                        <InputError :message="errors.status" />
+
                         <div class="grid grid-cols-2 gap-2">
                             <label
                                 v-for="role in roles"
