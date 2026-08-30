@@ -1,12 +1,31 @@
 <script setup lang="ts">
-import { Form, Head } from '@inertiajs/vue3';
+import { Form, Head, Link } from '@inertiajs/vue3';
+import {
+    ChevronDownIcon,
+    EyeIcon,
+    FolderIcon,
+    MessageCircleQuestionIcon,
+    SendIcon,
+} from '@lucide/vue';
+import { ref } from 'vue';
 import HelpTopicController from '@/actions/App/Http/Controllers/Backend/HelpTopicController';
 import Heading from '@/components/Heading.vue';
 import InputError from '@/components/InputError.vue';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardFooter,
+    CardHeader,
+    CardTitle,
+} from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Spinner } from '@/components/ui/spinner';
+import { Textarea } from '@/components/ui/textarea';
 import { edit, index } from '@/routes/help-topics';
 
 type HelpTopic = {
@@ -18,7 +37,7 @@ type HelpTopic = {
     status: boolean;
 };
 
-defineProps<{
+const props = defineProps<{
     helpTopic: HelpTopic;
 }>();
 
@@ -37,14 +56,16 @@ defineOptions({
     }),
 });
 
-const textareaClass =
-    'placeholder:text-muted-foreground dark:bg-input/30 border-input min-h-24 w-full rounded-md border bg-transparent px-3 py-2 text-base shadow-xs transition-[color,box-shadow] outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] md:text-sm';
+const question = ref(props.helpTopic.question);
+const answer = ref(props.helpTopic.answer);
+const status = ref(props.helpTopic.status);
+const previewOpen = ref(true);
 </script>
 
 <template>
     <Head title="Edit help topic" />
 
-    <div class="flex flex-col space-y-6">
+    <div class="flex flex-col gap-6">
         <Heading
             title="Edit help topic"
             description="Update this frequently asked question"
@@ -52,70 +73,187 @@ const textareaClass =
 
         <Form
             v-bind="HelpTopicController.update.form(helpTopic)"
-            class="max-w-xl space-y-6"
+            class="grid gap-6 lg:grid-cols-3 lg:items-start"
             v-slot="{ errors, processing }"
         >
-            <div class="grid gap-2">
-                <Label for="question">Question</Label>
-                <textarea
-                    id="question"
-                    name="question"
-                    required
-                    autofocus
-                    :class="textareaClass"
-                    >{{ helpTopic.question }}</textarea
-                >
-                <InputError :message="errors.question" />
+            <div class="flex flex-col gap-6 lg:col-span-2">
+                <Card>
+                    <CardHeader>
+                        <div class="flex items-center gap-2.5">
+                            <MessageCircleQuestionIcon
+                                class="size-4.5 text-muted-foreground"
+                                aria-hidden="true"
+                            />
+                            <CardTitle>Question &amp; answer</CardTitle>
+                        </div>
+                        <CardDescription
+                            >What customers ask, and the answer they'll see when
+                            they expand it.</CardDescription
+                        >
+                    </CardHeader>
+                    <CardContent class="flex flex-col gap-4">
+                        <div class="grid gap-2">
+                            <Label for="question">Question</Label>
+                            <Textarea
+                                id="question"
+                                v-model="question"
+                                name="question"
+                                required
+                                autofocus
+                                rows="2"
+                            />
+                            <InputError :message="errors.question" />
+                        </div>
+
+                        <div class="grid gap-2">
+                            <Label for="answer">Answer</Label>
+                            <Textarea
+                                id="answer"
+                                v-model="answer"
+                                name="answer"
+                                required
+                                rows="6"
+                            />
+                            <InputError :message="errors.answer" />
+                        </div>
+                    </CardContent>
+                </Card>
+
+                <Card>
+                    <CardHeader>
+                        <div class="flex items-center gap-2.5">
+                            <FolderIcon
+                                class="size-4.5 text-muted-foreground"
+                                aria-hidden="true"
+                            />
+                            <CardTitle>Organization</CardTitle>
+                        </div>
+                        <CardDescription
+                            >How this topic is grouped and ordered among the
+                            others.</CardDescription
+                        >
+                    </CardHeader>
+                    <CardContent class="flex flex-col gap-4">
+                        <div class="grid gap-4 sm:grid-cols-2">
+                            <div class="grid gap-2">
+                                <Label for="type">Type</Label>
+                                <Input
+                                    id="type"
+                                    name="type"
+                                    :default-value="helpTopic.type"
+                                />
+                                <p class="text-xs text-muted-foreground">
+                                    Groups related questions together.
+                                </p>
+                                <InputError :message="errors.type" />
+                            </div>
+
+                            <div class="grid gap-2">
+                                <Label for="ranking">Ranking</Label>
+                                <Input
+                                    id="ranking"
+                                    name="ranking"
+                                    type="number"
+                                    min="1"
+                                    :default-value="helpTopic.ranking"
+                                />
+                                <p class="text-xs text-muted-foreground">
+                                    Lower numbers show first.
+                                </p>
+                                <InputError :message="errors.ranking" />
+                            </div>
+                        </div>
+
+                        <label
+                            for="status"
+                            class="flex items-center gap-2.5 rounded-lg border border-input px-3 py-2.5 has-[:checked]:border-primary/50 has-[:checked]:bg-primary/5"
+                        >
+                            <Checkbox
+                                id="status"
+                                name="status"
+                                v-model="status"
+                            />
+                            <span class="grid gap-0.5">
+                                <span class="text-sm font-medium">Active</span>
+                                <span class="text-xs text-muted-foreground"
+                                    >Shown to customers while this stays
+                                    checked.</span
+                                >
+                            </span>
+                        </label>
+                        <InputError :message="errors.status" />
+                    </CardContent>
+                </Card>
             </div>
 
-            <div class="grid gap-2">
-                <Label for="answer">Answer</Label>
-                <textarea
-                    id="answer"
-                    name="answer"
-                    required
-                    :class="textareaClass"
-                    >{{ helpTopic.answer }}</textarea
-                >
-                <InputError :message="errors.answer" />
-            </div>
+            <div class="flex flex-col gap-6">
+                <Card class="lg:sticky lg:top-6">
+                    <CardHeader>
+                        <div class="flex items-center gap-2.5">
+                            <EyeIcon
+                                class="size-4.5 text-muted-foreground"
+                                aria-hidden="true"
+                            />
+                            <CardTitle>Preview</CardTitle>
+                        </div>
+                        <CardDescription
+                            >How this reads on the customer-facing
+                            FAQ.</CardDescription
+                        >
+                    </CardHeader>
+                    <CardContent>
+                        <div
+                            class="overflow-hidden rounded-lg border border-input"
+                        >
+                            <button
+                                type="button"
+                                class="flex w-full items-center justify-between gap-3 p-3 text-left text-sm font-medium focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
+                                :aria-expanded="previewOpen"
+                                @click="previewOpen = !previewOpen"
+                            >
+                                <span>{{ question }}</span>
+                                <ChevronDownIcon
+                                    class="size-4 shrink-0 text-muted-foreground transition-transform"
+                                    :class="{ 'rotate-180': previewOpen }"
+                                    aria-hidden="true"
+                                />
+                            </button>
+                            <div
+                                v-if="previewOpen"
+                                class="border-t border-input px-3 py-3 text-sm text-muted-foreground"
+                            >
+                                {{ answer }}
+                            </div>
+                        </div>
+                        <Badge
+                            :variant="status ? 'default' : 'secondary'"
+                            class="mt-3"
+                        >
+                            {{ status ? 'Active' : 'Inactive' }}
+                        </Badge>
+                    </CardContent>
+                </Card>
 
-            <div class="grid grid-cols-2 gap-4">
-                <div class="grid gap-2">
-                    <Label for="type">Type</Label>
-                    <Input
-                        id="type"
-                        name="type"
-                        :default-value="helpTopic.type"
-                    />
-                    <InputError :message="errors.type" />
-                </div>
-
-                <div class="grid gap-2">
-                    <Label for="ranking">Ranking</Label>
-                    <Input
-                        id="ranking"
-                        name="ranking"
-                        type="number"
-                        min="1"
-                        :default-value="helpTopic.ranking"
-                    />
-                    <InputError :message="errors.ranking" />
-                </div>
-            </div>
-
-            <div class="flex items-center gap-2">
-                <Checkbox
-                    id="status"
-                    name="status"
-                    :default-value="helpTopic.status"
-                />
-                <Label for="status">Active</Label>
-                <InputError :message="errors.status" />
-            </div>
-
-            <div class="flex items-center gap-4">
-                <Button :disabled="processing">Save help topic</Button>
+                <Card>
+                    <CardFooter class="flex-col gap-3 pt-6 sm:flex-row">
+                        <Button class="w-full sm:w-auto" :disabled="processing">
+                            <Spinner v-if="processing" />
+                            <SendIcon
+                                v-else
+                                class="size-4"
+                                aria-hidden="true"
+                            />
+                            Save help topic
+                        </Button>
+                        <Button
+                            class="w-full sm:w-auto"
+                            variant="outline"
+                            as-child
+                        >
+                            <Link :href="index()">Cancel</Link>
+                        </Button>
+                    </CardFooter>
+                </Card>
             </div>
         </Form>
     </div>

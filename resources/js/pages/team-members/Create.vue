@@ -104,13 +104,18 @@ defineOptions({
                     name="sort_order"
                     type="number"
                     min="0"
-                    placeholder="0"
+                    default-value="0"
                 />
                 <InputError :message="errors.sort_order" />
             </div>
 
             <div class="flex items-center gap-2">
-                <Checkbox id="status" name="status" :default-value="true" />
+                <Checkbox
+                    id="status"
+                    name="status"
+                    value="1"
+                    :default-value="true"
+                />
                 <Label for="status">Active</Label>
                 <InputError :message="errors.status" />
             </div>

@@ -131,6 +131,7 @@ defineOptions({
                 <Checkbox
                     id="status"
                     name="status"
+                    value="1"
                     :default-value="props.teamMember.status"
                 />
                 <Label for="status">Active</Label>

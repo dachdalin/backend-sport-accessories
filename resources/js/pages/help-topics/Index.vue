@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { Form, Head, Link } from '@inertiajs/vue3';
+import { ChevronDownIcon } from '@lucide/vue';
+import { computed, reactive } from 'vue';
 import HelpTopicController from '@/actions/App/Http/Controllers/Backend/HelpTopicController';
 import Heading from '@/components/Heading.vue';
 import { Badge } from '@/components/ui/badge';
@@ -24,7 +26,7 @@ type HelpTopic = {
     status: boolean;
 };
 
-defineProps<{
+const props = defineProps<{
     helpTopics: HelpTopic[];
 }>();
 
@@ -38,68 +40,133 @@ defineOptions({
         ],
     },
 });
+
+const openIds = reactive(new Set<number>());
+
+function toggle(id: number): void {
+    if (openIds.has(id)) {
+        openIds.delete(id);
+    } else {
+        openIds.add(id);
+    }
+}
+
+function formatType(type: string): string {
+    const label = type.trim() || 'general';
+
+    return label.charAt(0).toUpperCase() + label.slice(1);
+}
+
+const groups = computed(() => {
+    const byType = new Map<string, HelpTopic[]>();
+
+    for (const topic of props.helpTopics) {
+        const key = formatType(topic.type);
+
+        if (!byType.has(key)) {
+            byType.set(key, []);
+        }
+
+        byType.get(key)!.push(topic);
+    }
+
+    return Array.from(byType.entries()).map(([type, topics]) => ({
+        type,
+        topics,
+    }));
+});
 </script>
 
 <template>
     <Head title="Help topics" />
 
     <div class="flex flex-col gap-6">
-        <div class="flex items-center justify-between">
+        <div
+            class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"
+        >
             <Heading
                 title="Help topics"
                 description="Manage the frequently asked questions shown to customers"
             />
-            <Button as-child>
+            <Button as-child class="w-full sm:w-auto">
                 <Link :href="create()">Add help topic</Link>
             </Button>
         </div>
 
-        <div
-            class="overflow-x-auto rounded-xl border border-sidebar-border/70 dark:border-sidebar-border"
+        <p
+            v-if="helpTopics.length === 0"
+            class="rounded-xl border border-sidebar-border/70 p-6 text-center text-sm text-muted-foreground dark:border-sidebar-border"
         >
-            <table class="w-full text-left text-sm">
-                <thead
-                    class="border-b border-sidebar-border/70 text-muted-foreground dark:border-sidebar-border"
-                >
-                    <tr>
-                        <th class="p-3 font-medium">Question</th>
-                        <th class="p-3 font-medium">Type</th>
-                        <th class="p-3 font-medium">Ranking</th>
-                        <th class="p-3 font-medium">Status</th>
-                        <th class="p-3 text-right font-medium">Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr
-                        v-for="helpTopic in helpTopics"
-                        :key="helpTopic.id"
-                        class="border-b border-sidebar-border/70 last:border-b-0 dark:border-sidebar-border"
+            No help topics yet.
+        </p>
+
+        <div
+            v-else
+            class="rounded-xl border border-sidebar-border/70 p-4 sm:p-6 dark:border-sidebar-border"
+        >
+            <section
+                v-for="(group, groupIndex) in groups"
+                :key="group.type"
+                :class="groupIndex > 0 ? 'mt-6' : ''"
+            >
+                <div class="mb-3 flex items-center gap-2">
+                    <h2
+                        class="text-xs font-semibold tracking-wide text-muted-foreground uppercase"
                     >
-                        <td class="max-w-md truncate p-3 font-medium">
-                            {{ helpTopic.question }}
-                        </td>
-                        <td class="p-3">{{ helpTopic.type }}</td>
-                        <td class="p-3">{{ helpTopic.ranking }}</td>
-                        <td class="p-3">
-                            <Badge
-                                :variant="
-                                    helpTopic.status ? 'default' : 'secondary'
-                                "
+                        {{ group.type }}
+                    </h2>
+                    <span class="text-xs text-muted-foreground"
+                        >({{ group.topics.length }})</span
+                    >
+                </div>
+
+                <div class="flex flex-col gap-2">
+                    <div
+                        v-for="topic in group.topics"
+                        :key="topic.id"
+                        class="overflow-hidden rounded-lg border border-sidebar-border/70 dark:border-sidebar-border"
+                    >
+                        <div
+                            class="flex flex-wrap items-start justify-between gap-3 p-3"
+                        >
+                            <button
+                                type="button"
+                                class="flex min-w-0 flex-1 items-start gap-2 rounded-sm text-left focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
+                                :aria-expanded="openIds.has(topic.id)"
+                                @click="toggle(topic.id)"
                             >
-                                {{ helpTopic.status ? 'Active' : 'Inactive' }}
-                            </Badge>
-                        </td>
-                        <td class="p-3">
-                            <div class="flex justify-end gap-2">
+                                <ChevronDownIcon
+                                    class="mt-0.5 size-4 shrink-0 text-muted-foreground transition-transform"
+                                    :class="{
+                                        'rotate-180': openIds.has(topic.id),
+                                    }"
+                                    aria-hidden="true"
+                                />
+                                <span class="flex flex-wrap items-center gap-2">
+                                    <span class="font-medium">{{
+                                        topic.question
+                                    }}</span>
+                                    <Badge variant="outline" class="shrink-0"
+                                        >#{{ topic.ranking }}</Badge
+                                    >
+                                </span>
+                            </button>
+
+                            <div class="flex shrink-0 items-center gap-2">
+                                <Badge
+                                    :variant="
+                                        topic.status ? 'default' : 'secondary'
+                                    "
+                                >
+                                    {{ topic.status ? 'Active' : 'Inactive' }}
+                                </Badge>
                                 <Button variant="outline" size="sm" as-child>
-                                    <Link :href="edit(helpTopic)">Edit</Link>
+                                    <Link :href="edit(topic)">Edit</Link>
                                 </Button>
 
                                 <Dialog>
                                     <DialogTrigger as-child>
-                                        <Button
-                                            variant="destructive"
-                                            size="sm"
+                                        <Button variant="destructive" size="sm"
                                             >Delete</Button
                                         >
                                     </DialogTrigger>
@@ -107,7 +174,7 @@ defineOptions({
                                         <Form
                                             v-bind="
                                                 HelpTopicController.destroy.form(
-                                                    helpTopic,
+                                                    topic,
                                                 )
                                             "
                                             :options="{ preserveScroll: true }"
@@ -138,19 +205,17 @@ defineOptions({
                                     </DialogContent>
                                 </Dialog>
                             </div>
-                        </td>
-                    </tr>
+                        </div>
 
-                    <tr v-if="helpTopics.length === 0">
-                        <td
-                            class="p-6 text-center text-muted-foreground"
-                            colspan="5"
+                        <div
+                            v-if="openIds.has(topic.id)"
+                            class="border-t border-sidebar-border/70 px-3 py-3 pl-9 text-sm text-muted-foreground dark:border-sidebar-border"
                         >
-                            No help topics yet.
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+                            {{ topic.answer }}
+                        </div>
+                    </div>
+                </div>
+            </section>
         </div>
     </div>
 </template>

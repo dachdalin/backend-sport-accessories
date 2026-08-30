@@ -14,6 +14,7 @@ import {
 import { ref } from 'vue';
 import FlashDealController from '@/actions/App/Http/Controllers/Backend/FlashDealController';
 import ColorSwatchInput from '@/components/ColorSwatchInput.vue';
+import DatePicker from '@/components/DatePicker.vue';
 import FlashDealPreview from '@/components/FlashDealPreview.vue';
 import Heading from '@/components/Heading.vue';
 import ImageDropzone from '@/components/ImageDropzone.vue';
@@ -155,11 +156,10 @@ function removeItem(index: number) {
                         <div class="grid gap-4 sm:grid-cols-2">
                             <div class="grid gap-2">
                                 <Label for="start_date">Start date</Label>
-                                <Input
+                                <DatePicker
                                     id="start_date"
                                     v-model="startDate"
                                     name="start_date"
-                                    type="date"
                                     required
                                 />
                                 <InputError :message="errors.start_date" />
@@ -167,11 +167,11 @@ function removeItem(index: number) {
 
                             <div class="grid gap-2">
                                 <Label for="end_date">End date</Label>
-                                <Input
+                                <DatePicker
                                     id="end_date"
                                     v-model="endDate"
                                     name="end_date"
-                                    type="date"
+                                    :min="startDate || undefined"
                                     required
                                 />
                                 <InputError :message="errors.end_date" />
