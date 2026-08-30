@@ -462,6 +462,7 @@ function removeItem(index: number) {
                             <Checkbox
                                 id="featured"
                                 name="featured"
+                                value="1"
                                 :default-value="flashDeal.featured"
                             />
                             <span class="text-sm font-medium">Featured</span>
@@ -474,6 +475,7 @@ function removeItem(index: number) {
                             <Checkbox
                                 id="status"
                                 name="status"
+                                value="1"
                                 :default-value="flashDeal.status"
                             />
                             <span class="text-sm font-medium">Active</span>

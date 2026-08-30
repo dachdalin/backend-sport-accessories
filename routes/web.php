@@ -115,7 +115,7 @@ Route::middleware(['auth', 'verified'])->group(function () use ($gateCrud, $gate
     $gateCrud(Route::resource('newsletter-subscribers', NewsletterSubscriberController::class)->only(['index', 'store', 'update', 'destroy']), 'newsletter subscribers');
     $gateCrudWithForms(Route::resource('tax-rates', TaxRateController::class)->except(['show']), 'tax rates');
     $gateCrudWithForms(Route::resource('warehouses', WarehouseController::class)->except(['show']), 'warehouses');
-    $gateCrudWithForms(Route::resource('return-policies', ReturnPolicyController::class)->except(['show']), 'return policies');
+    $gateCrud(Route::resource('return-policies', ReturnPolicyController::class)->only(['index', 'store', 'update', 'destroy']), 'return policies');
     $gateCrudWithForms(Route::resource('suppliers', SupplierController::class)->except(['show']), 'suppliers');
     $gateCrudWithForms(Route::resource('pages', PageController::class)->except(['show']), 'pages');
     $gateCrudWithForms(Route::resource('store-locations', StoreLocationController::class)->except(['show']), 'store locations');

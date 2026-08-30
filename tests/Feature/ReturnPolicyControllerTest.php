@@ -23,17 +23,6 @@ class ReturnPolicyControllerTest extends TestCase
         $response->assertOk();
     }
 
-    public function test_return_policy_create_page_is_displayed(): void
-    {
-        $user = User::factory()->create();
-
-        $response = $this
-            ->actingAs($user)
-            ->get(route('return-policies.create'));
-
-        $response->assertOk();
-    }
-
     public function test_return_policy_can_be_created(): void
     {
         $user = User::factory()->create();
@@ -85,18 +74,6 @@ class ReturnPolicyControllerTest extends TestCase
             ]);
 
         $response->assertSessionHasErrors('days_allowed');
-    }
-
-    public function test_return_policy_edit_page_is_displayed(): void
-    {
-        $user = User::factory()->create();
-        $returnPolicy = ReturnPolicy::factory()->create();
-
-        $response = $this
-            ->actingAs($user)
-            ->get(route('return-policies.edit', $returnPolicy));
-
-        $response->assertOk();
     }
 
     public function test_return_policy_can_be_updated(): void

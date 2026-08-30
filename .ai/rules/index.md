@@ -17,6 +17,7 @@ Before planning or editing, find the row whose globs match the file's path and r
 | app/Http/Controllers/Backend/BusinessSettingController.php,app/Services/BusinessSettingService.php,app/Http/Requests/Backend/UpdateBusinessSettingRequest.php,resources/js/pages/business-settings/Edit.vue | .ai/rules/business-settings.md |
 | app/Http/Controllers/Api/**,app/Actions/CartItems/**,database/migrations/** | .ai/rules/cart-items-migrations.md |
 | resources/js/pages/categories/** | .ai/rules/categories.md |
+| resources/js/pages/**,resources/js/components/ui/checkbox/** | .ai/rules/checkbox.md |
 | app/Events/**,app/Listeners/**,app/Notifications/**,app/Http/Controllers/Backend/NotificationController.php,app/Services/NotificationService.php,resources/js/components/NotificationBell.vue | .ai/rules/components.md |
 | app/Http/Controllers/Backend/ContactController.php,resources/js/pages/contacts/** | .ai/rules/contacts.md |
 | app/Http/Controllers/Api/**,routes/api.php | .ai/rules/controllers-api.md |
@@ -45,6 +46,7 @@ Before planning or editing, find the row whose globs match the file's path and r
 | app/Http/Controllers/Backend/ProductController.php,app/Http/Requests/Backend/*Product*.php,app/Actions/Products/**,app/Models/Product.php,app/Models/ProductVariant.php,resources/js/pages/products/** | .ai/rules/products.md |
 | app/Http/Controllers/Backend/UserController.php,resources/js/pages/users/**,app/Providers/FortifyServiceProvider.php | .ai/rules/providers.md |
 | app/Http/Controllers/Api/**,app/Http/Requests/Api/**,routes/api.php | .ai/rules/requests-api.md |
+| app/Http/Controllers/Backend/ReturnPolicyController.php,routes/web.php,resources/js/pages/return-policies/** | .ai/rules/return-policies.md |
 | resources/js/pages/roles/**,resources/js/components/PermissionMatrix.vue | .ai/rules/roles-js-components.md |
 | app/Http/Controllers/Backend/RoleController.php,resources/js/pages/roles/** | .ai/rules/roles.md |
 | database/seeders/RolePermissionSeeder.php,database/seeders/AdminSeeder.php | .ai/rules/seeders.md |

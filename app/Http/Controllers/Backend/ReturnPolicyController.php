@@ -27,14 +27,6 @@ class ReturnPolicyController extends Controller
     }
 
     /**
-     * Show the form for creating a new return policy.
-     */
-    public function create(): Response
-    {
-        return Inertia::render('return-policies/Create');
-    }
-
-    /**
      * Store a newly created return policy.
      */
     public function store(StoreReturnPolicyRequest $request, CreateReturnPolicyAction $action): RedirectResponse
@@ -55,16 +47,6 @@ class ReturnPolicyController extends Controller
         Inertia::flash('toast', ['type' => 'success', 'message' => __('Return policy created.')]);
 
         return to_route('return-policies.index');
-    }
-
-    /**
-     * Show the form for editing the specified return policy.
-     */
-    public function edit(ReturnPolicy $returnPolicy): Response
-    {
-        return Inertia::render('return-policies/Edit', [
-            'returnPolicy' => $returnPolicy,
-        ]);
     }
 
     /**
