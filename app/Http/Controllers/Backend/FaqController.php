@@ -27,14 +27,6 @@ class FaqController extends Controller
     }
 
     /**
-     * Show the form for creating a new FAQ.
-     */
-    public function create(): Response
-    {
-        return Inertia::render('faqs/Create');
-    }
-
-    /**
      * Store a newly created FAQ.
      */
     public function store(StoreFaqRequest $request, CreateFaqAction $action): RedirectResponse
@@ -55,16 +47,6 @@ class FaqController extends Controller
         Inertia::flash('toast', ['type' => 'success', 'message' => __('FAQ created.')]);
 
         return to_route('faqs.index');
-    }
-
-    /**
-     * Show the form for editing the specified FAQ.
-     */
-    public function edit(Faq $faq): Response
-    {
-        return Inertia::render('faqs/Edit', [
-            'faq' => $faq,
-        ]);
     }
 
     /**

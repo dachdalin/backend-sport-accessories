@@ -1,0 +1,9 @@
+---
+paths:
+  - 'app/Providers/FortifyServiceProvider.php,config/passkeys.php,app/Models/User.php'
+---
+
+# Providers Models
+
+## Passkey login bypasses Fortify::authenticateUsing — must gate separately
+Fortify's passkey support (User's PasskeyAuthenticatable trait) is built entirely on the standalone `laravel/passkeys` package (v0.2.1). Its `PasskeyLoginController::store()` logs the user in directly via `$guard->login($passkey->user, ...)` after WebAuthn verification — it never calls `Fortify::$authenticateUsingCallback`. So the banned-account check in `FortifyServiceProvider::configureActions()` (password login) does NOT cover passkey login on its own. The fix (added 2026-08-30): register `Passkeys::authorizeLoginUsing(fn (Request $request, User $user) => (bool) $user->status)` in the same method — this is the hook `Passkeys::allowsLogin()` consults, called from `PasskeyLoginController::store()` right before `$guard->login()`. Any future account-status/authorization gate added to password login (Fortify::authenticateUsing) must be mirrored here too, or passkey holders bypass it. Also published `config/passkeys.php` (was previously using the package's unpublished defaults) to point `'throttle'` at the app's own `RateLimiter::for('passkeys', ...)` (keyed by credential id + IP) instead of the package's generic `throttle:6,1` (IP-only) — that named limiter existed in FortifyServiceProvider since the app was scaffolded but was dead code until this config was published. Set a dedicated `PASSKEYS_USER_HANDLE_SECRET` env var (was silently falling back to `config('app.key')` — mixes an unrelated secret's rotation with WebAuthn user-handle derivation). Can't test the full WebAuthn ceremony in PHPUnit; `test_banned_users_can_not_authenticate_with_a_passkey` in `tests/Feature/Auth/AuthenticationTest.php` instead calls `Passkeys::allowsLogin()` directly against real `Passkey` records to prove the wiring.

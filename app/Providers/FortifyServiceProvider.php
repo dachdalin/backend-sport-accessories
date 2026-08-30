@@ -15,6 +15,7 @@ use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use Laravel\Fortify\Features;
 use Laravel\Fortify\Fortify;
+use Laravel\Passkeys\Passkeys;
 
 class FortifyServiceProvider extends ServiceProvider
 {
@@ -58,6 +59,8 @@ class FortifyServiceProvider extends ServiceProvider
 
             return $user;
         });
+
+        Passkeys::authorizeLoginUsing(fn (Request $request, User $user): bool => (bool) $user->status);
     }
 
     /**

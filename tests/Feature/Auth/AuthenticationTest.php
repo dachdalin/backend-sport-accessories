@@ -4,8 +4,10 @@ namespace Tests\Feature\Auth;
 
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
 use Laravel\Fortify\Features;
+use Laravel\Passkeys\Passkeys;
 use Tests\TestCase;
 
 class AuthenticationTest extends TestCase
@@ -76,6 +78,33 @@ class AuthenticationTest extends TestCase
 
         $response->assertSessionHasErrors('email');
         $this->assertGuest();
+    }
+
+    public function test_banned_users_can_not_authenticate_with_a_passkey()
+    {
+        // A full WebAuthn ceremony can't be simulated here, so this exercises
+        // the Passkeys::authorizeLoginUsing() hook FortifyServiceProvider
+        // registers directly, the same gate PasskeyLoginController consults
+        // before logging a verified passkey in.
+        $bannedUser = User::factory()->create(['status' => false]);
+        $activeUser = User::factory()->create(['status' => true]);
+
+        $bannedPasskey = $bannedUser->passkeys()->create([
+            'name' => 'Test passkey',
+            'credential_id' => 'banned-credential',
+            'credential' => [],
+        ]);
+
+        $activePasskey = $activeUser->passkeys()->create([
+            'name' => 'Test passkey',
+            'credential_id' => 'active-credential',
+            'credential' => [],
+        ]);
+
+        $request = Request::create('/passkeys/login');
+
+        $this->assertFalse(Passkeys::allowsLogin($request, $bannedPasskey));
+        $this->assertTrue(Passkeys::allowsLogin($request, $activePasskey));
     }
 
     public function test_users_can_logout()

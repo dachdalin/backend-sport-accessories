@@ -23,17 +23,6 @@ class FaqControllerTest extends TestCase
         $response->assertOk();
     }
 
-    public function test_faq_create_page_is_displayed(): void
-    {
-        $user = User::factory()->create();
-
-        $response = $this
-            ->actingAs($user)
-            ->get(route('faqs.create'));
-
-        $response->assertOk();
-    }
-
     public function test_faq_can_be_created(): void
     {
         $user = User::factory()->create();
@@ -84,18 +73,6 @@ class FaqControllerTest extends TestCase
             ]);
 
         $response->assertSessionHasErrors('answer');
-    }
-
-    public function test_faq_edit_page_is_displayed(): void
-    {
-        $user = User::factory()->create();
-        $faq = Faq::factory()->create();
-
-        $response = $this
-            ->actingAs($user)
-            ->get(route('faqs.edit', $faq));
-
-        $response->assertOk();
     }
 
     public function test_faq_can_be_updated(): void

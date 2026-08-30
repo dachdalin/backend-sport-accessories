@@ -14,6 +14,7 @@ Before planning or editing, find the row whose globs match the file's path and r
 | database/seeders/**,app/Http/Controllers/Backend/RoleController.php,app/Http/Controllers/Backend/UserController.php | .ai/rules/backend.md |
 | app/Http/Controllers/Backend/BannerController.php,resources/js/pages/banners/** | .ai/rules/banners.md |
 | app/Http/Controllers/Backend/BlogCategoryController.php,resources/js/pages/blog-categories/** | .ai/rules/blog-categories.md |
+| app/Http/Controllers/Backend/BlogController.php,resources/js/pages/blogs/** | .ai/rules/blogs.md |
 | app/Http/Controllers/Backend/BusinessSettingController.php,app/Services/BusinessSettingService.php,app/Http/Requests/Backend/UpdateBusinessSettingRequest.php,resources/js/pages/business-settings/Edit.vue | .ai/rules/business-settings.md |
 | app/Http/Controllers/Api/**,app/Actions/CartItems/**,database/migrations/** | .ai/rules/cart-items-migrations.md |
 | resources/js/pages/categories/** | .ai/rules/categories.md |
@@ -45,6 +46,7 @@ Before planning or editing, find the row whose globs match the file's path and r
 | app/Models/Customer.php,app/Http/Controllers/Backend/CustomerController.php,app/Http/Requests/Backend/*CustomerRequest.php,resources/js/pages/customers/** | .ai/rules/pages-customers.md |
 | resources/js/pages/** | .ai/rules/pages.md |
 | app/Http/Controllers/Backend/ProductController.php,app/Http/Requests/Backend/*Product*.php,app/Actions/Products/**,app/Models/Product.php,app/Models/ProductVariant.php,resources/js/pages/products/** | .ai/rules/products.md |
+| app/Providers/FortifyServiceProvider.php,config/passkeys.php,app/Models/User.php | .ai/rules/providers-models.md |
 | app/Http/Controllers/Backend/UserController.php,resources/js/pages/users/**,app/Providers/FortifyServiceProvider.php | .ai/rules/providers.md |
 | app/Http/Controllers/Api/**,app/Http/Requests/Api/**,routes/api.php | .ai/rules/requests-api.md |
 | app/Http/Controllers/Backend/ReturnPolicyController.php,routes/web.php,resources/js/pages/return-policies/** | .ai/rules/return-policies.md |

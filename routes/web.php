@@ -110,7 +110,7 @@ Route::middleware(['auth', 'verified'])->group(function () use ($gateCrud, $gate
     $gateCrudWithForms(Route::resource('social-medias', SocialMediaController::class)->except(['show']), 'social medias');
     $gateCrud(Route::resource('credentials', SoftCredentialController::class)->only(['index', 'store', 'update', 'destroy']), 'credentials');
     $gateCrudWithForms(Route::resource('testimonials', TestimonialController::class)->except(['show']), 'testimonials');
-    $gateCrudWithForms(Route::resource('faqs', FaqController::class)->except(['show']), 'faqs');
+    $gateCrud(Route::resource('faqs', FaqController::class)->only(['index', 'store', 'update', 'destroy']), 'faqs');
     $gateCrudWithForms(Route::resource('coupons', CouponController::class)->except(['show']), 'coupons');
     $gateCrud(Route::resource('newsletter-subscribers', NewsletterSubscriberController::class)->only(['index', 'store', 'update', 'destroy']), 'newsletter subscribers');
     Route::post('newsletter-subscribers/send-all', [NewsletterSubscriberController::class, 'sendAll'])
