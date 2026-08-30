@@ -31,8 +31,9 @@ class UpdateProductAction
         try {
             $product = DB::transaction(function () use ($product, $data, $thumbnail, $variants, $attributes, &$newPath) {
                 if ($thumbnail) {
-                    $newPath = $thumbnail->store('products', 'public');
+                    $newPath = $thumbnail->store('products', 'cloudinary');
                     $data['thumbnail'] = $newPath;
+                    $data['thumbnail_storage_type'] = 'cloudinary';
                 }
 
                 $product->update($data);
@@ -49,7 +50,7 @@ class UpdateProductAction
             });
         } catch (Throwable $e) {
             if ($newPath) {
-                Storage::disk('public')->delete($newPath);
+                Storage::disk('cloudinary')->delete($newPath);
             }
 
             throw $e;

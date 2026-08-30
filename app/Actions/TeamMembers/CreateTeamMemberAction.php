@@ -20,15 +20,16 @@ class CreateTeamMemberAction
         try {
             return DB::transaction(function () use ($data, $photo, &$storedPath) {
                 if ($photo) {
-                    $storedPath = $photo->store('team-members', 'public');
+                    $storedPath = $photo->store('team-members', 'cloudinary');
                     $data['photo'] = $storedPath;
+                    $data['photo_storage_type'] = 'cloudinary';
                 }
 
                 return TeamMember::create($data);
             });
         } catch (Throwable $e) {
             if ($storedPath) {
-                Storage::disk('public')->delete($storedPath);
+                Storage::disk('cloudinary')->delete($storedPath);
             }
 
             throw $e;

@@ -25,15 +25,16 @@ class CreateCategoryAction
                 $data['slug'] = $this->slugService->generate($data['name']);
 
                 if ($icon) {
-                    $storedPath = $icon->store('categories', 'public');
+                    $storedPath = $icon->store('categories', 'cloudinary');
                     $data['icon'] = $storedPath;
+                    $data['icon_storage_type'] = 'cloudinary';
                 }
 
                 return Category::create($data);
             });
         } catch (Throwable $e) {
             if ($storedPath) {
-                Storage::disk('public')->delete($storedPath);
+                Storage::disk('cloudinary')->delete($storedPath);
             }
 
             throw $e;

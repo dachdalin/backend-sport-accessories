@@ -4,14 +4,20 @@ namespace App\Providers;
 
 use App\Models\User;
 use Carbon\CarbonImmutable;
+use Cloudinary\Cloudinary;
+use Cloudinary\Configuration\Configuration;
 use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Filesystem\FilesystemAdapter;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Rules\Password;
+use League\Flysystem\Filesystem;
+use ThomasVantuycom\FlysystemCloudinary\CloudinaryAdapter;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -29,6 +35,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->configureDefaults();
+        $this->configureCloudinary();
         $this->configureRateLimiting();
         $this->configureAuthorization();
     }
@@ -53,6 +60,35 @@ class AppServiceProvider extends ServiceProvider
                 ->uncompromised()
             : null,
         );
+    }
+
+    /**
+     * Register the Cloudinary filesystem driver.
+     */
+    protected function configureCloudinary(): void
+    {
+        Storage::extend('cloudinary', function ($app, $config) {
+            $client = new Cloudinary(
+                Configuration::instance([
+                    'cloud' => [
+                        'cloud_name' => $config['cloud_name'],
+                        'api_key' => $config['api_key'],
+                        'api_secret' => $config['api_secret'],
+                    ],
+                    'url' => [
+                        'secure' => true,
+                    ],
+                ])
+            );
+
+            $adapter = new CloudinaryAdapter($client);
+
+            return new FilesystemAdapter(
+                new Filesystem($adapter, $config),
+                $adapter,
+                $config,
+            );
+        });
     }
 
     /**

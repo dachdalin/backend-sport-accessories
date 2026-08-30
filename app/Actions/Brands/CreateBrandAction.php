@@ -20,15 +20,16 @@ class CreateBrandAction
         try {
             return DB::transaction(function () use ($data, $image, &$storedPath) {
                 if ($image) {
-                    $storedPath = $image->store('brands', 'public');
+                    $storedPath = $image->store('brands', 'cloudinary');
                     $data['image'] = $storedPath;
+                    $data['image_storage_type'] = 'cloudinary';
                 }
 
                 return Brand::create($data);
             });
         } catch (Throwable $e) {
             if ($storedPath) {
-                Storage::disk('public')->delete($storedPath);
+                Storage::disk('cloudinary')->delete($storedPath);
             }
 
             throw $e;

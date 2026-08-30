@@ -22,8 +22,9 @@ class UpdateTestimonialAction
         try {
             $testimonial = DB::transaction(function () use ($testimonial, $data, $avatar, &$newPath) {
                 if ($avatar) {
-                    $newPath = $avatar->store('testimonials', 'public');
+                    $newPath = $avatar->store('testimonials', 'cloudinary');
                     $data['avatar'] = $newPath;
+                    $data['avatar_storage_type'] = 'cloudinary';
                 }
 
                 $testimonial->update($data);
@@ -32,7 +33,7 @@ class UpdateTestimonialAction
             });
         } catch (Throwable $e) {
             if ($newPath) {
-                Storage::disk('public')->delete($newPath);
+                Storage::disk('cloudinary')->delete($newPath);
             }
 
             throw $e;

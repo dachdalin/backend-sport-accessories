@@ -25,16 +25,16 @@ class UpdateBusinessSettingsAction
         try {
             DB::transaction(function () use ($data, $logo, &$newPath) {
                 if ($logo) {
-                    $newPath = $logo->store('business-settings', 'public');
+                    $newPath = $logo->store('business-settings', 'cloudinary');
                     $data['logo'] = $newPath;
-                    $data['logo_storage_type'] = 'public';
+                    $data['logo_storage_type'] = 'cloudinary';
                 }
 
                 $this->businessSettings->save($data);
             });
         } catch (Throwable $e) {
             if ($newPath) {
-                Storage::disk('public')->delete($newPath);
+                Storage::disk('cloudinary')->delete($newPath);
             }
 
             throw $e;

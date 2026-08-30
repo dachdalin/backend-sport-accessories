@@ -30,8 +30,9 @@ class UpdateFlashDealAction
                 }
 
                 if ($banner) {
-                    $newPath = $banner->store('flash-deals', 'public');
+                    $newPath = $banner->store('flash-deals', 'cloudinary');
                     $data['banner'] = $newPath;
+                    $data['banner_storage_type'] = 'cloudinary';
                 }
 
                 $flashDeal->update($data);
@@ -43,7 +44,7 @@ class UpdateFlashDealAction
             });
         } catch (Throwable $e) {
             if ($newPath) {
-                Storage::disk('public')->delete($newPath);
+                Storage::disk('cloudinary')->delete($newPath);
             }
 
             throw $e;

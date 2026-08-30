@@ -20,15 +20,16 @@ class CreateTestimonialAction
         try {
             return DB::transaction(function () use ($data, $avatar, &$storedPath) {
                 if ($avatar) {
-                    $storedPath = $avatar->store('testimonials', 'public');
+                    $storedPath = $avatar->store('testimonials', 'cloudinary');
                     $data['avatar'] = $storedPath;
+                    $data['avatar_storage_type'] = 'cloudinary';
                 }
 
                 return Testimonial::create($data);
             });
         } catch (Throwable $e) {
             if ($storedPath) {
-                Storage::disk('public')->delete($storedPath);
+                Storage::disk('cloudinary')->delete($storedPath);
             }
 
             throw $e;

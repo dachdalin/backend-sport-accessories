@@ -22,8 +22,9 @@ class UpdateTeamMemberAction
         try {
             $teamMember = DB::transaction(function () use ($teamMember, $data, $photo, &$newPath) {
                 if ($photo) {
-                    $newPath = $photo->store('team-members', 'public');
+                    $newPath = $photo->store('team-members', 'cloudinary');
                     $data['photo'] = $newPath;
+                    $data['photo_storage_type'] = 'cloudinary';
                 }
 
                 $teamMember->update($data);
@@ -32,7 +33,7 @@ class UpdateTeamMemberAction
             });
         } catch (Throwable $e) {
             if ($newPath) {
-                Storage::disk('public')->delete($newPath);
+                Storage::disk('cloudinary')->delete($newPath);
             }
 
             throw $e;

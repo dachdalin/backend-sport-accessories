@@ -20,15 +20,16 @@ class CreateSupportTicketAction
         try {
             return DB::transaction(function () use ($data, $attachment, &$storedPath) {
                 if ($attachment) {
-                    $storedPath = $attachment->store('support-tickets', 'public');
+                    $storedPath = $attachment->store('support-tickets', 'cloudinary');
                     $data['attachment'] = $storedPath;
+                    $data['attachment_storage_type'] = 'cloudinary';
                 }
 
                 return SupportTicket::create($data);
             });
         } catch (Throwable $e) {
             if ($storedPath) {
-                Storage::disk('public')->delete($storedPath);
+                Storage::disk('cloudinary')->delete($storedPath);
             }
 
             throw $e;

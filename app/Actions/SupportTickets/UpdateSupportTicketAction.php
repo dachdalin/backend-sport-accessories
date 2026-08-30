@@ -22,8 +22,9 @@ class UpdateSupportTicketAction
         try {
             $supportTicket = DB::transaction(function () use ($supportTicket, $data, $attachment, &$newPath) {
                 if ($attachment) {
-                    $newPath = $attachment->store('support-tickets', 'public');
+                    $newPath = $attachment->store('support-tickets', 'cloudinary');
                     $data['attachment'] = $newPath;
+                    $data['attachment_storage_type'] = 'cloudinary';
                 }
 
                 $supportTicket->update($data);
@@ -32,7 +33,7 @@ class UpdateSupportTicketAction
             });
         } catch (Throwable $e) {
             if ($newPath) {
-                Storage::disk('public')->delete($newPath);
+                Storage::disk('cloudinary')->delete($newPath);
             }
 
             throw $e;

@@ -22,8 +22,9 @@ class UpdateMostDemandedAction
         try {
             $mostDemanded = DB::transaction(function () use ($mostDemanded, $data, $banner, &$newPath) {
                 if ($banner) {
-                    $newPath = $banner->store('most-demandeds', 'public');
+                    $newPath = $banner->store('most-demandeds', 'cloudinary');
                     $data['banner'] = $newPath;
+                    $data['banner_storage_type'] = 'cloudinary';
                 }
 
                 $mostDemanded->update($data);
@@ -32,7 +33,7 @@ class UpdateMostDemandedAction
             });
         } catch (Throwable $e) {
             if ($newPath) {
-                Storage::disk('public')->delete($newPath);
+                Storage::disk('cloudinary')->delete($newPath);
             }
 
             throw $e;

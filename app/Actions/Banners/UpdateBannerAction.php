@@ -22,8 +22,9 @@ class UpdateBannerAction
         try {
             $banner = DB::transaction(function () use ($banner, $data, $image, &$newPath) {
                 if ($image) {
-                    $newPath = $image->store('banners', 'public');
+                    $newPath = $image->store('banners', 'cloudinary');
                     $data['image'] = $newPath;
+                    $data['image_storage_type'] = 'cloudinary';
                 }
 
                 $banner->update($data);
@@ -32,7 +33,7 @@ class UpdateBannerAction
             });
         } catch (Throwable $e) {
             if ($newPath) {
-                Storage::disk('public')->delete($newPath);
+                Storage::disk('cloudinary')->delete($newPath);
             }
 
             throw $e;

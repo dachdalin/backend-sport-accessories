@@ -25,15 +25,16 @@ class CreateBlogAction
                 $data['slug'] = $this->slugService->generate($data['title']);
 
                 if ($image) {
-                    $storedPath = $image->store('blogs', 'public');
+                    $storedPath = $image->store('blogs', 'cloudinary');
                     $data['image'] = $storedPath;
+                    $data['image_storage_type'] = 'cloudinary';
                 }
 
                 return Blog::create($data);
             });
         } catch (Throwable $e) {
             if ($storedPath) {
-                Storage::disk('public')->delete($storedPath);
+                Storage::disk('cloudinary')->delete($storedPath);
             }
 
             throw $e;

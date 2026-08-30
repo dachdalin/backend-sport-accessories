@@ -28,19 +28,20 @@ class CreateProductAction
         try {
             return DB::transaction(function () use ($data, $thumbnail, $images, $variants, $attributes, &$storedPath, &$storedGalleryPaths) {
                 if ($thumbnail) {
-                    $storedPath = $thumbnail->store('products', 'public');
+                    $storedPath = $thumbnail->store('products', 'cloudinary');
                     $data['thumbnail'] = $storedPath;
+                    $data['thumbnail_storage_type'] = 'cloudinary';
                 }
 
                 $product = Product::create($data);
 
                 foreach ($images ?? [] as $sortOrder => $image) {
-                    $galleryPath = $image->store('products/gallery', 'public');
+                    $galleryPath = $image->store('products/gallery', 'cloudinary');
                     $storedGalleryPaths[] = $galleryPath;
 
                     $product->images()->create([
                         'image' => $galleryPath,
-                        'image_storage_type' => 'public',
+                        'image_storage_type' => 'cloudinary',
                         'sort_order' => $sortOrder,
                     ]);
                 }
@@ -57,11 +58,11 @@ class CreateProductAction
             });
         } catch (Throwable $e) {
             if ($storedPath) {
-                Storage::disk('public')->delete($storedPath);
+                Storage::disk('cloudinary')->delete($storedPath);
             }
 
             if ($storedGalleryPaths !== []) {
-                Storage::disk('public')->delete($storedGalleryPaths);
+                Storage::disk('cloudinary')->delete($storedGalleryPaths);
             }
 
             throw $e;

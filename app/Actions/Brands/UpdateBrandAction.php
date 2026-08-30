@@ -22,8 +22,9 @@ class UpdateBrandAction
         try {
             $brand = DB::transaction(function () use ($brand, $data, $image, &$newPath) {
                 if ($image) {
-                    $newPath = $image->store('brands', 'public');
+                    $newPath = $image->store('brands', 'cloudinary');
                     $data['image'] = $newPath;
+                    $data['image_storage_type'] = 'cloudinary';
                 }
 
                 $brand->update($data);
@@ -32,7 +33,7 @@ class UpdateBrandAction
             });
         } catch (Throwable $e) {
             if ($newPath) {
-                Storage::disk('public')->delete($newPath);
+                Storage::disk('cloudinary')->delete($newPath);
             }
 
             throw $e;

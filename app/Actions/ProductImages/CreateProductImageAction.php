@@ -16,18 +16,18 @@ class CreateProductImageAction
      */
     public function handle(Product $product, array $data, UploadedFile $image): ProductImage
     {
-        $storedPath = $image->store('products/gallery', 'public');
+        $storedPath = $image->store('products/gallery', 'cloudinary');
 
         try {
             return DB::transaction(function () use ($product, $data, $storedPath) {
                 return $product->images()->create([
                     'image' => $storedPath,
-                    'image_storage_type' => 'public',
+                    'image_storage_type' => 'cloudinary',
                     'sort_order' => $data['sort_order'] ?? 0,
                 ]);
             });
         } catch (Throwable $e) {
-            Storage::disk('public')->delete($storedPath);
+            Storage::disk('cloudinary')->delete($storedPath);
 
             throw $e;
         }

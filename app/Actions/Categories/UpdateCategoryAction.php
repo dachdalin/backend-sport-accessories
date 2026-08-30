@@ -29,8 +29,9 @@ class UpdateCategoryAction
                 }
 
                 if ($icon) {
-                    $newPath = $icon->store('categories', 'public');
+                    $newPath = $icon->store('categories', 'cloudinary');
                     $data['icon'] = $newPath;
+                    $data['icon_storage_type'] = 'cloudinary';
                 }
 
                 $category->update($data);
@@ -39,7 +40,7 @@ class UpdateCategoryAction
             });
         } catch (Throwable $e) {
             if ($newPath) {
-                Storage::disk('public')->delete($newPath);
+                Storage::disk('cloudinary')->delete($newPath);
             }
 
             throw $e;

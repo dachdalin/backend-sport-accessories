@@ -22,8 +22,9 @@ class UpdateFeatureDealAction
         try {
             $featureDeal = DB::transaction(function () use ($featureDeal, $data, $photo, &$newPath) {
                 if ($photo) {
-                    $newPath = $photo->store('feature-deals', 'public');
+                    $newPath = $photo->store('feature-deals', 'cloudinary');
                     $data['photo'] = $newPath;
+                    $data['photo_storage_type'] = 'cloudinary';
                 }
 
                 $featureDeal->update($data);
@@ -32,7 +33,7 @@ class UpdateFeatureDealAction
             });
         } catch (Throwable $e) {
             if ($newPath) {
-                Storage::disk('public')->delete($newPath);
+                Storage::disk('cloudinary')->delete($newPath);
             }
 
             throw $e;

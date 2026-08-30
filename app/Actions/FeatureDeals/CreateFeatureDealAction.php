@@ -20,15 +20,16 @@ class CreateFeatureDealAction
         try {
             return DB::transaction(function () use ($data, $photo, &$storedPath) {
                 if ($photo) {
-                    $storedPath = $photo->store('feature-deals', 'public');
+                    $storedPath = $photo->store('feature-deals', 'cloudinary');
                     $data['photo'] = $storedPath;
+                    $data['photo_storage_type'] = 'cloudinary';
                 }
 
                 return FeatureDeal::create($data);
             });
         } catch (Throwable $e) {
             if ($storedPath) {
-                Storage::disk('public')->delete($storedPath);
+                Storage::disk('cloudinary')->delete($storedPath);
             }
 
             throw $e;

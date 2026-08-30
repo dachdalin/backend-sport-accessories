@@ -26,8 +26,9 @@ class CreateFlashDealAction
                 $data['slug'] = $this->slugService->generate($data['title']);
 
                 if ($banner) {
-                    $storedPath = $banner->store('flash-deals', 'public');
+                    $storedPath = $banner->store('flash-deals', 'cloudinary');
                     $data['banner'] = $storedPath;
+                    $data['banner_storage_type'] = 'cloudinary';
                 }
 
                 $flashDeal = FlashDeal::create($data);
@@ -38,7 +39,7 @@ class CreateFlashDealAction
             });
         } catch (Throwable $e) {
             if ($storedPath) {
-                Storage::disk('public')->delete($storedPath);
+                Storage::disk('cloudinary')->delete($storedPath);
             }
 
             throw $e;

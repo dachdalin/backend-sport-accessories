@@ -20,15 +20,16 @@ class CreateMostDemandedAction
         try {
             return DB::transaction(function () use ($data, $banner, &$storedPath) {
                 if ($banner) {
-                    $storedPath = $banner->store('most-demandeds', 'public');
+                    $storedPath = $banner->store('most-demandeds', 'cloudinary');
                     $data['banner'] = $storedPath;
+                    $data['banner_storage_type'] = 'cloudinary';
                 }
 
                 return MostDemanded::create($data);
             });
         } catch (Throwable $e) {
             if ($storedPath) {
-                Storage::disk('public')->delete($storedPath);
+                Storage::disk('cloudinary')->delete($storedPath);
             }
 
             throw $e;
