@@ -52,6 +52,7 @@ Before planning or editing, find the row whose globs match the file's path and r
 | app/Http/Controllers/Backend/ReturnPolicyController.php,routes/web.php,resources/js/pages/return-policies/** | .ai/rules/return-policies.md |
 | resources/js/pages/roles/**,resources/js/components/PermissionMatrix.vue | .ai/rules/roles-js-components.md |
 | app/Http/Controllers/Backend/RoleController.php,resources/js/pages/roles/** | .ai/rules/roles.md |
+| app/Http/Controllers/Backend/SearchFunctionController.php,resources/js/pages/search-functions/**,routes/web.php | .ai/rules/search-functions.md |
 | database/seeders/RolePermissionSeeder.php,database/seeders/AdminSeeder.php | .ai/rules/seeders.md |
 | app/Services/DashboardService.php,database/migrations/** | .ai/rules/services-migrations.md |
 | app/Services/** | .ai/rules/services.md |

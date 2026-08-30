@@ -27,14 +27,6 @@ class SocialMediaController extends Controller
     }
 
     /**
-     * Show the form for creating a new social media link.
-     */
-    public function create(): Response
-    {
-        return Inertia::render('social-medias/Create');
-    }
-
-    /**
      * Store a newly created social media link.
      */
     public function store(StoreSocialMediaRequest $request, CreateSocialMediaAction $action): RedirectResponse
@@ -55,16 +47,6 @@ class SocialMediaController extends Controller
         Inertia::flash('toast', ['type' => 'success', 'message' => __('Social media link created.')]);
 
         return to_route('social-medias.index');
-    }
-
-    /**
-     * Show the form for editing the specified social media link.
-     */
-    public function edit(SocialMedia $socialMedia): Response
-    {
-        return Inertia::render('social-medias/Edit', [
-            'socialMedia' => $socialMedia,
-        ]);
     }
 
     /**

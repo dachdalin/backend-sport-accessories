@@ -105,9 +105,9 @@ Route::middleware(['auth', 'verified'])->group(function () use ($gateCrud, $gate
     $gateCrudWithForms(Route::resource('help-topics', HelpTopicController::class)->except(['show']), 'help topics');
     $gateCrudWithForms(Route::resource('shipping-methods', ShippingMethodController::class)->except(['show']), 'shipping methods');
     $gateCrudWithForms(Route::resource('shipping-addresses', ShippingAddressController::class)->except(['show']), 'shipping addresses');
-    $gateCrudWithForms(Route::resource('search-functions', SearchFunctionController::class)->except(['show']), 'search functions');
+    $gateCrud(Route::resource('search-functions', SearchFunctionController::class)->only(['index', 'store', 'update', 'destroy']), 'search functions');
     $gateCrudWithForms(Route::resource('offline-payment-methods', OfflinePaymentMethodController::class)->except(['show']), 'offline payment methods');
-    $gateCrudWithForms(Route::resource('social-medias', SocialMediaController::class)->except(['show']), 'social medias');
+    $gateCrud(Route::resource('social-medias', SocialMediaController::class)->only(['index', 'store', 'update', 'destroy']), 'social medias');
     $gateCrud(Route::resource('credentials', SoftCredentialController::class)->only(['index', 'store', 'update', 'destroy']), 'credentials');
     $gateCrudWithForms(Route::resource('testimonials', TestimonialController::class)->except(['show']), 'testimonials');
     $gateCrud(Route::resource('faqs', FaqController::class)->only(['index', 'store', 'update', 'destroy']), 'faqs');

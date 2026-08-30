@@ -25,20 +25,7 @@ class SearchFunctionControllerTest extends TestCase
             ->assertInertia(fn (Assert $page) => $page
                 ->component('search-functions/Index')
                 ->has('searchFunctions', 1)
-                ->where('searchFunctions.0.id', $searchFunction->id),
-            );
-    }
-
-    public function test_create_page_is_displayed(): void
-    {
-        $user = User::factory()->create();
-
-        $response = $this->actingAs($user)->get(route('search-functions.create'));
-
-        $response
-            ->assertOk()
-            ->assertInertia(fn (Assert $page) => $page
-                ->component('search-functions/Create')
+                ->where('searchFunctions.0.id', $searchFunction->id)
                 ->has('visibilities', 3),
             );
     }

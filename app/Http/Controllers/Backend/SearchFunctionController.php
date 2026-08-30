@@ -24,15 +24,6 @@ class SearchFunctionController extends Controller
     {
         return Inertia::render('search-functions/Index', [
             'searchFunctions' => SearchFunction::query()->latest()->get(),
-        ]);
-    }
-
-    /**
-     * Show the form for creating a new search function.
-     */
-    public function create(): Response
-    {
-        return Inertia::render('search-functions/Create', [
             'visibilities' => $this->visibilityOptions(),
         ]);
     }
@@ -55,17 +46,6 @@ class SearchFunctionController extends Controller
         Inertia::flash('toast', ['type' => 'success', 'message' => __('Search function created.')]);
 
         return to_route('search-functions.index');
-    }
-
-    /**
-     * Show the form for editing the specified search function.
-     */
-    public function edit(SearchFunction $searchFunction): Response
-    {
-        return Inertia::render('search-functions/Edit', [
-            'searchFunction' => $searchFunction,
-            'visibilities' => $this->visibilityOptions(),
-        ]);
     }
 
     /**

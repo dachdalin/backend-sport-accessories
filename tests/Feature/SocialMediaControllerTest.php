@@ -35,15 +35,6 @@ class SocialMediaControllerTest extends TestCase
         $response->assertRedirect(route('login'));
     }
 
-    public function test_social_media_create_page_is_displayed(): void
-    {
-        $user = User::factory()->create();
-
-        $response = $this->actingAs($user)->get(route('social-medias.create'));
-
-        $response->assertOk();
-    }
-
     public function test_social_media_can_be_created(): void
     {
         $user = User::factory()->create();
@@ -77,16 +68,6 @@ class SocialMediaControllerTest extends TestCase
         ]);
 
         $response->assertSessionHasErrors('link');
-    }
-
-    public function test_social_media_edit_page_is_displayed(): void
-    {
-        $user = User::factory()->create();
-        $socialMedia = SocialMedia::factory()->create();
-
-        $response = $this->actingAs($user)->get(route('social-medias.edit', $socialMedia));
-
-        $response->assertOk();
     }
 
     public function test_social_media_can_be_updated(): void
