@@ -34,6 +34,7 @@ Before planning or editing, find the row whose globs match the file's path and r
 | resources/js/pages/**/Index.vue,resources/js/components/Pagination.vue | .ai/rules/js-components.md |
 | app/Http/Middleware/HandleInertiaRequests.php,resources/js/components/AppLogo.vue,resources/js/layouts/auth/** | .ai/rules/layouts-auth.md |
 | resources/js/pages/flash-deals/**,resources/js/components/ColorSwatchInput.vue,resources/js/components/FlashDealPreview.vue,resources/js/lib/colors.ts | .ai/rules/lib.md |
+| app/Http/Controllers/Backend/NewsletterSubscriberController.php,app/Mail/**,app/Actions/NewsletterSubscribers/**,resources/js/pages/newsletter-subscribers/**,resources/views/mail/** | .ai/rules/mail.md |
 | app/Http/Controllers/Backend/MaterialController.php,resources/js/pages/materials/** | .ai/rules/materials.md |
 | app/Http/Controllers/Backend/MessageController.php,resources/js/pages/messages/**,database/migrations/** | .ai/rules/messages-migrations.md |
 | app/Http/Controllers/Backend/**,database/migrations/** | .ai/rules/migrations.md |

@@ -83,8 +83,8 @@ const destinationLabel = computed(() => {
                             <CardTitle>Artwork</CardTitle>
                         </div>
                         <CardDescription>
-                            A wide image works best — it fills the tile
-                            without cropping the focal point.
+                            A wide image works best — it fills the tile without
+                            cropping the focal point.
                         </CardDescription>
                     </CardHeader>
                     <CardContent>
@@ -130,7 +130,11 @@ const destinationLabel = computed(() => {
                             for="status"
                             class="flex items-center gap-2.5 rounded-lg border border-input px-3 py-2.5 has-[:checked]:border-primary/50 has-[:checked]:bg-primary/5"
                         >
-                            <Checkbox id="status" name="status" v-model="status" />
+                            <Checkbox
+                                id="status"
+                                name="status"
+                                v-model="status"
+                            />
                             <span class="grid gap-0.5">
                                 <span class="text-sm font-medium">Active</span>
                                 <span class="text-xs text-muted-foreground">
@@ -204,7 +208,11 @@ const destinationLabel = computed(() => {
                     <CardFooter class="flex-col gap-3 pt-6 sm:flex-row">
                         <Button class="w-full sm:w-auto" :disabled="processing">
                             <Spinner v-if="processing" />
-                            <SendIcon v-else class="size-4" aria-hidden="true" />
+                            <SendIcon
+                                v-else
+                                class="size-4"
+                                aria-hidden="true"
+                            />
                             Create feature deal
                         </Button>
                         <Button

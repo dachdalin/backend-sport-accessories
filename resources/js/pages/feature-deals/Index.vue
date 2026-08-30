@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { Form, Head, Link } from '@inertiajs/vue3';
+import { Link2Icon } from '@lucide/vue';
 import FeatureDealController from '@/actions/App/Http/Controllers/Backend/FeatureDealController';
 import Heading from '@/components/Heading.vue';
 import Pagination from '@/components/Pagination.vue';
@@ -60,18 +61,21 @@ defineOptions({
     <Head title="Feature deals" />
 
     <div class="flex flex-col gap-6">
-        <div class="flex items-center justify-between">
+        <div
+            class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"
+        >
             <Heading
                 title="Feature deals"
                 description="Manage the featured deal tiles shown to customers"
             />
-            <Button as-child>
+            <Button as-child class="w-full sm:w-auto">
                 <Link :href="create()">Add feature deal</Link>
             </Button>
         </div>
 
+        <!-- Desktop / tablet table -->
         <div
-            class="overflow-x-auto rounded-xl border border-sidebar-border/70 dark:border-sidebar-border"
+            class="hidden overflow-x-auto rounded-xl border border-sidebar-border/70 md:block dark:border-sidebar-border"
         >
             <table class="w-full text-left text-sm">
                 <thead
@@ -169,6 +173,107 @@ defineOptions({
                     </tr>
                 </tbody>
             </table>
+        </div>
+
+        <!-- Mobile card list -->
+        <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 md:hidden">
+            <p
+                v-if="featureDeals.data.length === 0"
+                class="col-span-full rounded-xl border border-sidebar-border/70 p-6 text-center text-sm text-muted-foreground dark:border-sidebar-border"
+            >
+                No feature deals yet.
+            </p>
+
+            <div
+                v-for="featureDeal in featureDeals.data"
+                :key="featureDeal.id"
+                class="flex flex-col overflow-hidden rounded-xl border border-sidebar-border/70 dark:border-sidebar-border"
+            >
+                <div class="relative aspect-video w-full bg-muted">
+                    <img
+                        :src="`/storage/${featureDeal.photo}`"
+                        alt="Feature deal photo"
+                        class="size-full object-cover"
+                    />
+                    <Badge
+                        :variant="featureDeal.status ? 'default' : 'secondary'"
+                        class="absolute top-2 right-2"
+                    >
+                        {{ featureDeal.status ? 'Active' : 'Inactive' }}
+                    </Badge>
+                </div>
+
+                <div class="flex flex-1 flex-col gap-3 p-3">
+                    <div
+                        class="flex min-w-0 items-center gap-1.5 text-sm text-muted-foreground"
+                    >
+                        <Link2Icon
+                            class="size-3.5 shrink-0"
+                            aria-hidden="true"
+                        />
+                        <span class="truncate">{{
+                            featureDeal.url ?? 'No destination link'
+                        }}</span>
+                    </div>
+
+                    <div
+                        class="mt-auto flex gap-2 border-t border-sidebar-border/70 pt-3 dark:border-sidebar-border"
+                    >
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            as-child
+                            class="flex-1"
+                        >
+                            <Link :href="edit(featureDeal)">Edit</Link>
+                        </Button>
+
+                        <Dialog>
+                            <DialogTrigger as-child>
+                                <Button
+                                    variant="destructive"
+                                    size="sm"
+                                    class="flex-1"
+                                    >Delete</Button
+                                >
+                            </DialogTrigger>
+                            <DialogContent>
+                                <Form
+                                    v-bind="
+                                        FeatureDealController.destroy.form(
+                                            featureDeal,
+                                        )
+                                    "
+                                    :options="{ preserveScroll: true }"
+                                    v-slot="{ processing }"
+                                >
+                                    <DialogHeader class="space-y-3">
+                                        <DialogTitle
+                                            >Delete this feature
+                                            deal?</DialogTitle
+                                        >
+                                    </DialogHeader>
+
+                                    <DialogFooter class="mt-6 gap-2">
+                                        <DialogClose as-child>
+                                            <Button variant="secondary"
+                                                >Cancel</Button
+                                            >
+                                        </DialogClose>
+                                        <Button
+                                            type="submit"
+                                            variant="destructive"
+                                            :disabled="processing"
+                                        >
+                                            Delete
+                                        </Button>
+                                    </DialogFooter>
+                                </Form>
+                            </DialogContent>
+                        </Dialog>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <Pagination :meta="featureDeals" label="feature deals" />

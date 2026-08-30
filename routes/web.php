@@ -113,6 +113,12 @@ Route::middleware(['auth', 'verified'])->group(function () use ($gateCrud, $gate
     $gateCrudWithForms(Route::resource('faqs', FaqController::class)->except(['show']), 'faqs');
     $gateCrudWithForms(Route::resource('coupons', CouponController::class)->except(['show']), 'coupons');
     $gateCrud(Route::resource('newsletter-subscribers', NewsletterSubscriberController::class)->only(['index', 'store', 'update', 'destroy']), 'newsletter subscribers');
+    Route::post('newsletter-subscribers/send-all', [NewsletterSubscriberController::class, 'sendAll'])
+        ->middleware('permission:edit newsletter subscribers')
+        ->name('newsletter-subscribers.send-all');
+    Route::post('newsletter-subscribers/{newsletter_subscriber}/send', [NewsletterSubscriberController::class, 'send'])
+        ->middleware('permission:edit newsletter subscribers')
+        ->name('newsletter-subscribers.send');
     $gateCrudWithForms(Route::resource('tax-rates', TaxRateController::class)->except(['show']), 'tax rates');
     $gateCrudWithForms(Route::resource('warehouses', WarehouseController::class)->except(['show']), 'warehouses');
     $gateCrud(Route::resource('return-policies', ReturnPolicyController::class)->only(['index', 'store', 'update', 'destroy']), 'return policies');

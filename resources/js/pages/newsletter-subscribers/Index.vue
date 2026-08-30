@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import { Form, Head } from '@inertiajs/vue3';
-import { Pencil, Plus, Trash2 } from '@lucide/vue';
+import { Mail, Pencil, Plus, Send, Trash2 } from '@lucide/vue';
 import { ref } from 'vue';
 import NewsletterSubscriberController from '@/actions/App/Http/Controllers/Backend/NewsletterSubscriberController';
 import Heading from '@/components/Heading.vue';
 import InputError from '@/components/InputError.vue';
 import Pagination from '@/components/Pagination.vue';
+import RichTextEditor from '@/components/RichTextEditor.vue';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -21,6 +22,7 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Spinner } from '@/components/ui/spinner';
 import { index as newsletterSubscribersIndex } from '@/routes/newsletter-subscribers';
 
 interface Subscriber {
@@ -47,6 +49,7 @@ interface Paginated<T> {
 
 defineProps<{
     subscribers: Paginated<Subscriber>;
+    subscribedCount: number;
 }>();
 
 defineOptions({
@@ -62,9 +65,15 @@ defineOptions({
 
 const createOpen = ref(false);
 const editingSubscriber = ref<Subscriber | null>(null);
+const sendAllOpen = ref(false);
+const sendingToSubscriber = ref<Subscriber | null>(null);
 
 function openEdit(subscriber: Subscriber) {
     editingSubscriber.value = subscriber;
+}
+
+function openSend(subscriber: Subscriber) {
+    sendingToSubscriber.value = subscriber;
 }
 </script>
 
@@ -78,61 +87,135 @@ function openEdit(subscriber: Subscriber) {
                 description="Manage the mailing list for product updates"
             />
 
-            <Dialog v-model:open="createOpen">
-                <DialogTrigger as-child>
-                    <Button>
-                        <Plus />
-                        Add subscriber
-                    </Button>
-                </DialogTrigger>
-                <DialogContent>
-                    <Form
-                        v-bind="NewsletterSubscriberController.store.form()"
-                        reset-on-success
-                        @success="createOpen = false"
-                        class="space-y-6"
-                        v-slot="{ errors, processing }"
-                    >
-                        <DialogHeader>
-                            <DialogTitle>Add subscriber</DialogTitle>
-                            <DialogDescription>
-                                Add a new email to the mailing list.
-                            </DialogDescription>
-                        </DialogHeader>
+            <div class="flex items-center gap-2">
+                <Dialog v-model:open="sendAllOpen">
+                    <DialogTrigger as-child>
+                        <Button
+                            variant="outline"
+                            :disabled="subscribedCount === 0"
+                            :title="
+                                subscribedCount === 0
+                                    ? 'No subscribed recipients to send to yet'
+                                    : undefined
+                            "
+                        >
+                            <Send />
+                            Send newsletter
+                        </Button>
+                    </DialogTrigger>
+                    <DialogContent>
+                        <Form
+                            v-bind="
+                                NewsletterSubscriberController.sendAll.form()
+                            "
+                            reset-on-success
+                            @success="sendAllOpen = false"
+                            class="space-y-6"
+                            v-slot="{ errors, processing }"
+                        >
+                            <DialogHeader>
+                                <DialogTitle>Send newsletter</DialogTitle>
+                                <DialogDescription>
+                                    Sends to all
+                                    {{ subscribedCount }} subscribed
+                                    {{
+                                        subscribedCount === 1
+                                            ? 'address'
+                                            : 'addresses'
+                                    }}.
+                                </DialogDescription>
+                            </DialogHeader>
 
-                        <div class="grid gap-2">
-                            <Label for="create-email">Email</Label>
-                            <Input
-                                id="create-email"
-                                name="email"
-                                type="email"
-                                placeholder="jane@example.com"
+                            <div class="grid gap-2">
+                                <Label for="send-all-subject">Subject</Label>
+                                <Input
+                                    id="send-all-subject"
+                                    name="subject"
+                                    placeholder="What's new this month"
+                                    required
+                                    autofocus
+                                />
+                                <InputError :message="errors.subject" />
+                            </div>
+
+                            <RichTextEditor
+                                name="body"
+                                label="Message"
                                 required
+                                placeholder="Write the newsletter content"
+                                :error="errors.body"
                             />
-                            <InputError :message="errors.email" />
-                        </div>
 
-                        <div class="flex items-center gap-2">
-                            <Checkbox
-                                id="create-status"
-                                name="status"
-                                :default-value="true"
-                            />
-                            <Label for="create-status">Subscribed</Label>
-                            <InputError :message="errors.status" />
-                        </div>
+                            <DialogFooter class="gap-2">
+                                <DialogClose as-child>
+                                    <Button variant="secondary">Cancel</Button>
+                                </DialogClose>
+                                <Button type="submit" :disabled="processing">
+                                    <Spinner v-if="processing" />
+                                    Send to all
+                                </Button>
+                            </DialogFooter>
+                        </Form>
+                    </DialogContent>
+                </Dialog>
 
-                        <DialogFooter class="gap-2">
-                            <DialogClose as-child>
-                                <Button variant="secondary">Cancel</Button>
-                            </DialogClose>
-                            <Button type="submit" :disabled="processing">
-                                Save
-                            </Button>
-                        </DialogFooter>
-                    </Form>
-                </DialogContent>
-            </Dialog>
+                <Dialog v-model:open="createOpen">
+                    <DialogTrigger as-child>
+                        <Button>
+                            <Plus />
+                            Add subscriber
+                        </Button>
+                    </DialogTrigger>
+                    <DialogContent>
+                        <Form
+                            v-bind="NewsletterSubscriberController.store.form()"
+                            reset-on-success
+                            @success="createOpen = false"
+                            class="space-y-6"
+                            v-slot="{ errors, processing }"
+                        >
+                            <DialogHeader>
+                                <DialogTitle>Add subscriber</DialogTitle>
+                                <DialogDescription>
+                                    Add a new email to the mailing list.
+                                </DialogDescription>
+                            </DialogHeader>
+
+                            <div class="grid gap-2">
+                                <Label for="create-email">Email</Label>
+                                <Input
+                                    id="create-email"
+                                    name="email"
+                                    type="email"
+                                    placeholder="jane@example.com"
+                                    required
+                                />
+                                <InputError :message="errors.email" />
+                            </div>
+
+                            <div class="flex items-center gap-2">
+                                <Checkbox
+                                    id="create-status"
+                                    name="status"
+                                    value="1"
+                                    :default-value="true"
+                                />
+                                <Label for="create-status">Subscribed</Label>
+                                <InputError :message="errors.status" />
+                            </div>
+
+                            <DialogFooter class="gap-2">
+                                <DialogClose as-child>
+                                    <Button variant="secondary">Cancel</Button>
+                                </DialogClose>
+                                <Button type="submit" :disabled="processing">
+                                    Save
+                                </Button>
+                            </DialogFooter>
+                        </Form>
+                    </DialogContent>
+                </Dialog>
+            </div>
         </div>
 
         <div
@@ -175,6 +258,21 @@ function openEdit(subscriber: Subscriber) {
                                 <Button
                                     variant="outline"
                                     size="icon-sm"
+                                    :disabled="!subscriber.status"
+                                    :title="
+                                        subscriber.status
+                                            ? undefined
+                                            : 'Subscriber has unsubscribed'
+                                    "
+                                    @click="openSend(subscriber)"
+                                >
+                                    <Mail />
+                                    <span class="sr-only">Send email</span>
+                                </Button>
+
+                                <Button
+                                    variant="outline"
+                                    size="icon-sm"
                                     @click="openEdit(subscriber)"
                                 >
                                     <Pencil />
@@ -188,9 +286,7 @@ function openEdit(subscriber: Subscriber) {
                                             size="icon-sm"
                                         >
                                             <Trash2 />
-                                            <span class="sr-only"
-                                                >Delete</span
-                                            >
+                                            <span class="sr-only">Delete</span>
                                         </Button>
                                     </DialogTrigger>
                                     <DialogContent>
@@ -210,8 +306,7 @@ function openEdit(subscriber: Subscriber) {
                                         >
                                             <DialogHeader class="space-y-3">
                                                 <DialogTitle
-                                                    >Delete
-                                                    "{{
+                                                    >Delete "{{
                                                         subscriber.email
                                                     }}"?</DialogTitle
                                                 >
@@ -222,9 +317,7 @@ function openEdit(subscriber: Subscriber) {
 
                                             <DialogFooter class="gap-2">
                                                 <DialogClose as-child>
-                                                    <Button
-                                                        variant="secondary"
-                                                    >
+                                                    <Button variant="secondary">
                                                         Cancel
                                                     </Button>
                                                 </DialogClose>
@@ -294,6 +387,7 @@ function openEdit(subscriber: Subscriber) {
                         <Checkbox
                             id="edit-status"
                             name="status"
+                            value="1"
                             :default-value="editingSubscriber.status"
                         />
                         <Label for="edit-status">Subscribed</Label>
@@ -306,6 +400,63 @@ function openEdit(subscriber: Subscriber) {
                         </DialogClose>
                         <Button type="submit" :disabled="processing">
                             Save
+                        </Button>
+                    </DialogFooter>
+                </Form>
+            </DialogContent>
+        </Dialog>
+
+        <Dialog
+            :open="sendingToSubscriber !== null"
+            @update:open="(open) => !open && (sendingToSubscriber = null)"
+        >
+            <DialogContent v-if="sendingToSubscriber">
+                <Form
+                    v-bind="
+                        NewsletterSubscriberController.send.form({
+                            newsletter_subscriber: sendingToSubscriber.id,
+                        })
+                    "
+                    reset-on-success
+                    @success="sendingToSubscriber = null"
+                    class="space-y-6"
+                    v-slot="{ errors, processing }"
+                >
+                    <DialogHeader>
+                        <DialogTitle>Send email</DialogTitle>
+                        <DialogDescription>
+                            Sends to
+                            {{ sendingToSubscriber.email }}.
+                        </DialogDescription>
+                    </DialogHeader>
+
+                    <div class="grid gap-2">
+                        <Label for="send-subject">Subject</Label>
+                        <Input
+                            id="send-subject"
+                            name="subject"
+                            placeholder="What's new this month"
+                            required
+                            autofocus
+                        />
+                        <InputError :message="errors.subject" />
+                    </div>
+
+                    <RichTextEditor
+                        name="body"
+                        label="Message"
+                        required
+                        placeholder="Write the email content"
+                        :error="errors.body"
+                    />
+
+                    <DialogFooter class="gap-2">
+                        <DialogClose as-child>
+                            <Button variant="secondary">Cancel</Button>
+                        </DialogClose>
+                        <Button type="submit" :disabled="processing">
+                            <Spinner v-if="processing" />
+                            Send
                         </Button>
                     </DialogFooter>
                 </Form>
