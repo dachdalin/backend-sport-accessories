@@ -3,6 +3,7 @@ import { Form, Head, Link } from '@inertiajs/vue3';
 import { Clock, KeyRound, ShieldCheck, UserRound } from '@lucide/vue';
 import UserController from '@/actions/App/Http/Controllers/Backend/UserController';
 import Heading from '@/components/Heading.vue';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
@@ -43,6 +44,15 @@ const props = defineProps<{
     user: User;
 }>();
 
+function initials(name: string): string {
+    return name
+        .split(' ')
+        .filter(Boolean)
+        .slice(0, 2)
+        .map((part) => part[0]?.toUpperCase())
+        .join('');
+}
+
 function formatDate(value: string | null): string {
     if (!value) {
         return '—';
@@ -72,7 +82,14 @@ defineOptions({
 
     <div class="flex flex-col space-y-6">
         <div class="flex items-center justify-between">
-            <Heading :title="user.name" description="Admin account details" />
+            <div class="flex items-start gap-4">
+                <Avatar class="size-12">
+                    <AvatarFallback class="text-base">{{
+                        initials(user.name)
+                    }}</AvatarFallback>
+                </Avatar>
+                <Heading :title="user.name" description="Admin account details" />
+            </div>
             <div class="flex gap-2">
                 <Button variant="outline" as-child>
                     <Link :href="edit(props.user)">Edit</Link>

@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import { Form, Head, Link } from '@inertiajs/vue3';
+import { Pencil, Trash2 } from '@lucide/vue';
 import UserController from '@/actions/App/Http/Controllers/Backend/UserController';
 import Heading from '@/components/Heading.vue';
 import Pagination from '@/components/Pagination.vue';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
@@ -14,7 +16,7 @@ import {
     DialogTitle,
     DialogTrigger,
 } from '@/components/ui/dialog';
-import { create, edit, index, show } from '@/routes/users';
+import { create, edit, index } from '@/routes/users';
 
 type Role = {
     id: number;
@@ -25,6 +27,7 @@ type User = {
     id: number;
     name: string;
     email: string;
+    image: string | null;
     status: boolean;
     roles: Role[];
     created_at: string;
@@ -56,6 +59,15 @@ function formatDate(value: string): string {
         month: 'short',
         day: 'numeric',
     });
+}
+
+function initials(name: string): string {
+    return name
+        .split(' ')
+        .filter(Boolean)
+        .slice(0, 2)
+        .map((part) => part[0]?.toUpperCase())
+        .join('');
 }
 
 defineOptions({
@@ -92,8 +104,7 @@ defineOptions({
                     class="border-b border-sidebar-border/70 text-muted-foreground dark:border-sidebar-border"
                 >
                     <tr>
-                        <th class="p-3 font-medium">Name</th>
-                        <th class="p-3 font-medium">Email</th>
+                        <th class="p-3 font-medium">User</th>
                         <th class="p-3 font-medium">Roles</th>
                         <th class="p-3 font-medium">Status</th>
                         <th class="p-3 font-medium">Created</th>
@@ -106,13 +117,29 @@ defineOptions({
                         :key="user.id"
                         class="border-b border-sidebar-border/70 last:border-b-0 dark:border-sidebar-border"
                     >
-                        <td class="p-3 font-medium">
-                            <Link :href="show(user)" class="hover:underline">{{
-                                user.name
-                            }}</Link>
-                        </td>
-                        <td class="p-3 text-muted-foreground">
-                            {{ user.email }}
+                        <td class="p-3">
+                            <div class="flex items-center gap-3">
+                                <Avatar>
+                                    <AvatarImage
+                                        v-if="user.image"
+                                        :src="user.image"
+                                        :alt="user.name"
+                                    />
+                                    <AvatarFallback>{{
+                                        initials(user.name)
+                                    }}</AvatarFallback>
+                                </Avatar>
+                                <div class="min-w-0">
+                                    <div class="truncate font-medium">
+                                        {{ user.name }}
+                                    </div>
+                                    <div
+                                        class="truncate text-xs text-muted-foreground"
+                                    >
+                                        {{ user.email }}
+                                    </div>
+                                </div>
+                            </div>
                         </td>
                         <td class="p-3">
                             <div
@@ -130,7 +157,14 @@ defineOptions({
                             <span v-else class="text-muted-foreground">—</span>
                         </td>
                         <td class="p-3">
-                            <Badge :variant="user.status ? 'default' : 'destructive'">
+                            <Badge
+                                :variant="user.status ? 'default' : 'destructive'"
+                                class="gap-1.5"
+                            >
+                                <span
+                                    class="size-1.5 rounded-full bg-current"
+                                    aria-hidden="true"
+                                />
                                 {{ user.status ? 'Active' : 'Banned' }}
                             </Badge>
                         </td>
@@ -138,19 +172,27 @@ defineOptions({
                             {{ formatDate(user.created_at) }}
                         </td>
                         <td class="p-3">
-                            <div class="flex justify-end gap-2">
-                                <Button variant="outline" size="sm" as-child>
-                                    <Link :href="show(user)">View</Link>
-                                </Button>
-                                <Button variant="outline" size="sm" as-child>
-                                    <Link :href="edit(user)">Edit</Link>
+                            <div class="flex justify-end gap-1">
+                                <Button
+                                    variant="ghost"
+                                    size="icon-sm"
+                                    as-child
+                                >
+                                    <Link :href="edit(user)" aria-label="Edit user">
+                                        <Pencil aria-hidden="true" />
+                                    </Link>
                                 </Button>
 
                                 <Dialog>
                                     <DialogTrigger as-child>
-                                        <Button variant="destructive" size="sm"
-                                            >Delete</Button
+                                        <Button
+                                            variant="ghost"
+                                            size="icon-sm"
+                                            aria-label="Delete user"
+                                            class="text-destructive hover:bg-destructive/10 hover:text-destructive"
                                         >
+                                            <Trash2 aria-hidden="true" />
+                                        </Button>
                                     </DialogTrigger>
                                     <DialogContent>
                                         <Form
@@ -194,7 +236,7 @@ defineOptions({
                     <tr v-if="users.data.length === 0">
                         <td
                             class="p-6 text-center text-muted-foreground"
-                            colspan="6"
+                            colspan="5"
                         >
                             No users yet.
                         </td>
