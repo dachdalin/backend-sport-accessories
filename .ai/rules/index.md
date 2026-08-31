@@ -44,6 +44,7 @@ Before planning or editing, find the row whose globs match the file's path and r
 | app/Http/Controllers/Api/**,app/Actions/Orders/**,database/migrations/** | .ai/rules/orders-migrations.md |
 | app/Services/OrderService.php,app/Http/Controllers/Backend/OrderController.php,resources/js/pages/orders/** | .ai/rules/orders.md |
 | app/Models/Customer.php,app/Http/Controllers/Backend/CustomerController.php,app/Http/Requests/Backend/*CustomerRequest.php,resources/js/pages/customers/** | .ai/rules/pages-customers.md |
+| resources/js/app.ts,resources/js/pages/ErrorPage.vue,app/Providers/AppServiceProvider.php | .ai/rules/pages-providers.md |
 | resources/js/pages/** | .ai/rules/pages.md |
 | app/Http/Controllers/Backend/ProductController.php,app/Http/Requests/Backend/*Product*.php,app/Actions/Products/**,app/Models/Product.php,app/Models/ProductVariant.php,resources/js/pages/products/** | .ai/rules/products.md |
 | app/Providers/FortifyServiceProvider.php,config/passkeys.php,app/Models/User.php | .ai/rules/providers-models.md |

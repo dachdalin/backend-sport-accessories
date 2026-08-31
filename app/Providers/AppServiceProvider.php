@@ -16,6 +16,8 @@ use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Rules\Password;
+use Inertia\ExceptionResponse;
+use Inertia\Inertia;
 use League\Flysystem\Filesystem;
 use ThomasVantuycom\FlysystemCloudinary\CloudinaryAdapter;
 
@@ -38,6 +40,7 @@ class AppServiceProvider extends ServiceProvider
         $this->configureCloudinary();
         $this->configureRateLimiting();
         $this->configureAuthorization();
+        $this->configureErrorPages();
     }
 
     /**
@@ -140,6 +143,25 @@ class AppServiceProvider extends ServiceProvider
     {
         Gate::before(function ($user, string $ability) {
             return $user instanceof User && $user->hasRole('admin') ? true : null;
+        });
+    }
+
+    /**
+     * Render branded Inertia pages for HTTP error responses.
+     */
+    protected function configureErrorPages(): void
+    {
+        Inertia::handleExceptionsUsing(function (ExceptionResponse $response) {
+            $status = $response->statusCode();
+
+            // Keep Laravel's debug page for 500/503 locally so stack traces stay visible.
+            if (in_array($status, [500, 503], true) && app()->hasDebugModeEnabled()) {
+                return null;
+            }
+
+            if (in_array($status, [403, 404, 419, 429, 500, 503], true)) {
+                return $response->render('ErrorPage', ['status' => $status])->withSharedData();
+            }
         });
     }
 }

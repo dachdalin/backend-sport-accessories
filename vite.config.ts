@@ -18,6 +18,9 @@ export default defineConfig({
                 bunny('Noto Sans Khmer', {
                     weights: [400, 500, 600],
                 }),
+                bunny('Teko', {
+                    weights: [500, 600, 700],
+                }),
             ],
         }),
         inertia(),
