@@ -57,6 +57,7 @@ Before planning or editing, find the row whose globs match the file's path and r
 | database/seeders/RolePermissionSeeder.php,database/seeders/AdminSeeder.php | .ai/rules/seeders.md |
 | app/Services/DashboardService.php,database/migrations/** | .ai/rules/services-migrations.md |
 | app/Services/** | .ai/rules/services.md |
+| app/Http/Controllers/Backend/ShippingAddressController.php,resources/js/pages/shipping-addresses/** | .ai/rules/shipping-addresses.md |
 | app/Services/StockClearanceSetupService.php,app/Http/Controllers/Backend/StockClearanceSetupController.php,resources/js/pages/stock-clearance-setups/** | .ai/rules/stock-clearance-setups.md |
 | app/Http/Controllers/Backend/StoreLocationController.php,resources/js/pages/store-locations/** | .ai/rules/store-locations.md |
 | app/Http/Controllers/Backend/TestimonialController.php,app/Models/Testimonial.php,resources/js/pages/testimonials/** | .ai/rules/testimonials.md |
