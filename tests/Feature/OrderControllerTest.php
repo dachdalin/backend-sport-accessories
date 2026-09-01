@@ -122,6 +122,8 @@ class OrderControllerTest extends TestCase
             ->assertInertia(fn (Assert $page) => $page
                 ->component('orders/Show')
                 ->where('order.id', $order->id)
+                ->where('business.name', 'Sport Accessories Store')
+                ->where('business.currencySymbol', '$')
                 ->has('order.items', 2),
             );
     }

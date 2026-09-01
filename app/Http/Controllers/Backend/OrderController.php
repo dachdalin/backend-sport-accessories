@@ -13,16 +13,21 @@ use App\Http\Requests\Backend\StoreOrderRequest;
 use App\Http\Requests\Backend\UpdateOrderRequest;
 use App\Models\Order;
 use App\Models\Product;
+use App\Services\BusinessSettingService;
 use App\Services\OrderService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use Inertia\Response;
 use Throwable;
 
 class OrderController extends Controller
 {
-    public function __construct(private readonly OrderService $orderService) {}
+    public function __construct(
+        private readonly OrderService $orderService,
+        private readonly BusinessSettingService $businessSettings,
+    ) {}
 
     /**
      * Display a listing of the orders.
@@ -80,8 +85,20 @@ class OrderController extends Controller
      */
     public function show(Order $order): Response
     {
+        $settings = $this->businessSettings->all();
+
         return Inertia::render('orders/Show', [
             'order' => $order->load('items'),
+            'business' => [
+                'name' => $settings['site_name'] !== '' ? $settings['site_name'] : config('app.name'),
+                'logoUrl' => $settings['logo'] !== 'def.png'
+                    ? Storage::disk($settings['logo_storage_type'])->url($settings['logo'])
+                    : null,
+                'email' => $settings['contact_email'],
+                'phone' => $settings['contact_phone'],
+                'address' => $settings['address'],
+                'currencySymbol' => $settings['currency_symbol'] !== '' ? $settings['currency_symbol'] : '$',
+            ],
         ]);
     }
 
